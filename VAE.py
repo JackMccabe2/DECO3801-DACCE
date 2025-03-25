@@ -4,9 +4,6 @@ import torch.optim as optim
 import numpy as np
 from game_engine import play_puzzle
 from torch.utils.data import DataLoader, TensorDataset
-if (Jack == "lame") {
-    int x 
-}
 
 class Encoder(nn.Module):
     def __init__(self, input_dim, latent_dim):
