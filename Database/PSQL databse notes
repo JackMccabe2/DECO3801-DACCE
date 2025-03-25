@@ -1,0 +1,49 @@
+DECO3801 Database;
+
+How to open in terminal reminder; 
+
+$ cd Desktop/DECO3801/DATABASE
+$ brew services restart postgresql@14
+$ sudo -u joshmigotto psql
+Players Table
+•	Username (PK): Player's name (50-character max).
+•	Created_at: When the player joined (timestamp).
+•	Last_active: Last time the player played (timestamp).
+•	Firewall skill: Player’s skill level in firewall games (1-100).
+•	Encipher skill: Player’s skill level in encryption games (1-100).
+•	Leaderboard_score: Player’s score on the leaderboard (INTEGER, can be calculated based on game performance or other criteria).
+
+Games Table
+•	Game_id: Unique ID for each game.
+•	Game_type: Type of game, either 'firewall' or 'encryption'.
+•	Cipher_method: Cipher method used in the game (e.g., 'Caesar Cipher').
+•	Difficulty_rating: Difficulty level of the game (1-10).
+•	Created_at: When the game was created (timestamp).
+
+Game Results Table
+•	Result_id: Unique ID for each game result.
+•	Players_username: Player’s username (foreign key to players).
+•	Player_score: Player’s score (0-5).
+•	Opponent_score: Opponent’s score (0-5).
+•	Game_id: Game played (foreign key to games).
+•	Difficulty_rating: Game difficulty (1-10).
+•	Played_at: When the game was played (timestamp).
+•	Winner_leaderboard_points: Points awarded to the winner (INTEGER, NOT NULL).
+•	Loser_leaderboard_points: Points awarded to the loser (INTEGER, NOT NULL).
+
+Player Games Table (Updated)
+•	Id: Unique ID for each player’s game entry.
+•	Username: Player’s username (foreign key to players).
+•	Game_id: Game played (foreign key to games).
+•	Game_date: Date the game was played.
+•	Win_loss: Whether the player won or lost the game ('win' or 'loss').
+•	Leaderboard_points: Points based on the game outcome, referencing the points from the game_results table (INTEGER).
+
+Tutorial Levels Table
+•	Level_id: Unique ID for each tutorial level.
+•	Level: Tutorial level number (positive integer).
+•	Topic: Topic of the tutorial (e.g., 'Firewall Basics').
+•	Passed: Whether the player passed the level (TRUE/FALSE).
+•	Players_username: Player’s username (foreign key to players).
+•	Completed_at: When the tutorial was completed (timestamp).
+
