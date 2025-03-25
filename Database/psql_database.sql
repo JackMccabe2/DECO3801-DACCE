@@ -1,5 +1,3 @@
---This is my database, Josh -- 
-
 -- Players Table
 CREATE TABLE public.players (
     username VARCHAR(50) PRIMARY KEY,
