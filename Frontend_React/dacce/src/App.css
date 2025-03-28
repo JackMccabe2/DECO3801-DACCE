@@ -1,0 +1,51 @@
+#root {
+  /* max-width: 1280px; */
+  /* margin: 0 auto; */
+  /* padding: 2rem; */
+  text-align: center;
+  
+  --yellow: #FCBF49;
+  --light-yellow: #EAE2B7;
+  --red: #D62828;
+  --orange: #F77F00;
+  --dark-blue: #003049;
+  --green: #00CB76;
+  --white: #FFF;
+  --black: #000;
+}
+
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.header {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  height: 15%;
+  width: 100%;
+  padding: 2rem 2rem 0 2rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  padding: 2rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
