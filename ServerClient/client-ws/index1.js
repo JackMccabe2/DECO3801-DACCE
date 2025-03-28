@@ -1,3 +1,10 @@
+/*
+
+Client file
+Call node index1.js to run
+
+*/
+
 // websocket
 const Html5WebSocket = require('html5-websocket');
 const ReconnectingWebSocket = require('reconnecting-websocket');
@@ -12,7 +19,7 @@ rws.timeout = 1000;
 
 rws.addEventListener('open', () => {
     console.log('[Client] Connection to WebSocket was opened.');
-    rws.send('Hello, this is a message from a client.');
+    //rws.send('Hello, this is a message from a client.');
     rws.send(JSON.stringify({ 
         method: 'set-background-color',
         params: {
@@ -38,11 +45,13 @@ rws.addEventListener('message', (e) => {
 
 rws.addEventListener('close', () => {
     console.log('[Client] Connection closed.');
+    process.exit(0);
 });
 
 rws.onerror = (err) => {
     if (err.code == 'EHOSTDOWN') {
         console.log('[Client] Error: server down.');
+        process.exit(0);
     }
 };
 
@@ -85,7 +94,9 @@ function startCommandLineInput() {
             rws.close();
             return;
         }
-        rws.send(line);
+        if (line != "") {
+            rws.send(line);
+        }
         rl.prompt();
     });
 }
