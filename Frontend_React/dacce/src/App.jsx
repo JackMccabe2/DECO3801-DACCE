@@ -1,14 +1,10 @@
-import { useState } from "react";
 import "./App.css";
-import { Nav } from "react-bootstrap";
+
+import Background from "../src/components/background"
 
 function App() {
   return (
-    <>
-      <p>
-        Edit <code>src/App.jsx</code> and save to test HMR
-      </p>
-    </>
+      <Background />
   );
 }
 
