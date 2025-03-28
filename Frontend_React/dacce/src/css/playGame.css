@@ -1,0 +1,7 @@
+.custom-playmode-container {
+  background-color: var;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 5px 8px 4px 0px rgba(0,0,0,0.3);
+  padding: 100px 15px;
+}

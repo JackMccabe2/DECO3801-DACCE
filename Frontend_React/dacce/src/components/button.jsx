@@ -1,15 +1,14 @@
-// Import Bootstrap components
-
-
 // Import CSS
-import "../css/button.css";
+import "../css/playGame.css";
 
-const button = (text, color) => {
+const button = (text, colour) => {
   return (
     <>
-      <div className="custom-playgame-btn" color={color}>
+      <div className="custom-playgame-btn" color={colour}>
         {text}
       </div>
     </>
-  )
-}
+  );
+};
+
+export default button;
