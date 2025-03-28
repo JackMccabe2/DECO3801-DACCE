@@ -5,6 +5,17 @@ How to open in terminal reminder;
 $ cd Desktop/DECO3801/DATABASE
 $ brew services restart postgresql@14
 $ sudo -u joshmigotto psql
+
+Alternatively:
+Enter into database with:
+    psql postgres   
+Create user and password with:
+    CREATE USER name WITH PASSWORD password
+To view database, user and port info:
+    \conninfo
+Initialize database with:
+    psql -U 'username' -d 'database' -a -f 'filename'
+
 Players Table
 •	Username (PK): Player's name (50-character max).
 •	Created_at: When the player joined (timestamp).
