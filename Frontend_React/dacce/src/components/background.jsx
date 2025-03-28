@@ -1,6 +1,5 @@
 // Import CSS
-import "../css/general.css";
-
+// Do we still need this jsx file?
 const Navbar = () => {
   return <div className="custom-bg"></div>;
 };

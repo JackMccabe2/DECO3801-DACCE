@@ -70,5 +70,13 @@ button:focus-visible {
 
 body {
   font-family: 'Londrina Solid', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', 
-  'Helvetica Neue', Helvetica, 'Inter', Arial, sans-serif;
+  'Helvetica Neue', Helvetica, 'Inter', Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: normal;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
