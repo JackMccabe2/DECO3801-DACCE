@@ -1,0 +1,8 @@
+.landing-title {
+    font-size: 10rem !important;
+    font-weight: bold;
+    color: var(--white);
+    text-shadow: 
+        5px 10px 0px var(--black),
+        5px 15px 0px var(--yellow);
+}

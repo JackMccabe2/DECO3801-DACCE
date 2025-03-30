@@ -1,0 +1,38 @@
+.custom-content-wrap {
+    background-color: var(--white);
+    border-radius: 10px;
+    width: 50%;
+    height: 70%;
+    min-height: 500px;
+    box-shadow: 5px 8px 4px 0px rgba(0,0,0,0.3);
+    padding: 60px !important;
+}
+
+.custom-content-wrap h1 {
+    font-size: 3rem;
+}
+
+.custom-label {
+    display: block; 
+    text-align: left;
+    margin-bottom: 0.5rem; 
+}
+
+
+.custom-input-field {
+    background-color: var(--grey) !important;
+    border: 1px solid #ccc !important; 
+    color: #333; 
+  }
+  
+  .custom-input-field:focus {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .custom-button {
+    height: auto;
+  }
+
+.return-btn:hover {
+    color: #333 !important;
+}
