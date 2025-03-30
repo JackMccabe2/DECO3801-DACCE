@@ -24,7 +24,7 @@ function App() {
 
   return (
     <>
-      <div className={`view-container`}>
+      <div className="view-container">
         {currentView === "landing" && <Landing onNavigate={renderView} />}
         {currentView === "signup" && <Signup onNavigate={renderView} />}
         {currentView === "login" && <Login onNavigate={renderView} />}
