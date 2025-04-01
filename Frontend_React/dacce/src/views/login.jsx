@@ -1,5 +1,4 @@
 import "../css/login.css";
-// import { Link } from "react-router-dom";
 
 import Button from "../components/button";
 import Col from "react-bootstrap/Col";
@@ -35,7 +34,11 @@ const Signup = ({ onNavigate }) => {
           xs={12}
           className="custom-button d-flex justify-content-center align-self-center"
         >
-          <Button text="Enter" colour="yellow" />
+          <Button
+            text="Enter"
+            colour="yellow"
+            onClick={() => onNavigate("dashboard")}
+          />
         </Col>
         <Col
           xs={12}

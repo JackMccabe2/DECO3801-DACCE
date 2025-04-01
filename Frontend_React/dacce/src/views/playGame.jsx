@@ -3,6 +3,7 @@ import Button from "../components/button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import Header from "../components/header";
 
 // Import CSS
 import "../css/playGame.css";
@@ -11,6 +12,7 @@ const playGame = () => {
   return (
     <>
       <Container>
+        <Header />
         <Row>
           <Col sm={12} md={5} lg={5} className="custom-playmode-container">
             <div>
@@ -19,7 +21,7 @@ const playGame = () => {
             <div>
               <Button text="Find Match" colour="yellow"></Button>
             </div>
-          <Col sm={12} md={2} lg={2}></Col>
+            <Col sm={12} md={2} lg={2}></Col>
             <div>
               <Button text="Invite" colour="orange"></Button>
             </div>

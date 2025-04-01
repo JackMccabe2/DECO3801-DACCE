@@ -1,3 +1,7 @@
+/* .header-wrap {
+  justify-content: space-between !important;
+} */
+
 /* navbar */
 .custom-nav-container {
   padding-left: 30px !important;
@@ -70,3 +74,5 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
+
+
