@@ -1,3 +1,5 @@
+import random
+
 def aes():
     from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
     import os
@@ -29,6 +31,42 @@ def aes():
     else:
         print(f"❌ Incorrect! The correct plaintext was: {plaintext.decode()}")
         return False
+    
+def caesar_cipher_puzzle():
+    print("\n Caesar Cipher Puzzle\n")
+
+    shift = random.randint(1, 25)
+    answer = "SECURE"
+    ciphertext = ''.join(chr(((ord(c) - 65 + shift) % 26) + 65) for c in answer)
+
+    print(f"Encrypted Message: {ciphertext}")
+    print("Hint: It's a Caesar cipher (A-Z only), and the original word is a 6-letter word.")
+    guess = input("Enter the original word: ").strip().upper()
+
+    if guess == answer:
+        print("Nice job! You cracked the Caesar cipher.")
+    else:
+        print(f"Nope! The correct answer was: {answer}")
+
+def xor_aes():
+    import random
+
+    print("\nXOR Puzzle - Learn AddRoundKey!\n")
+    # can change the range here as a difficulty parameter
+    plaintext = bytes([random.randint(0, 255) for _ in range(2)])
+    key = bytes([random.randint(0, 255) for _ in range(2)])
+    expected = bytes([p ^ k for p, k in zip(plaintext, key)])
+
+    print(f"Plaintext : {plaintext.hex()}")
+    print(f"Key       : {key.hex()}")
+    print("Enter the result of XOR-ing each byte:")
+
+    answer = input("Your answer: ").strip().lower()
+
+    if answer == expected.hex():
+        print("Correct!")
+    else:
+        print(f"Not quite! The correct answer was: {expected.hex()}")
 
 def play_puzzle(puzzle_vector):
 
