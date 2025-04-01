@@ -1,19 +1,18 @@
 def aes():
     from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-    from cryptography.hazmat.backends import default_backend
     import os
 
     key_word = "cipher"
-    key_bytes = key_word.encode('utf-8').ljust(16, b'_')  # pad to 16 bytes
+    key_bytes = key_word.encode('utf-8').ljust(16, b'_')  # 16 bytes
     key_hex_hint = key_word.encode('utf-8').hex()
 
-    plaintext = b'ACCESSGRANTED!'  # 14 bytes
+    plaintext = b'ACCESSGRANTED!' 
     iv = os.urandom(16)
 
     pad_len = 16 - (len(plaintext) % 16)
     padded = plaintext + bytes([pad_len] * pad_len)
 
-    cipher = Cipher(algorithms.AES(key_bytes), modes.CBC(iv), backend=default_backend())
+    cipher = Cipher(algorithms.AES(key_bytes), modes.CBC(iv))
     encryptor = cipher.encryptor()
     ciphertext = encryptor.update(padded) + encryptor.finalize()
 
@@ -32,11 +31,11 @@ def aes():
         return False
 
 def play_puzzle(puzzle_vector):
-    
+
     key_length = int(1024 + puzzle_vector[1] * 2048)
     steps = int(2 + puzzle_vector[2] * 8)
     entropy = round(puzzle_vector[3], 2)
-    solution_length = 6 #int(8 + puzzle_vector[4] * 24)
+    solution_length = 6
 
     print("\n=== Hacking Challenge ===")
     print(f"Key Length: {key_length}-bit")
