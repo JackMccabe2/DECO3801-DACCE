@@ -3,7 +3,9 @@ const express = require('express');
 const WebSocket = require('ws');
 const SocketServer = require('ws').Server;
 
-const server = express().listen(3000);
+const server = express().listen(3000, () => {
+    console.log('[Server] Opened connection on port 3000')
+});
 
 const wss = new SocketServer({ server });
 
@@ -20,6 +22,8 @@ wss.on('connection', (ws) => {
         if (message == "test") {
             ws.send("RHAHHHASHHASHDHASDHAHH")
         }
+
+        
 
         // broadcast to everyone else connected
         wss.clients.forEach(function each(client) {
