@@ -5,3 +5,13 @@
   /* justify-content: center; */
   padding: 20px;
 }
+
+.dashboard-btn-hover:hover {
+  background-color: var(--grey) !important;
+}
+
+
+
+.play-btn-hover:hover {
+  background-color: var(--lighter-red) !important;
+}

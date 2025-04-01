@@ -17,6 +17,7 @@ function Dashboard({ onNavigate }) {
           <Row className="w-100 justify-content-center align-items-center gap-3">
             <Col xs={12} md={5} className="justify-content-center">
               <Button
+                btnHover={"dashboard-btn-hover"}
                 text="Profile"
                 textcolour="var(--black)"
                 background="var(--white)"
@@ -24,6 +25,7 @@ function Dashboard({ onNavigate }) {
             </Col>
             <Col xs={12} md={5} className="justify-content-center">
               <Button
+                btnHover={"dashboard-btn-hover"}
                 text="Leaderboard"
                 textcolour="var(--black)"
                 background="var(--white)"
@@ -31,6 +33,7 @@ function Dashboard({ onNavigate }) {
             </Col>
             <Col xs={12} md={5} className="justify-content-center">
               <Button
+                btnHover={"dashboard-btn-hover"}
                 text="History"
                 textcolour="var(--black)"
                 background="var(--white)"
@@ -38,6 +41,7 @@ function Dashboard({ onNavigate }) {
             </Col>
             <Col xs={12} md={10} className="justify-content-center">
               <Button
+                btnHover={"play-btn-hover"}
                 text="Play"
                 textcolour="var(--white)"
                 background="var(--red)"

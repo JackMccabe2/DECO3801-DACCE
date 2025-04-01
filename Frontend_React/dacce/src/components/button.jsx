@@ -2,7 +2,14 @@
 import "../css/playGame.css";
 import "../css/button.css";
 
-const Button = ({ text, colour, textcolour, background, onClick }) => {
+const Button = ({
+  text,
+  colour,
+  btnHover,
+  textcolour,
+  background,
+  onClick,
+}) => {
   // Can add different styles here, customisable for each button
   const btnStyle = {
     cursor: "pointer",
@@ -13,7 +20,7 @@ const Button = ({ text, colour, textcolour, background, onClick }) => {
   return (
     <>
       <div
-        className={`custom-universal-btn custom-playgame-btn mt-5 btn-${colour}`}
+        className={`${btnHover} custom-universal-btn custom-playgame-btn mt-5 btn-${colour}`}
         style={btnStyle}
         onClick={onClick}
       >
