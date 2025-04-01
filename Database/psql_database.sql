@@ -20,7 +20,7 @@ CREATE TABLE public.games (
 -- Game Results Table
 CREATE TABLE public.game_results (
     result_id SERIAL PRIMARY KEY,
-    players_username VARCHAR(255),
+    players_username VARCHAR(50),
     player_score INTEGER CHECK (player_score BETWEEN 0 AND 5),
     opponent_score INTEGER CHECK (opponent_score BETWEEN 0 AND 5),
     game_id INTEGER,
@@ -35,28 +35,37 @@ CREATE TABLE public.game_results (
 -- Player Games Table
 CREATE TABLE public.player_games (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(50),
+    players_username VARCHAR(50),
     game_id INTEGER NOT NULL,
     game_date DATE NOT NULL,
     win_loss VARCHAR(4) CHECK (win_loss IN ('win', 'loss')) NOT NULL,
     leaderboard_points INTEGER,
-    FOREIGN KEY (username) REFERENCES players(username) ON DELETE CASCADE,
+    FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
+    FOREIGN KEY (opponents_username) REFERENCES players(username) ON DELETE CASCADE,
     FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
 );
+
+CREATE TABLE public.player_history (
+    players_username VARCHAR(50),
+    wins INTEGER,
+    losses INTEGER,
+    leaderboard_points INTEGER REFERENCES leaderboard(username)
+    FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE
+)
 
 -- Tutorial Levels Table
 CREATE TABLE public.tutorial_levels (
     level_id SERIAL PRIMARY KEY,
     level INTEGER CHECK (level > 0),
-    topic VARCHAR(255),
+    topic VARCHAR(50),
     passed BOOLEAN DEFAULT FALSE,
-    players_username VARCHAR(255),
+    players_username VARCHAR(50),
     completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE
 );
 
 CREATE TABLE public.leaderboard (
-    players_username VARCHAR(255),
+    players_username VARCHAR(50),
     players_leaderboard_score INTEGER,
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE
 
