@@ -20,9 +20,9 @@ Initialize database with:
 Setup connection with database:
     const client = new Client({
         host: "localhost",
-        user: "jackmccabe",
+        user: "user name",
         password: "password",
-        database: "postgres",
+        database: "database name",
         port: 5432
         });
 
