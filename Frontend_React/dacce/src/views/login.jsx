@@ -48,7 +48,7 @@ const Signup = ({ onNavigate }) => {
             <span
               className="return-btn"
               style={{ color: "black", cursor: "pointer" }}
-              onClick={() => onNavigate("login")}
+              onClick={() => onNavigate("signup")}
             >
               No account yet? SIGNUP
             </span>

@@ -20,7 +20,7 @@ const Button = ({
   return (
     <>
       <div
-        className={`${btnHover} custom-universal-btn custom-playgame-btn mt-5 btn-${colour}`}
+        className={`${btnHover} custom-universal-btn custom-playgame-btn btn-${colour}`}
         style={btnStyle}
         onClick={onClick}
       >

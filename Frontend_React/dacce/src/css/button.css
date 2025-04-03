@@ -1,3 +1,7 @@
 .custom-universal-btn:hover {
     background-color: var(--orange);
 }
+
+.custom-universal-btn {
+    margin-top: 2rem;
+}
