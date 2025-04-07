@@ -12,7 +12,8 @@ const playGame = ({ onNavigate }) => {
   return (
     <>
       <div className="dashboard-wrap">
-        <Header />
+        {/* Update: Moved the header to conditional in App.jsx */}
+        {/* <Header /> */}
         <Container className="mt-5">
           <Row className="d-flex justify-content-center gap-5">
             <Col sm={12} md={5} lg={5} className="custom-playmode-container">
