@@ -1,10 +1,13 @@
 import "./App.css";
 import { useState } from "react";
+import React from "react";
+import { WebSocketProvider } from "./utils/socketContext";
 
 import Landing from "./views/landing";
 import Background from "../src/components/background";
 import Dashboard from "./views/dashboard";
 import PlayGame from "./views/playGame";
+import Game from "./views/game";
 
 import Signup from "./views/signup";
 import Login from "./views/login";
@@ -24,14 +27,17 @@ function App() {
 
   return (
     <>
+      <WebSocketProvider>
       <div className="view-container">
         {currentView === "landing" && <Landing onNavigate={renderView} />}
         {currentView === "signup" && <Signup onNavigate={renderView} />}
         {currentView === "login" && <Login onNavigate={renderView} />}
         {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
         {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
+        {currentView === "game" && <Game onNavigate={renderView} />}
       </div>
       <Background />
+      </WebSocketProvider>
     </>
   );
 }

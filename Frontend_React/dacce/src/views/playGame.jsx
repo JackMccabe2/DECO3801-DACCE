@@ -8,7 +8,7 @@ import Header from "../components/header";
 // Import CSS
 import "../css/playGame.css";
 
-const playGame = () => {
+const playGame = ({ onNavigate }) => {
   return (
     <>
       <div className="dashboard-wrap">
@@ -16,16 +16,14 @@ const playGame = () => {
         <Container className="mt-5">
           <Row className="d-flex justify-content-center gap-5">
             <Col sm={12} md={5} lg={5} className="custom-playmode-container">
-              <div>
-                <h4 className="custom-title">PvP</h4>
-              </div>
-              <div>
-                <Button text="Find Match" colour="yellow"></Button>
-              </div>
+              <h4 className="custom-title">PvP</h4>
+              <Button
+                text="Find Match"
+                colour="yellow"
+                onClick={() => onNavigate("game")}
+              ></Button>
               <Col sm={12} md={2} lg={2}></Col>
-              <div>
-                <Button text="Invite" colour="orange"></Button>
-              </div>
+              <Button text="Invite" colour="orange"></Button>
             </Col>
             <Col sm={12} md={5} lg={5} className="custom-playmode-container">
               <h4 className="custom-title">PvC</h4>
