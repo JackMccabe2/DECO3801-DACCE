@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import Landing from "./views/landing";
 import Background from "../src/components/background";
