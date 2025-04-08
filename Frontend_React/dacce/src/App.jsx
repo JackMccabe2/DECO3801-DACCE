@@ -12,7 +12,6 @@ import Game from "./views/game";
 import Signup from "./views/signup";
 import Login from "./views/login";
 import Header from "./components/header";
-import Header from "./components/header";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
