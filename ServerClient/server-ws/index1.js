@@ -11,8 +11,8 @@ const WebSocket = require('ws');
 const { Client } = require('pg');
 
 // Initialize Express Server
-const server = express().listen(3000, () => {
-    console.log('[Server] Opened connection on port 3000');
+const server = express().listen(8080, () => {
+    console.log('[Server] Opened connection on port 8080');
 });
 
 // Initialize WebSocket Server
@@ -35,22 +35,13 @@ wss.on('connection', (ws) => {
     console.log('[Server] A client was connected.');
 
     ws.on('message', async (message) => {
-        console.log('[Server] Received message:', message);
-
-        const messageString = message.toString('utf-8');
-        console.log(messageString);
-
         try {
-            const data = JSON.parse(messageString);  // Parse the incoming message
-            console.log(data);
-            if (data.method === 'createPlayer') {
-                const { username, firewall_skill, encipher_skill, leaderboard_score } = data.params;
-                await createPlayer(username, firewall_skill, encipher_skill, leaderboard_score);
-            }
-            // await initializePlayer("jackMccabe");
-
+            const data = JSON.parse(message.toString('utf-8'));
+            console.log('[Server] Received init:', data.username);
+            //await initializePlayer(data.username);
         } catch (err) {
-            console.error('[Server] Error processing message:', err);
+
+            console.error('[Server] Invalid JSON or error:', message);
         }
     });
 
