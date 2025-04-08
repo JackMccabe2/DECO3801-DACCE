@@ -17,7 +17,7 @@ const Landing = ({ onNavigate }) => {
   const handleInitializePlayer = () => {
     if (username.trim() && isConnected) {
       console.log("Sending username to server:", username); // ✅ Confirm trigger
-      sendMessage(JSON.stringify({ type: "init", username }));
+      sendMessage(JSON.stringify({ method: "init", username }));
 
     } else {
       console.log("WebSocket not connected or username empty.");
@@ -45,13 +45,6 @@ const Landing = ({ onNavigate }) => {
             />
           </Col>
           <Col sm={12} md={4} lg={4}>
-            <input
-              type="text"
-              placeholder="Enter username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="form-control my-2"
-            />
             <Button
               text="Login"
               colour="yellow"
