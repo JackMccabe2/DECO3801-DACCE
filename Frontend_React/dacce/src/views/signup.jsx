@@ -1,13 +1,28 @@
+import { useState } from "react";
 import "../css/login.css";
 import Button from "../components/button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
-
+import { useWebSocket } from "../contexts/WebSocketContext";
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Signup = ({ onNavigate }) => {
+  const [username, setUsername] = useState("");
+  const { sendMessage } = useWebSocket();
+
+  const handleCreate = () => {
+    if (!username.trim()) {
+      alert("Please enter a valid username.");
+      return;
+    }
+
+    const payload = JSON.stringify({ type: "init", username });
+    sendMessage(payload);
+    console.log("[Client] Sent signup username:", payload);
+  };
+
   return (
     <Container
       fluid
@@ -17,7 +32,7 @@ const Signup = ({ onNavigate }) => {
         <Col xs={12}>
           <h1 className="text-center mb-4 mt-4">SIGN UP</h1>
         </Col>
-        <Col xs={12} className="">
+        <Col xs={12}>
           <Form.Group>
             <Form.Label className="custom-label text-start w-100">
               Create a username
@@ -26,6 +41,8 @@ const Signup = ({ onNavigate }) => {
               type="text"
               placeholder="e.g. Alex #3312"
               className="custom-input-field"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </Form.Group>
         </Col>
@@ -33,7 +50,7 @@ const Signup = ({ onNavigate }) => {
           xs={12}
           className="custom-button d-flex justify-content-center align-self-center"
         >
-          <Button text="Create" colour="yellow" />
+          <Button text="Create" colour="yellow" onClick={handleCreate} />
         </Col>
         <Col
           xs={12}

@@ -14,7 +14,9 @@ export const WebSocketProvider = ({ children }) => {
     ws.current.onopen = () => {
       console.log("WebSocket connected");
       setIsConnected(true);
+      ws.current.send(JSON.stringify({ type: "init", username: "connection" }));
     };
+    
 
     ws.current.onmessage = (event) => {
       console.log("Received:", event.data);
@@ -38,12 +40,14 @@ export const WebSocketProvider = ({ children }) => {
     };
   }, []);
 
+  console.log("WebSocket readyState:", ws.current?.readyState);
   const sendMessage = (msg) => {
-    send("rahhhhhhhh")
+    console.log("Preparing to send:", msg);
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send(JSON.stringify({ type: "message", content: msg }));
+      ws.current.send(msg);
+      console.log("✅ Sent message:", msg);
     } else {
-      console.warn("WebSocket is not open.");
+      console.warn("❌ WebSocket not open:", ws.current?.readyState);
     }
   };
 

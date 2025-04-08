@@ -35,17 +35,13 @@ wss.on('connection', (ws) => {
     console.log('[Server] A client was connected.');
 
     ws.on('message', async (message) => {
-        console.log('[Server] Received message:', message);
-
-        const messageString = message.toString('utf-8');
-        console.log(messageString);
-
         try {
-            
-            //await initializePlayer("jackMccabe");
-
+            const data = JSON.parse(message.toString('utf-8'));
+            console.log('[Server] Received init:', data.username);
+            //await initializePlayer(data.username);
         } catch (err) {
-            console.error('[Server] Error processing message:', err);
+
+            console.error('[Server] Invalid JSON or error:', message);
         }
     });
 

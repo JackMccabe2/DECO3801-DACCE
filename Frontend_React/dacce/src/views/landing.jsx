@@ -1,3 +1,6 @@
+// landing.jsx
+
+import { useState } from "react";
 import "../css/landing.css";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -8,11 +11,19 @@ import Logo from "../assets/chg_logo.png";
 import { useWebSocket } from "../contexts/WebSocketContext";
 
 const Landing = ({ onNavigate }) => {
-  const { isConnected, messages, sendMessage } = useWebSocket();
+  const [username, setUsername] = useState('');
+  const { isConnected, sendMessage } = useWebSocket();
 
-  const handleSendMessage = () => {
-    sendMessage("Hello from component!");
+  const handleInitializePlayer = () => {
+    if (username.trim() && isConnected) {
+      console.log("Sending username to server:", username); // ✅ Confirm trigger
+      sendMessage(JSON.stringify({ type: "init", username }));
+
+    } else {
+      console.log("WebSocket not connected or username empty.");
+    }
   };
+
   return (
     <Container
       fluid
@@ -20,7 +31,6 @@ const Landing = ({ onNavigate }) => {
     >
       <Row className="justify-content-center align-items-center">
         <Col xs={12} className="justify-content-center align-items-center">
-          {/* <h1 className="landing-title">Cool Hack Game</h1> */}
           <Image src={Logo} className="logo" />
         </Col>
         <Row className="w-100 d-flex justify-content-center align-items-center">
@@ -28,18 +38,28 @@ const Landing = ({ onNavigate }) => {
             <Button
               text="Sign Up"
               colour="yellow"
-              onClick={() => onNavigate("signup")}
+              onClick={() => {
+                handleInitializePlayer();
+                onNavigate("signup")}
+              }
             />
           </Col>
           <Col sm={12} md={4} lg={4}>
+            <input
+              type="text"
+              placeholder="Enter username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="form-control my-2"
+            />
             <Button
               text="Login"
               colour="yellow"
               onClick={() => {
-                onNavigate("login"); 
-                sendMessage("Hello from component!");
-              }
-            }
+                handleInitializePlayer();
+                onNavigate("login");
+              }}
+              disabled={!isConnected}
             />
           </Col>
         </Row>
