@@ -11,8 +11,8 @@ const WebSocket = require('ws');
 const { Client } = require('pg');
 
 // Initialize Express Server
-const server = express().listen(3000, () => {
-    console.log('[Server] Opened connection on port 3000');
+const server = express().listen(8080, () => {
+    console.log('[Server] Opened connection on port 8080');
 });
 
 // Initialize WebSocket Server
@@ -42,7 +42,7 @@ wss.on('connection', (ws) => {
 
         try {
             
-            await initializePlayer("jackMccabe");
+            //await initializePlayer("jackMccabe");
 
         } catch (err) {
             console.error('[Server] Error processing message:', err);

@@ -3,8 +3,8 @@ const express = require('express');
 const WebSocket = require('ws');
 const SocketServer = require('ws').Server;
 
-const server = express().listen(3000, () => {
-    console.log('[Server] Opened connection on port 3000')
+const server = express().listen(8080, () => {
+    console.log('[Server] Opened connection on port 8080')
 });
 
 const wss = new SocketServer({ server });

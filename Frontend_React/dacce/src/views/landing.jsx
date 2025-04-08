@@ -5,8 +5,14 @@ import Row from "react-bootstrap/Row";
 import Button from "../components/button";
 import Image from "react-bootstrap/Image";
 import Logo from "../assets/chg_logo.png";
+import { useWebSocket } from "../contexts/WebSocketContext";
 
 const Landing = ({ onNavigate }) => {
+  const { isConnected, messages, sendMessage } = useWebSocket();
+
+  const handleSendMessage = () => {
+    sendMessage("Hello from component!");
+  };
   return (
     <Container
       fluid
@@ -29,7 +35,11 @@ const Landing = ({ onNavigate }) => {
             <Button
               text="Login"
               colour="yellow"
-              onClick={() => onNavigate("login")}
+              onClick={() => {
+                onNavigate("login"); 
+                sendMessage("Hello from component!");
+              }
+            }
             />
           </Col>
         </Row>
