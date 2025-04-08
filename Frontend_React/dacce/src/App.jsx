@@ -7,14 +7,17 @@ import Landing from "./views/landing";
 import Background from "../src/components/background";
 import Dashboard from "./views/dashboard";
 import PlayGame from "./views/playGame";
+import Game from "./views/game";
 
 import Signup from "./views/signup";
 import Login from "./views/login";
+import Header from "./components/header";
 import Header from "./components/header";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
+  // Set different views for the app.
   const [currentView, setCurrentView] = useState("landing");
 
   const renderView = (view) => {
@@ -35,6 +38,7 @@ function App() {
         {currentView === "login" && <Login onNavigate={renderView} />}
         {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
         {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
+        {currentView === "game" && <Game onNavigate={renderView} />}
         {currentView === "game" && <Game onNavigate={renderView} />}
       </div>
       <Background />

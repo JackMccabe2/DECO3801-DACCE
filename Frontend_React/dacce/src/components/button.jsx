@@ -9,12 +9,19 @@ const Button = ({
   textcolour,
   background,
   onClick,
+  fontsize,
+  padding,
+  margin,
 }) => {
   // Can add different styles here, customisable for each button
   const btnStyle = {
     cursor: "pointer",
     color: textcolour,
     backgroundColor: background,
+    fontSize: fontsize,
+    padding: padding,
+    margin: margin,
+    textAlign: "center",
   };
 
   return (

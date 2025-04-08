@@ -8,7 +8,7 @@ import Form from "react-bootstrap/Form";
 
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
-const Signup = ({ onNavigate }) => {
+const Login = ({ onNavigate }) => {
   return (
     <Container
       fluid
@@ -72,4 +72,4 @@ const Signup = ({ onNavigate }) => {
   );
 };
 
-export default Signup;
+export default Login;

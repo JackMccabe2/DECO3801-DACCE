@@ -76,3 +76,45 @@
 }
 
 
+
+/* Todo: Still need to fix the menu position */
+.burger-menu-btn {
+  position: fixed;
+  top: 20px;
+  left: 30px;
+  z-index: 1050;
+  background-color: transparent !important;
+  color: var(--white) !important;
+  border: none !important;
+  font-size: 2.5rem !important;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.burger-menu-btn:hover {
+  color: var(--grey) !important;
+}
+
+.menu-item {
+  display: block;
+  padding: 10px 0;
+  color: var(--black);
+  background-color: var(--white);
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.menu-item:hover {
+  text-decoration: underline;
+}
+
+.menu-bottom {
+  margin-top: auto;
+  padding-bottom: 1rem; 
+}
+
+
+.menu-icon {
+  color: var(--black);
+  font-size: 1.5rem;
+}

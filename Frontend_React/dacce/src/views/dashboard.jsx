@@ -5,11 +5,15 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Header from "../components/header";
 
+import { IoPersonCircleOutline } from "react-icons/io5";
+
 function Dashboard({ onNavigate }) {
   return (
     <>
       <div className="dashboard-wrap">
-        <Header />
+        {/* Update: Moved the header to conditional in App.jsx */}
+        {/* Set current view to dashboard and send the prop to navbar/header */}
+        {/* <Header currentView="dashboard" onNavigate={onNavigate} /> */}
         <br />
         <br />
         <br />
@@ -45,7 +49,9 @@ function Dashboard({ onNavigate }) {
                 text="Play"
                 textcolour="var(--white)"
                 background="var(--red)"
-                onClick={() => onNavigate("playgame")}
+                onClick={() => {
+                  onNavigate("playgame");
+                }}
               />
             </Col>
           </Row>
