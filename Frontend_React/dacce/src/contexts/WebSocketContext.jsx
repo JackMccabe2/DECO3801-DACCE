@@ -4,7 +4,7 @@ const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState([]);
   const ws = useRef(null);
 
   useEffect(() => {
@@ -17,10 +17,20 @@ export const WebSocketProvider = ({ children }) => {
       ws.current.send(JSON.stringify({ type: "init", username: "connection" }));
     };
     
-
     ws.current.onmessage = (event) => {
-      console.log("Received:", event.data);
-      setMessages(prev => [...prev, event.data]);
+      const response = JSON.parse(event.data);
+      console.log('[Client] Received message:', response);
+
+      ws.current.send(JSON.stringify({ status: "log", message: "response status: " + response.status}));
+
+      // Handle the response from the server
+      if (response.status === 'OK') {
+          console.log('[Client] Received OK');
+          ws.current.send(JSON.stringify({ status: "log", message: "status: " + status}));
+      } else {
+          console.error('[Client] Error:', response.message);
+          setMessage('Error: ' + response.message);
+      }
     };
 
     ws.current.onerror = (error) => {
@@ -40,7 +50,6 @@ export const WebSocketProvider = ({ children }) => {
     };
   }, []);
 
-  console.log("WebSocket readyState:", ws.current?.readyState);
   const sendMessage = (msg) => {
     console.log("Preparing to send:", msg);
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
@@ -53,7 +62,7 @@ export const WebSocketProvider = ({ children }) => {
 
   const value = {
     isConnected,
-    messages,
+    message,
     sendMessage,
     ws: ws.current
   };
