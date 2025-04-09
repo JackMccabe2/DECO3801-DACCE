@@ -12,16 +12,39 @@ const Signup = ({ onNavigate }) => {
   const [username, setUsername] = useState("");
   const { sendMessage } = useWebSocket();
 
-  const handleCreate = () => {
-    if (!username.trim()) {
-      alert("Please enter a valid username.");
+  const handleClick = async ( page ) => {
+    //if (isConnected) {
+      const loginPayload = { type: "login", username: page };
+
+      sendMessage(loginPayload, (response) => {
+        if (response.status === "OK") {
+          onNavigate(page);
+        } else {
+          console.error("Login failed:", response.message);
+        }
+      }
+    )
+  };
+
+  
+  const handleSignup = async ( page ) => {
+    
+    if (username  === "") {
+      alert("Username blank");
       return;
     }
 
-    const payload = JSON.stringify({ type: "POST", username });
-    sendMessage(payload);
-    console.log("[Client] Sent signup username:", payload);
-  };
+    const loginPayload = { type: "POST", username: username };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        alert("user created: " + username + "!");
+      } else {
+        console.error("Login failed:", response.message);
+      }
+    });
+  }
+    
 
   return (
     <Container
@@ -50,7 +73,26 @@ const Signup = ({ onNavigate }) => {
           xs={12}
           className="custom-button d-flex justify-content-center align-self-center"
         >
-          <Button text="Create" colour="yellow" onClick={handleCreate} />
+          <Button text="Create" colour="yellow" onClick={() => {
+
+            handleSignup('landing')
+
+          /*
+          const loginPayload = { type: "POST", username: username };
+
+              sendMessage(loginPayload, (response) => {
+                if (response.status === "OK") {
+                  alert("user created: " + username + "!");
+                } else {
+                  console.error("Login failed:", response.message);
+                }
+              });
+            */
+
+
+            }}
+            />
+  
         </Col>
         <Col
           xs={12}
@@ -60,7 +102,7 @@ const Signup = ({ onNavigate }) => {
             <span
               className="return-btn"
               style={{ color: "black", cursor: "pointer" }}
-              onClick={() => onNavigate("login")}
+              onClick={() => handleClick("login")}
             >
               Already have an account? LOGIN
             </span>
@@ -72,7 +114,10 @@ const Signup = ({ onNavigate }) => {
                 color: "black",
                 cursor: "pointer",
               }}
-              onClick={() => onNavigate("landing")}
+              onClick={() => {
+                handleClick("landing")
+              }
+            }
             >
               <FaLongArrowAltLeft /> {""}
               Return

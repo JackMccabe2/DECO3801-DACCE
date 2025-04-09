@@ -12,19 +12,21 @@ import { useWebSocket } from "../contexts/WebSocketContext";
 
 const Landing = ({ onNavigate }) => {
   const { isConnected, sendMessage } = useWebSocket();
-  const [message, setMessage] = useState('');
   ///// cfretes vairale status that can access in whole program that reflects wether the server response is valid
 
-  const handleLogMessage = async ( page ) => {
+  const handleClick = async ( page ) => {
+    
     if (isConnected) {
-      console.log("Sending log to server"); // ✅ Confirm trigger
-      
-      try {
-        await sendMessage(JSON.stringify({ navigate: page }));
-      } catch (err) {
-        alert(err)
-      }
+      const loginPayload = { type: "login", username: "myUser" };
 
+      sendMessage(loginPayload, (response) => {
+        if (response.status === "OK") {
+          onNavigate(page);
+        } else {
+          console.error("Login failed:", response.message);
+        }
+      }
+    )
     } else {
       console.log("WebSocket not connected.");
       return false;
@@ -46,8 +48,7 @@ const Landing = ({ onNavigate }) => {
               text="Sign Up"
               colour="yellow"
               onClick={() => {
-                handleLogMessage("signup");
-                onNavigate("signup");
+                handleClick("signup");
                 }
               }
             />
@@ -57,8 +58,7 @@ const Landing = ({ onNavigate }) => {
               text="Login"
               colour="yellow"
               onClick={() => {
-                handleLogMessage("login");
-                onNavigate("login");
+                handleClick("login");
               }}
               disabled={!isConnected}
             />
