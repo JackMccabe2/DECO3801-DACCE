@@ -37,13 +37,30 @@ wss.on('connection', (ws) => {
     ws.on('message', async (message) => {
         try {
             const data = JSON.parse(message.toString('utf-8'));
-            console.log('[Server] Received init:', data.username);
-            //await initializePlayer(data.username);
+            console.log('[Server] Received message:', data);
+    
+            // Example: Process received message
+            if (data.navigate === 'signup') {
+                console.log('[Server] Navigating to signup page');
+                // You can call the initializePlayer or any other function here
+                // await createPlayer(data.username, 1, 1, 1);
+            }
+            
+            if (data.status === 'log') {
+                console.log('[Client] log: ', data)
+            } else {
+                // Send "OK" back to the client
+                const response = { status: "OK", message: "Navigation successful" };
+                console.log('[Server] Sending response:', response);
+                ws.send(JSON.stringify(response));
+            }
         } catch (err) {
-
             console.error('[Server] Invalid JSON or error:', message);
+            const errorResponse = { status: "ERROR", message: "Invalid JSON or processing error" };
+            ws.send(JSON.stringify(errorResponse)); // Send error message back
         }
     });
+    
 
     ws.on('close', () => {
         console.log('[Server] Client disconnected.');

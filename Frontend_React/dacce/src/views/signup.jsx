@@ -18,7 +18,7 @@ const Signup = ({ onNavigate }) => {
       return;
     }
 
-    const payload = JSON.stringify({ type: "init", username });
+    const payload = JSON.stringify({ type: "POST", username });
     sendMessage(payload);
     console.log("[Client] Sent signup username:", payload);
   };

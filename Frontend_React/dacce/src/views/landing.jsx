@@ -11,16 +11,23 @@ import Logo from "../assets/chg_logo.png";
 import { useWebSocket } from "../contexts/WebSocketContext";
 
 const Landing = ({ onNavigate }) => {
-  const [username, setUsername] = useState('');
   const { isConnected, sendMessage } = useWebSocket();
+  const [message, setMessage] = useState('');
+  ///// cfretes vairale status that can access in whole program that reflects wether the server response is valid
 
-  const handleInitializePlayer = () => {
-    if (username.trim() && isConnected) {
-      console.log("Sending username to server:", username); // ✅ Confirm trigger
-      sendMessage(JSON.stringify({ method: "init", username }));
+  const handleLogMessage = async ( page ) => {
+    if (isConnected) {
+      console.log("Sending log to server"); // ✅ Confirm trigger
+      
+      try {
+        await sendMessage(JSON.stringify({ navigate: page }));
+      } catch (err) {
+        alert(err)
+      }
 
     } else {
-      console.log("WebSocket not connected or username empty.");
+      console.log("WebSocket not connected.");
+      return false;
     }
   };
 
@@ -39,8 +46,9 @@ const Landing = ({ onNavigate }) => {
               text="Sign Up"
               colour="yellow"
               onClick={() => {
-                handleInitializePlayer();
-                onNavigate("signup")}
+                handleLogMessage("signup");
+                onNavigate("signup");
+                }
               }
             />
           </Col>
@@ -49,7 +57,7 @@ const Landing = ({ onNavigate }) => {
               text="Login"
               colour="yellow"
               onClick={() => {
-                handleInitializePlayer();
+                handleLogMessage("login");
                 onNavigate("login");
               }}
               disabled={!isConnected}
