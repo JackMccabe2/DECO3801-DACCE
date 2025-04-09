@@ -39,6 +39,12 @@ wss.on('connection', (ws) => {
             const data = JSON.parse(message.toString('utf-8'));
             console.log('[Server] Received message:', data);
     
+            if (data.type === 'NAV') {
+                const response = { status: "OK", message: "Navigation successful" };
+                console.log('[Server] Sending response:', response);
+                ws.send(JSON.stringify(response));
+            }
+
             // Example: Process received message
             if (data.navigate === 'signup') {
                 console.log('[Server] Navigating to signup page');
