@@ -39,6 +39,7 @@ const Signup = ({ onNavigate }) => {
         return;
       } else {
         console.error("Login failed:", response.message);
+        return;
       }
     });
   }

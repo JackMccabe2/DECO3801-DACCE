@@ -4,7 +4,7 @@
 const express = require('express');
 const WebSocket = require('ws');
 const { Client } = require('pg');
-const { okMessage, createUser } = require('./utils/sendMessage'); // Import functions
+const { okMessage, createUser, loginUser } = require('./utils/sendMessage'); // Import functions
 
 // Initialize Express Server
 const server = express().listen(8080, () => {
@@ -41,6 +41,8 @@ wss.on('connection', (ws) => {
                 console.log('[Client] log: ', data);
             } else if (data.type === 'POST') {
                 await createUser(ws, data, client);
+            } else if (data.type === 'GET') {
+                await loginUser(ws, data, client)
             } else {
                 // Send "OK" back to the client
                 await okMessage(ws, data);

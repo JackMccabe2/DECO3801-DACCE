@@ -6,9 +6,48 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 
+import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Login = ({ onNavigate }) => {
+  
+  const { username, setUsername } = useUser();
+  const { sendMessage, handleRequest } = useWebSocket();
+  
+  const handleClick = (page) => {
+    handleRequest(
+      page,
+      { type: "NAV", message: page },
+      onNavigate, // success callback
+      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
+    );
+  };
+
+  const handleLogin = async ( page ) => {
+    
+    if (username  === "") {
+      alert("Username blank");
+      return;
+    }
+
+    const loginPayload = { type: "GET", username: username };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK USER LOGIN") {
+        alert("user logged in: " + username + "!");
+        setUsername(username)
+        onNavigate(page)
+      } else if (response.status === "ERR USER NOT EXIST") {
+        alert("There is no user with this username.");
+        return;
+      } else {
+        console.error("Login failed:", response.message);
+        return;
+      }
+    });
+  };
+  
   return (
     <Container
       fluid
@@ -27,6 +66,8 @@ const Login = ({ onNavigate }) => {
               type="text"
               placeholder="Enter your username"
               className="custom-input-field"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </Form.Group>
         </Col>
@@ -37,7 +78,7 @@ const Login = ({ onNavigate }) => {
           <Button
             text="Enter"
             colour="yellow"
-            onClick={() => onNavigate("dashboard")}
+            onClick={() => handleLogin("dashboard")}
           />
         </Col>
         <Col
@@ -48,7 +89,7 @@ const Login = ({ onNavigate }) => {
             <span
               className="return-btn"
               style={{ color: "black", cursor: "pointer" }}
-              onClick={() => onNavigate("signup")}
+              onClick={() => handleClick("signup")}
             >
               No account yet? SIGNUP
             </span>
@@ -60,7 +101,7 @@ const Login = ({ onNavigate }) => {
                 color: "black",
                 cursor: "pointer",
               }}
-              onClick={() => onNavigate("landing")}
+              onClick={() => handleClick("landing")}
             >
               <FaLongArrowAltLeft /> {""}
               Return
