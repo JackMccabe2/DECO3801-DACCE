@@ -1,14 +1,10 @@
-/*
-
-Server file that communicates with database
-Call node index1.js to run
-
-*/
+// index1.js
 
 // Dependencies
 const express = require('express');
 const WebSocket = require('ws');
 const { Client } = require('pg');
+const { okMessage, createUser } = require('./utils/sendMessage'); // Import functions
 
 // Initialize Express Server
 const server = express().listen(8080, () => {
@@ -38,27 +34,16 @@ wss.on('connection', (ws) => {
         try {
             const data = JSON.parse(message.toString('utf-8'));
             console.log('[Server] Received message:', data);
-    
             if (data.type === 'NAV') {
-                const response = { status: "OK", message: "Navigation successful" };
-                console.log('[Server] Sending response:', response);
-                ws.send(JSON.stringify(response));
-            }
-
-            // Example: Process received message
-            if (data.navigate === 'signup') {
-                console.log('[Server] Navigating to signup page');
-                // You can call the initializePlayer or any other function here
-                // await createPlayer(data.username, 1, 1, 1);
-            }
-            
-            if (data.status === 'log') {
-                console.log('[Client] log: ', data)
+                // Send "OK" back to the client
+                await okMessage(ws, data);
+            } else if (data.status === 'log') {
+                console.log('[Client] log: ', data);
+            } else if (data.type === 'POST') {
+                await createUser(ws, data);
             } else {
                 // Send "OK" back to the client
-                const response = { status: "OK", message: "Navigation successful" };
-                console.log('[Server] Sending response:', response);
-                ws.send(JSON.stringify(response));
+                await okMessage(ws, data);
             }
         } catch (err) {
             console.error('[Server] Invalid JSON or error:', message);
@@ -66,7 +51,6 @@ wss.on('connection', (ws) => {
             ws.send(JSON.stringify(errorResponse)); // Send error message back
         }
     });
-    
 
     ws.on('close', () => {
         console.log('[Server] Client disconnected.');
@@ -85,32 +69,37 @@ async function initializePlayer(username) {
         
         await client.query(query);
         console.log("1 record inserted");
+        return "success"
     } catch (err) {
-        console.error("Error executing query:", err);
+        console.log("Error executing query:", err.constraint);
+        if (err.constraint == "players_pkey") {
+            return "duplicate"
+        } else {
+            return "error"
+        }
     }
 }
 
 /**
- * Function to create a new player in the database
- * @param {string} username - The username of the player
- * @param {number} firewall_skill - The firewall skill of the player
- * @param {number} leaderboard_score - The leaderboard score of the player
- * @returns {Promise<void>}
+ * Function to get player information from the database by username
  */
-async function createPlayer(username, firewall_skill, encipher_skill, leaderboard_score) {
-    console.log("backend createPlayer called");
+async function getPlayer(username) {
     try {
         const query = `
-            INSERT INTO players 
-            (username, created_at, last_active, firewall_skill, encipher_skill, leaderboard_score)
-            VALUES ($1, NOW(), NOW(), $2, $3, $4)
+            SELECT * FROM players WHERE username = '` + username + `'
         `;
-
-        const values = [username, firewall_skill, encipher_skill, leaderboard_score];
-
-        await client.query(query, values);
-        console.log("1 record inserted");
+        
+        const result = await client.query(query);
+        
+        if (result.rows.length === 1) {
+            console.log("Player found:", result.rows[0]);
+            return result.rows[0]; // Return the player data since there's only one result
+        } else {
+            console.log("Player not found");
+            return null; // Return null if no player is found
+        }
     } catch (err) {
-        console.error("Error executing query:", err);
+        console.log("Error executing query:", err);
+        return "error"; // Return "error" if there's an issue with the query
     }
 }
