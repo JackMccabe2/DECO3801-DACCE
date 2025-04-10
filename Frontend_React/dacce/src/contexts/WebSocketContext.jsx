@@ -1,3 +1,5 @@
+// WebSocketContext.jsx
+
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 const WebSocketContext = createContext(null);
@@ -75,10 +77,24 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
+  const handleNavigationRequest = (page, onSuccess, onFailure) => {
+    const loginPayload = { type: "NAV", username: page };
+  
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        onSuccess?.(page);
+      } else {
+        console.error("Login failed:", response.message);
+        onFailure?.(response.message);
+      }
+    });
+  };
+
   const value = {
     isConnected,
     message,
     sendMessage,
+    handleNavigationRequest,
     ws: ws.current
   };
 

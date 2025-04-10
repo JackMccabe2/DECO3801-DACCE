@@ -10,23 +10,16 @@ import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Signup = ({ onNavigate }) => {
   const [username, setUsername] = useState("");
-  const { sendMessage } = useWebSocket();
+  const { sendMessage, handleNavigationRequest } = useWebSocket();
 
-  const handleClick = async ( page ) => {
-    //if (isConnected) {
-      const loginPayload = { type: "NAV", username: page };
-
-      sendMessage(loginPayload, (response) => {  
-        if (response.status === "OK") {     
-          onNavigate(page);
-        } else {
-          console.error("Login failed:", response.message);
-        }
-      }
-    )
+  const handleClick = (page) => {
+    handleNavigationRequest(
+      page,
+      onNavigate, // success callback
+      (errMsg) => console.error("Navigation failed:", errMsg) // failure callback
+    );
   };
 
-  
   const handleSignup = async ( page ) => {
     
     if (username  === "") {
@@ -46,7 +39,6 @@ const Signup = ({ onNavigate }) => {
     });
   }
     
-
   return (
     <Container
       fluid
