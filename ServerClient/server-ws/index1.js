@@ -11,8 +11,8 @@ const WebSocket = require('ws');
 const { Client } = require('pg');
 
 // Initialize Express Server
-const server = express().listen(3000, () => {
-    console.log('[Server] Opened connection on port 3000');
+const server = express().listen(8080, () => {
+    console.log('[Server] Opened connection on port 8080');
 });
 
 // Initialize WebSocket Server
@@ -35,24 +35,32 @@ wss.on('connection', (ws) => {
     console.log('[Server] A client was connected.');
 
     ws.on('message', async (message) => {
-        console.log('[Server] Received message:', message);
-
-        const messageString = message.toString('utf-8');
-        console.log(messageString);
-
         try {
-            const data = JSON.parse(messageString);  // Parse the incoming message
-            console.log(data);
-            if (data.method === 'createPlayer') {
-                const { username, firewall_skill, encipher_skill, leaderboard_score } = data.params;
-                await createPlayer(username, firewall_skill, encipher_skill, leaderboard_score);
+            const data = JSON.parse(message.toString('utf-8'));
+            console.log('[Server] Received message:', data);
+    
+            // Example: Process received message
+            if (data.navigate === 'signup') {
+                console.log('[Server] Navigating to signup page');
+                // You can call the initializePlayer or any other function here
+                // await createPlayer(data.username, 1, 1, 1);
             }
-            // await initializePlayer("jackMccabe");
-
+            
+            if (data.status === 'log') {
+                console.log('[Client] log: ', data)
+            } else {
+                // Send "OK" back to the client
+                const response = { status: "OK", message: "Navigation successful" };
+                console.log('[Server] Sending response:', response);
+                ws.send(JSON.stringify(response));
+            }
         } catch (err) {
-            console.error('[Server] Error processing message:', err);
+            console.error('[Server] Invalid JSON or error:', message);
+            const errorResponse = { status: "ERROR", message: "Invalid JSON or processing error" };
+            ws.send(JSON.stringify(errorResponse)); // Send error message back
         }
     });
+    
 
     ws.on('close', () => {
         console.log('[Server] Client disconnected.');
