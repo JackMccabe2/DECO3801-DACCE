@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
-from game_ai import play_puzzle
 from torch.utils.data import DataLoader, TensorDataset
 import psycopg2
 import Database
