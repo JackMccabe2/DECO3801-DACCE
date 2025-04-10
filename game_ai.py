@@ -157,11 +157,6 @@ num_incorrect	INTEGER	Number of failed attempts
 solved	BOOLEAN	Did the user succeed
 """
 
-# convert to PyTorch TensorDataset
-puzzle_tensor = torch.tensor(puzzle_data)
-dataset = TensorDataset(puzzle_tensor)
-data_loader = DataLoader(dataset, batch_size=BATCH_SIZE)
-
 # initialize model
 vae_model.load_state_dict(torch.load("vae_model.pth"))
 vae_model.eval()
