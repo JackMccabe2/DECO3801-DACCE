@@ -6,10 +6,8 @@ import Row from "react-bootstrap/Row";
 import Header from "../components/header";
 
 import { IoPersonCircleOutline } from "react-icons/io5";
-import { useUser } from "../contexts/UserContext";
 
 function Dashboard({ onNavigate }) {
-  const { username, setUsername } = useUser();
   return (
     <>
       <div className="dashboard-wrap">
@@ -21,17 +19,6 @@ function Dashboard({ onNavigate }) {
         <br />
         <Container fluid className=" d-flex flex-column align-items-center">
           <Row className="w-100 justify-content-center align-items-center gap-3">
-          <Col xs={12} md={10} className="justify-content-center">
-              <Button
-                btnHover={"play-btn-hover"}
-                text={"username: " + username}
-                textcolour="var(--white)"
-                background="var(--red)"
-                onClick={() => {
-                  onNavigate("playgame");
-                }}
-              />
-            </Col>
             <Col xs={12} md={5} className="justify-content-center">
               <Button
                 btnHover={"dashboard-btn-hover"}

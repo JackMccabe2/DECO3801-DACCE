@@ -1,13 +1,11 @@
 // WebSocketContext.jsx
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { useUser } from "./UserContext";
 
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
-  const { username, setUsername } = useUser();
   const [message, setMessage] = useState(null); // single message or last message
   const ws = useRef(null);
 
@@ -80,18 +78,11 @@ export const WebSocketProvider = ({ children }) => {
   };
 
   const handleRequest = (page, payload, onSuccess, onFailure) => {
-    const loginPayload = { type: "NAV", username: page };
+    //const loginPayload = { type: "NAV", username: page };
   
     sendMessage(payload, (response) => {
       if (response.status === "OK") {
         onSuccess?.(page);
-      } else if (response.status === "OK USER CREATED") {
-        setUsername(response.username)
-        onSuccess?.(page)
-      } else if (response.status === "ERR USER EXISTS") {
-        alert("user already exists: '" + response.username + "'")
-        onFailure?.(response.message + response.username);
-      
       } else {
         console.error("Login failed:", response.message);
         onFailure?.(response.message);

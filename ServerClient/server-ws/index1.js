@@ -9,7 +9,6 @@ Call node index1.js to run
 const express = require('express');
 const WebSocket = require('ws');
 const { Client } = require('pg');
-//const { okMessage, createUser } = require('./utils/sendMessage')
 
 // Initialize Express Server
 const server = express().listen(8080, () => {
@@ -39,16 +38,27 @@ wss.on('connection', (ws) => {
         try {
             const data = JSON.parse(message.toString('utf-8'));
             console.log('[Server] Received message:', data);
+    
             if (data.type === 'NAV') {
-                // Send "OK" back to the client
-                await okMessage(ws, data)
-            } else if (data.status === 'log') {
+                const response = { status: "OK", message: "Navigation successful" };
+                console.log('[Server] Sending response:', response);
+                ws.send(JSON.stringify(response));
+            }
+
+            // Example: Process received message
+            if (data.navigate === 'signup') {
+                console.log('[Server] Navigating to signup page');
+                // You can call the initializePlayer or any other function here
+                // await createPlayer(data.username, 1, 1, 1);
+            }
+            
+            if (data.status === 'log') {
                 console.log('[Client] log: ', data)
-            } else if (data.type === 'POST') {
-                await createUser(ws, data)
             } else {
                 // Send "OK" back to the client
-                await okMessage(ws, data)
+                const response = { status: "OK", message: "Navigation successful" };
+                console.log('[Server] Sending response:', response);
+                ws.send(JSON.stringify(response));
             }
         } catch (err) {
             console.error('[Server] Invalid JSON or error:', message);
@@ -56,56 +66,12 @@ wss.on('connection', (ws) => {
             ws.send(JSON.stringify(errorResponse)); // Send error message back
         }
     });
+    
 
     ws.on('close', () => {
         console.log('[Server] Client disconnected.');
     });
 });
-
-async function okMessage(ws, data) {
-    const response = { status: "OK", message: data };
-    console.log('[Server] Sending response:', response.status + " " + data.type);
-    ws.send(JSON.stringify(response));
-}
-
-async function createUser(ws, data) {
-    console.log("USER CREATION INITIATED");
-
-    const initResult = await initializePlayer(data.username);  // Ensure you await the result if it's asynchronous
-    console.log("Init result: " + initResult);
-
-    let response;
-
-    switch (initResult) {
-        case "success":
-            response = { 
-                status: "OK USER CREATED", 
-                message: "user successfully created", 
-                username: data.username 
-            };
-            break;
-
-        case "duplicate":
-            response = { 
-                status: "ERR USER EXISTS", 
-                message: "user already exists in the database", 
-                username: data.username 
-            };
-            break;
-
-        default:
-            response = { 
-                status: "ERR OCCURRED", 
-                message: "error occurred when adding user", 
-                username: data.username 
-            };
-            break;
-    }
-
-    console.log('[Server] Sending response:', response);
-    ws.send(JSON.stringify(response));
-}
-
 
 /**
  * Function to add or update a player in the database
@@ -119,38 +85,32 @@ async function initializePlayer(username) {
         
         await client.query(query);
         console.log("1 record inserted");
-        return "success"
     } catch (err) {
-        console.log("Error executing query:", err.constraint);
-        if (err.constraint == "players_pkey") {
-            return "duplicate"
-        } else {
-            return "error"
-        }
-        
+        console.error("Error executing query:", err);
     }
 }
 
 /**
- * Function to get player information from the database by username
+ * Function to create a new player in the database
+ * @param {string} username - The username of the player
+ * @param {number} firewall_skill - The firewall skill of the player
+ * @param {number} leaderboard_score - The leaderboard score of the player
+ * @returns {Promise<void>}
  */
-async function getPlayer(username) {
+async function createPlayer(username, firewall_skill, encipher_skill, leaderboard_score) {
+    console.log("backend createPlayer called");
     try {
         const query = `
-            SELECT * FROM players WHERE username = '` + username + `'
+            INSERT INTO players 
+            (username, created_at, last_active, firewall_skill, encipher_skill, leaderboard_score)
+            VALUES ($1, NOW(), NOW(), $2, $3, $4)
         `;
-        
-        const result = await client.query(query);
-        
-        if (result.rows.length === 1) {
-            console.log("Player found:", result.rows[0]);
-            return result.rows[0]; // Return the player data since there's only one result
-        } else {
-            console.log("Player not found");
-            return null; // Return null if no player is found
-        }
+
+        const values = [username, firewall_skill, encipher_skill, leaderboard_score];
+
+        await client.query(query, values);
+        console.log("1 record inserted");
     } catch (err) {
-        console.log("Error executing query:", err);
-        return "error"; // Return "error" if there's an issue with the query
+        console.error("Error executing query:", err);
     }
 }
