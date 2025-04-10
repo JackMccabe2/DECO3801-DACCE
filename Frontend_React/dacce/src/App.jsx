@@ -29,7 +29,8 @@ function App() {
       <div className="view-container">
         {currentView !== "landing" &&
           currentView !== "signup" &&
-          currentView !== "login" && (
+          currentView !== "login" &&
+          currentView !== "game" && (
             <Header currentView={currentView} onNavigate={renderView} />
           )}
         {currentView === "landing" && <Landing onNavigate={renderView} />}
@@ -37,7 +38,6 @@ function App() {
         {currentView === "login" && <Login onNavigate={renderView} />}
         {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
         {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
-        {currentView === "game" && <Game onNavigate={renderView} />}
         {currentView === "game" && <Game onNavigate={renderView} />}
       </div>
       <Background />
