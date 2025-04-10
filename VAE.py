@@ -98,7 +98,6 @@ def fetch_puzzle_data():
             encipher_skill,
             firewall_skill
         FROM players
-        LIMIT %s;
     """
 
     cur.execute(query) 
