@@ -1,10 +1,15 @@
-// index1.js
+/*
+
+Server file that communicates with database
+Call node index1.js to run
+
+*/
 
 // Dependencies
 const express = require('express');
 const WebSocket = require('ws');
 const { Client } = require('pg');
-const { okMessage, createUser } = require('./utils/sendMessage'); // Import functions
+//const { okMessage, createUser } = require('./utils/sendMessage')
 
 // Initialize Express Server
 const server = express().listen(8080, () => {
@@ -36,14 +41,14 @@ wss.on('connection', (ws) => {
             console.log('[Server] Received message:', data);
             if (data.type === 'NAV') {
                 // Send "OK" back to the client
-                await okMessage(ws, data);
+                await okMessage(ws, data)
             } else if (data.status === 'log') {
-                console.log('[Client] log: ', data);
+                console.log('[Client] log: ', data)
             } else if (data.type === 'POST') {
-                await createUser(ws, data);
+                await createUser(ws, data)
             } else {
                 // Send "OK" back to the client
-                await okMessage(ws, data);
+                await okMessage(ws, data)
             }
         } catch (err) {
             console.error('[Server] Invalid JSON or error:', message);
@@ -56,6 +61,51 @@ wss.on('connection', (ws) => {
         console.log('[Server] Client disconnected.');
     });
 });
+
+async function okMessage(ws, data) {
+    const response = { status: "OK", message: data };
+    console.log('[Server] Sending response:', response.status + " " + data.type);
+    ws.send(JSON.stringify(response));
+}
+
+async function createUser(ws, data) {
+    console.log("USER CREATION INITIATED");
+
+    const initResult = await initializePlayer(data.username);  // Ensure you await the result if it's asynchronous
+    console.log("Init result: " + initResult);
+
+    let response;
+
+    switch (initResult) {
+        case "success":
+            response = { 
+                status: "OK USER CREATED", 
+                message: "user successfully created", 
+                username: data.username 
+            };
+            break;
+
+        case "duplicate":
+            response = { 
+                status: "ERR USER EXISTS", 
+                message: "user already exists in the database", 
+                username: data.username 
+            };
+            break;
+
+        default:
+            response = { 
+                status: "ERR OCCURRED", 
+                message: "error occurred when adding user", 
+                username: data.username 
+            };
+            break;
+    }
+
+    console.log('[Server] Sending response:', response);
+    ws.send(JSON.stringify(response));
+}
+
 
 /**
  * Function to add or update a player in the database
@@ -77,6 +127,7 @@ async function initializePlayer(username) {
         } else {
             return "error"
         }
+        
     }
 }
 
