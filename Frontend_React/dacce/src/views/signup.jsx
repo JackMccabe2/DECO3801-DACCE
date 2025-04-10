@@ -10,7 +10,7 @@ import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Signup = ({ onNavigate }) => {
   const [username, setUsername] = useState("");
-  const { sendMessage, handleRequest } = useWebSocket();
+  const { handleRequest } = useWebSocket();
 
   const handleClick = (page) => {
     handleRequest(
@@ -21,23 +21,19 @@ const Signup = ({ onNavigate }) => {
     );
   };
 
-  const handleSignup = async ( page ) => {
+  const handleSignup = ( page ) => {
     
     if (username  === "") {
       alert("Username blank");
       return;
     }
 
-    const loginPayload = { type: "POST", username: username };
-
-    sendMessage(loginPayload, (response) => {
-      if (response.status === "OK") {
-        //alert("user created: " + username + "!");
-        onNavigate(page)
-      } else {
-        console.error("Login failed:", response.message);
-      }
-    });
+    handleRequest(
+      page,
+      { type: "POST", username: username },
+      onNavigate,
+      (errMsg) => console.log("Username already exists:", username)
+    )
   }
     
   return (

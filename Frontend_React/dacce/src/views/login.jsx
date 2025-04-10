@@ -5,10 +5,38 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
+import { useWebSocket } from "../contexts/WebSocketContext";
 
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Login = ({ onNavigate }) => {
+
+  const { handleRequest } = useWebSocket();
+
+  const handleClick = (page) => {
+    handleRequest(
+      page,
+      {type: "NAV", message: page},
+      onNavigate, // success callback
+      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
+    );
+  };
+
+  const handleLogin = ( page ) => {
+    
+    if (username  === "") {
+      alert("Username blank");
+      return;
+    }
+
+    handleRequest(
+      page,
+      { type: "GET", username: username },
+      onNavigate,
+      (errMsg) => console.log("Username already exists:", username)
+    )
+  }
+
   return (
     <Container
       fluid
@@ -37,7 +65,7 @@ const Login = ({ onNavigate }) => {
           <Button
             text="Enter"
             colour="yellow"
-            onClick={() => onNavigate("dashboard")}
+            onClick={() => handleLogin("dashboard")}
           />
         </Col>
         <Col
@@ -48,7 +76,7 @@ const Login = ({ onNavigate }) => {
             <span
               className="return-btn"
               style={{ color: "black", cursor: "pointer" }}
-              onClick={() => onNavigate("signup")}
+              onClick={() => handleClick("signup")}
             >
               No account yet? SIGNUP
             </span>
@@ -60,7 +88,7 @@ const Login = ({ onNavigate }) => {
                 color: "black",
                 cursor: "pointer",
               }}
-              onClick={() => onNavigate("landing")}
+              onClick={() => handleClick("landing")}
             >
               <FaLongArrowAltLeft /> {""}
               Return
