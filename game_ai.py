@@ -1,4 +1,12 @@
 import random
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+from VAE import vae_model
+from torch.utils.data import DataLoader, TensorDataset
+import psycopg2
+import Database
 
 def aes():
     from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -81,3 +89,85 @@ def play_puzzle(puzzle_vector):
     print(f"Entropy Level: {entropy}")
     print(f"Solution Length: {solution_length} bytes")
     xor_aes()
+
+# Generating a new puzzle
+def generate_puzzle(model, difficulty_vector):
+    with torch.no_grad():
+        generated_puzzle = model.decoder(difficulty_vector)
+    return generated_puzzle.numpy()
+
+# Constants
+INPUT_DIM = 6     
+LATENT_DIM = 3     
+EPOCHS = 20
+BATCH_SIZE = 16
+LEARNING_RATE = 0.001
+
+def fetch_puzzle_data():
+    conn = psycopg2.connect(
+        host="localhost",
+        database="postgres",
+        user="georgiadocherty",
+        password="D4t4b4se",
+        port=5432
+    )
+
+    cur = conn.cursor()
+    # Need to select games info per session too.
+    query = """ 
+        SELECT
+            encipher_skill,
+            firewall_skill
+        FROM players
+    """
+
+    cur.execute(query) 
+    rows = cur.fetchall() # store
+
+    for row in rows:
+        print(row)  # test for if prints like the sample puzzle_data below
+
+    cur.close()
+    conn.close()
+
+    # will adjust puzzle rows to be model-parseable here.
+    
+    return rows
+
+fetch_puzzle_data()
+
+# Sample dataset 
+puzzle_data = np.array([
+    [1, 0.5, 0.2, 0.7, 0.4, 0.3],  
+    [0, 0.8, 0.5, 0.6, 0.2, 0.1],
+    [1, 0.4, 0.3, 0.9, 0.6, 0.7],
+    [0, 0.6, 0.4, 0.8, 0.3, 0.5]
+], dtype=np.float32)
+
+"""
+puzzle_id	UUID	Unique ID for each puzzle
+puzzle_type	TEXT	“AES”, “Firewall”, etc.
+key_length	INTEGER	Raw key size (e.g., 2048)
+steps	INTEGER	Number of encryption/decryption steps
+entropy	FLOAT	Complexity rating
+solution_length	INTEGER	Length of expected answer
+randomness_factor	FLOAT	Randomness factor in generation
+time_taken	FLOAT	How long the user took (seconds)
+num_incorrect	INTEGER	Number of failed attempts
+solved	BOOLEAN	Did the user succeed
+"""
+
+# convert to PyTorch TensorDataset
+puzzle_tensor = torch.tensor(puzzle_data)
+dataset = TensorDataset(puzzle_tensor)
+data_loader = DataLoader(dataset, batch_size=BATCH_SIZE)
+
+# initialize model
+vae_model.load_state_dict(torch.load("vae_model.pth"))
+vae_model.eval()
+# play
+difficulty_vector = torch.tensor([0.7, 0.6, 0.5]) 
+generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
+
+print("\nGenerated Puzzle:", generated_puzzle)
+play_puzzle(generated_puzzle) 
