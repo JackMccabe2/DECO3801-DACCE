@@ -32,9 +32,8 @@
 }
 
 .window-content {
-  padding: 20px;
-  flex: 1;
-  overflow: auto;
+  height: 100%;
+  overflow: hidden;
   text-align: start;
 }
 

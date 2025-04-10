@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
+// Import React components
 import { useState } from "react";
 import Sidemenu from "react-bootstrap/Offcanvas";
 import Button from "react-bootstrap/Button";
@@ -10,7 +11,7 @@ import Button from "react-bootstrap/Button";
 // Import CSS
 import "../css/header.css";
 
-// Import components
+// Import assets
 import levelBadge from "../assets/level-badge.png";
 import starMedal from "../assets/star-medal.png";
 import profilePic from "../assets/profile.png";
