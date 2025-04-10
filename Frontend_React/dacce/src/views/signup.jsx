@@ -31,9 +31,12 @@ const Signup = ({ onNavigate }) => {
     const loginPayload = { type: "POST", username: username };
 
     sendMessage(loginPayload, (response) => {
-      if (response.status === "OK") {
-        //alert("user created: " + username + "!");
+      if (response.status === "OK USER CREATED") {
+        alert("user created: " + username + "!");
         onNavigate(page)
+      } else if (response.status === "ERR USER EXISTS") {
+        alert("A user with this username already exists.");
+        return;
       } else {
         console.error("Login failed:", response.message);
       }

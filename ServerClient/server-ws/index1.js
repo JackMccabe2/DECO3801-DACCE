@@ -40,7 +40,7 @@ wss.on('connection', (ws) => {
             } else if (data.status === 'log') {
                 console.log('[Client] log: ', data);
             } else if (data.type === 'POST') {
-                await createUser(ws, data);
+                await createUser(ws, data, client);
             } else {
                 // Send "OK" back to the client
                 await okMessage(ws, data);
@@ -56,50 +56,3 @@ wss.on('connection', (ws) => {
         console.log('[Server] Client disconnected.');
     });
 });
-
-/**
- * Function to add or update a player in the database
- */
-async function initializePlayer(username) {
-    try {
-        const query = `
-            INSERT INTO players (username, created_at, last_active, firewall_skill, leaderboard_score)
-            VALUES ('`+username+`', '2025-03-28 13:10:11', '2025-03-28 13:10:11', 1, 1)
-        `;
-        
-        await client.query(query);
-        console.log("1 record inserted");
-        return "success"
-    } catch (err) {
-        console.log("Error executing query:", err.constraint);
-        if (err.constraint == "players_pkey") {
-            return "duplicate"
-        } else {
-            return "error"
-        }
-    }
-}
-
-/**
- * Function to get player information from the database by username
- */
-async function getPlayer(username) {
-    try {
-        const query = `
-            SELECT * FROM players WHERE username = '` + username + `'
-        `;
-        
-        const result = await client.query(query);
-        
-        if (result.rows.length === 1) {
-            console.log("Player found:", result.rows[0]);
-            return result.rows[0]; // Return the player data since there's only one result
-        } else {
-            console.log("Player not found");
-            return null; // Return null if no player is found
-        }
-    } catch (err) {
-        console.log("Error executing query:", err);
-        return "error"; // Return "error" if there's an issue with the query
-    }
-}

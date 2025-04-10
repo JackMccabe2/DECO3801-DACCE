@@ -1,3 +1,30 @@
+
+/*
+ * function to add new player to database
+ *
+ * 
+ * 
+ */
+async function initializePlayer(username, client) {
+    try {
+        const query = `
+            INSERT INTO players (username, created_at, last_active, firewall_skill, leaderboard_score)
+            VALUES ('${username}', '2025-03-28 13:10:11', '2025-03-28 13:10:11', 1, 1)
+        `;
+        
+        await client.query(query);
+        console.log("1 record inserted");
+        return "success"
+    } catch (err) {
+        console.log("Error executing query:", err);
+        if (err.constraint == "players_pkey") {
+            return "duplicate"
+        } else {
+            return "error"
+        }
+    }
+}
+
 async function okMessage(ws, data) {
     const response = { status: "OK", message: data };
     console.log('[Server] Sending response:', response.status + " " + data.type);
@@ -8,10 +35,10 @@ async function okMessage(ws, data) {
  *  function to attempt to create specified user
  *  sends response back to client
  */
-async function createUser(ws, data) {
-    console.log("USER CREATION INITIATED");
+async function createUser(ws, data, client) {
+    console.log("USER CREATION INITIATED: " + data.username);
 
-    const initResult = await initializePlayer(data.username);  // Ensure you await the result if it's asynchronous
+    const initResult = await initializePlayer(data.username, client);  // Ensure you await the result if it's asynchronous
     console.log("Init result: " + initResult);
 
     let response;
