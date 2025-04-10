@@ -148,10 +148,3 @@ print("Training VAE...")
 train_vae(vae_model, data_loader, epochs=EPOCHS, lr=LEARNING_RATE)
 # Save trained VAE model
 torch.save(vae_model.state_dict(), "vae_model.pth")
-
-# play
-difficulty_vector = torch.tensor([0.7, 0.6, 0.5]) 
-generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
-
-print("\nGenerated Puzzle:", generated_puzzle)
-play_puzzle(generated_puzzle) 
