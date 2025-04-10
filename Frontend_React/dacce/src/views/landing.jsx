@@ -16,8 +16,7 @@ const Landing = ({ onNavigate }) => {
 
   const handleClick = async ( page ) => {
     
-    if (isConnected) {
-      const loginPayload = { type: "login", username: "myUser" };
+      const loginPayload = { type: "NAV", username: page };
 
       sendMessage(loginPayload, (response) => {
         if (response.status === "OK") {
@@ -27,10 +26,6 @@ const Landing = ({ onNavigate }) => {
         }
       }
     )
-    } else {
-      console.log("WebSocket not connected.");
-      return false;
-    }
   };
 
   return (

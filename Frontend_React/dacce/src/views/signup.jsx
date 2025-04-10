@@ -14,10 +14,10 @@ const Signup = ({ onNavigate }) => {
 
   const handleClick = async ( page ) => {
     //if (isConnected) {
-      const loginPayload = { type: "login", username: page };
+      const loginPayload = { type: "NAV", username: page };
 
-      sendMessage(loginPayload, (response) => {
-        if (response.status === "OK") {
+      sendMessage(loginPayload, (response) => {  
+        if (response.status === "OK") {     
           onNavigate(page);
         } else {
           console.error("Login failed:", response.message);
@@ -38,7 +38,8 @@ const Signup = ({ onNavigate }) => {
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK") {
-        alert("user created: " + username + "!");
+        //alert("user created: " + username + "!");
+        onNavigate(page)
       } else {
         console.error("Login failed:", response.message);
       }
@@ -74,22 +75,7 @@ const Signup = ({ onNavigate }) => {
           className="custom-button d-flex justify-content-center align-self-center"
         >
           <Button text="Create" colour="yellow" onClick={() => {
-
-            handleSignup('landing')
-
-          /*
-          const loginPayload = { type: "POST", username: username };
-
-              sendMessage(loginPayload, (response) => {
-                if (response.status === "OK") {
-                  alert("user created: " + username + "!");
-                } else {
-                  console.error("Login failed:", response.message);
-                }
-              });
-            */
-
-
+              handleSignup("dashboard")
             }}
             />
   

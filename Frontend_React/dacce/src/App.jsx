@@ -38,7 +38,6 @@ function App() {
         {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
         {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
         {currentView === "game" && <Game onNavigate={renderView} />}
-        {currentView === "game" && <Game onNavigate={renderView} />}
       </div>
       <Background />
     </WebSocketProvider>
