@@ -77,10 +77,10 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
-  const handleNavigationRequest = (page, onSuccess, onFailure) => {
-    const loginPayload = { type: "NAV", username: page };
+  const handleRequest = (page, payload, onSuccess, onFailure) => {
+    //const loginPayload = { type: "NAV", username: page };
   
-    sendMessage(loginPayload, (response) => {
+    sendMessage(payload, (response) => {
       if (response.status === "OK") {
         onSuccess?.(page);
       } else {
@@ -94,7 +94,7 @@ export const WebSocketProvider = ({ children }) => {
     isConnected,
     message,
     sendMessage,
-    handleNavigationRequest,
+    handleRequest,
     ws: ws.current
   };
 

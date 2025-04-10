@@ -10,13 +10,14 @@ import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Signup = ({ onNavigate }) => {
   const [username, setUsername] = useState("");
-  const { sendMessage, handleNavigationRequest } = useWebSocket();
+  const { sendMessage, handleRequest } = useWebSocket();
 
   const handleClick = (page) => {
-    handleNavigationRequest(
+    handleRequest(
       page,
+      { type: "NAV", message: page },
       onNavigate, // success callback
-      (errMsg) => console.error("Navigation failed:", errMsg) // failure callback
+      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
     );
   };
 
