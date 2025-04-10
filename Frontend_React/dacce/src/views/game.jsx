@@ -14,7 +14,8 @@ import AppWindow from "../components/appWindow";
 import Terminal from "../components/terminal";
 
 const Game = ({ onNavigate }) => {
-  // timer
+
+  // Timer
   const [timeLeft, setTimeLeft] = useState(60); // second
 
   useEffect(() => {
@@ -71,6 +72,7 @@ const Game = ({ onNavigate }) => {
         positiony="50"
         width="500"
         height="200"
+        padding="3"
         icon={
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -92,7 +94,8 @@ const Game = ({ onNavigate }) => {
         positionx="600"
         positiony="300"
         width="600"
-        height="300"
+        height="fit-content"
+        padding="0"
         icon={
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +109,7 @@ const Game = ({ onNavigate }) => {
           </svg>
         }
         title="Terminal"
-        content={<Terminal />}
+        content={<Terminal id="terminal" />}
       />
     </>
   );

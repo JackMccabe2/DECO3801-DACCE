@@ -1,11 +1,10 @@
 // Import React rnd (draggable & resizable window)
 import { Rnd } from "react-rnd";
-import "../css/xterm.css";
 
 // Import CSS
 import "../css/appWindow.css";
 
-const AppWindow = ({ positionx, positiony, width, height, icon, title, content }) => {
+const AppWindow = ({ positionx, positiony, width, height, padding, icon, title, content }) => {
   return (
     <Rnd
       default={{
@@ -20,7 +19,7 @@ const AppWindow = ({ positionx, positiony, width, height, icon, title, content }
           {icon}
           <span className="custom-window-title">{title}</span>
         </div>
-        <div className="window-content">{content}</div>
+        <div className={`window-content p-${padding}`}>{content}</div>
       </div>
     </Rnd>
   );
