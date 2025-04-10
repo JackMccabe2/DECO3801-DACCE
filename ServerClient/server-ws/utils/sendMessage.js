@@ -1,5 +1,4 @@
 
-
 async function okMessage(ws, data) {
     const response = { status: "OK", message: data };
     console.log('[Server] Sending response:', response.status + " " + data.type);
@@ -47,3 +46,5 @@ async function createUser(ws, data) {
     console.log('[Server] Sending response:', response);
     ws.send(JSON.stringify(response));
 }
+
+module.exports = { okMessage, createUser };
