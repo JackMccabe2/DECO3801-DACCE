@@ -80,4 +80,4 @@ def play_puzzle(puzzle_vector):
     print(f"Steps Required: {steps}")
     print(f"Entropy Level: {entropy}")
     print(f"Solution Length: {solution_length} bytes")
-    aes()
+    xor_aes()
