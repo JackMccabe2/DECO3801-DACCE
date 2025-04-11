@@ -11,24 +11,16 @@ import Logo from "../assets/chg_logo.png";
 import { useWebSocket } from "../contexts/WebSocketContext";
 
 const Landing = ({ onNavigate }) => {
-  const { isConnected, sendMessage } = useWebSocket();
-  const [message, setMessage] = useState('');
+  const { isConnected, handleRequest } = useWebSocket();
   ///// cfretes vairale status that can access in whole program that reflects wether the server response is valid
 
-  const handleLogMessage = async ( page ) => {
-    if (isConnected) {
-      console.log("Sending log to server"); // ✅ Confirm trigger
-      
-      try {
-        await sendMessage(JSON.stringify({ navigate: page }));
-      } catch (err) {
-        alert(err)
-      }
-
-    } else {
-      console.log("WebSocket not connected.");
-      return false;
-    }
+  const handleClick = (page) => {
+    handleRequest(
+      page,
+      {type: "NAV", message: page},
+      onNavigate, // success callback
+      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
+    );
   };
 
   return (
@@ -46,8 +38,7 @@ const Landing = ({ onNavigate }) => {
               text="Sign Up"
               colour="yellow"
               onClick={() => {
-                handleLogMessage("signup");
-                onNavigate("signup");
+                handleClick("signup");
                 }
               }
             />
@@ -57,8 +48,7 @@ const Landing = ({ onNavigate }) => {
               text="Login"
               colour="yellow"
               onClick={() => {
-                handleLogMessage("login");
-                onNavigate("login");
+                handleClick("login");
               }}
               disabled={!isConnected}
             />

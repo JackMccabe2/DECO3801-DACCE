@@ -6,23 +6,48 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
+
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Signup = ({ onNavigate }) => {
-  const [username, setUsername] = useState("");
-  const { sendMessage } = useWebSocket();
+  const { user, setUser } = useUser();
+  const [tempUsername, setTempUsername] = useState("");
+  const { sendMessage, handleRequest } = useWebSocket();
 
-  const handleCreate = () => {
-    if (!username.trim()) {
-      alert("Please enter a valid username.");
+  const handleClick = (page) => {
+    handleRequest(
+      page,
+      { type: "NAV", message: page },
+      onNavigate, // success callback
+      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
+    );
+  };
+
+  const handleSignup = async ( page ) => {
+    
+    if (tempUsername  === "") {
+      alert("Username blank");
       return;
     }
 
-    const payload = JSON.stringify({ type: "POST", username });
-    sendMessage(payload);
-    console.log("[Client] Sent signup username:", payload);
-  };
+    const loginPayload = { type: "POST", username: tempUsername };
 
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK USER CREATED") {
+        alert("user created: " + tempUsername + "!");
+        setUser(response.user);
+        onNavigate(page)
+      } else if (response.status === "ERR USER EXISTS") {
+        alert("A user with this username already exists.");
+        return;
+      } else {
+        console.error("Login failed:", response.message);
+        return;
+      }
+    });
+  }
+    
   return (
     <Container
       fluid
@@ -41,8 +66,8 @@ const Signup = ({ onNavigate }) => {
               type="text"
               placeholder="e.g. Alex #3312"
               className="custom-input-field"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={tempUsername}
+              onChange={(e) => setTempUsername(e.target.value)}
             />
           </Form.Group>
         </Col>
@@ -50,7 +75,11 @@ const Signup = ({ onNavigate }) => {
           xs={12}
           className="custom-button d-flex justify-content-center align-self-center"
         >
-          <Button text="Create" colour="yellow" onClick={handleCreate} />
+          <Button text="Create" colour="yellow" onClick={() => {
+              handleSignup("dashboard")
+            }}
+            />
+  
         </Col>
         <Col
           xs={12}
@@ -60,7 +89,7 @@ const Signup = ({ onNavigate }) => {
             <span
               className="return-btn"
               style={{ color: "black", cursor: "pointer" }}
-              onClick={() => onNavigate("login")}
+              onClick={() => handleClick("login")}
             >
               Already have an account? LOGIN
             </span>
@@ -72,7 +101,10 @@ const Signup = ({ onNavigate }) => {
                 color: "black",
                 cursor: "pointer",
               }}
-              onClick={() => onNavigate("landing")}
+              onClick={() => {
+                handleClick("landing")
+              }
+            }
             >
               <FaLongArrowAltLeft /> {""}
               Return

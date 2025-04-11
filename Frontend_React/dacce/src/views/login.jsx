@@ -6,9 +6,51 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 
+import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
+import { useState } from "react";
+
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Login = ({ onNavigate }) => {
+  
+  const { user, setUser } = useUser();
+  const [tempUsername, setTempUsername] = useState("");
+  const { sendMessage, handleRequest } = useWebSocket();
+  
+  const handleClick = (page) => {
+    handleRequest(
+      page,
+      { type: "NAV", message: page },
+      onNavigate, // success callback
+      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
+    );
+  };
+
+  const handleLogin = async ( page ) => {
+    
+    if (tempUsername  === "") {
+      alert("Username blank");
+      return;
+    }
+
+    const loginPayload = { type: "GET USER", username: tempUsername };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK USER LOGIN") {
+        alert("user logged in: " + tempUsername + "!");
+        setUser(response.user);
+        onNavigate(page)
+      } else if (response.status === "ERR USER NOT EXIST") {
+        alert("There is no user with this username.");
+        return;
+      } else {
+        console.error("Login failed:", response.message);
+        return;
+      }
+    });
+  };
+  
   return (
     <Container
       fluid
@@ -27,6 +69,8 @@ const Login = ({ onNavigate }) => {
               type="text"
               placeholder="Enter your username"
               className="custom-input-field"
+              value={tempUsername}
+              onChange={(e) => setTempUsername(e.target.value)}
             />
           </Form.Group>
         </Col>
@@ -37,7 +81,7 @@ const Login = ({ onNavigate }) => {
           <Button
             text="Enter"
             colour="yellow"
-            onClick={() => onNavigate("dashboard")}
+            onClick={() => handleLogin("dashboard")}
           />
         </Col>
         <Col
@@ -48,7 +92,7 @@ const Login = ({ onNavigate }) => {
             <span
               className="return-btn"
               style={{ color: "black", cursor: "pointer" }}
-              onClick={() => onNavigate("signup")}
+              onClick={() => handleClick("signup")}
             >
               No account yet? SIGNUP
             </span>
@@ -60,7 +104,7 @@ const Login = ({ onNavigate }) => {
                 color: "black",
                 cursor: "pointer",
               }}
-              onClick={() => onNavigate("landing")}
+              onClick={() => handleClick("landing")}
             >
               <FaLongArrowAltLeft /> {""}
               Return
