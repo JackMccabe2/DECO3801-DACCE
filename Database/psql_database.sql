@@ -1,4 +1,5 @@
--- Players Table
+-- PLAYER
+-- each user is a new entry to table
 CREATE TABLE public.players (
     username VARCHAR(50) PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
@@ -8,7 +9,9 @@ CREATE TABLE public.players (
     leaderboard_score INTEGER DEFAULT 0
 );
 
--- Games Table
+
+-- GAMES
+-- each game creates new entry
 CREATE TABLE public.games (
     game_id SERIAL PRIMARY KEY,
     game_type VARCHAR(50) CHECK (game_type IN ('firewall', 'encryption')),
@@ -17,7 +20,7 @@ CREATE TABLE public.games (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Game Results Table
+-- might be able to merge with table below, this one covers both players but still from representation of one player
 CREATE TABLE public.game_results (
     result_id SERIAL PRIMARY KEY,
     players_username VARCHAR(50),
@@ -32,7 +35,9 @@ CREATE TABLE public.game_results (
     FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
 );
 
--- Player Games Table
+
+-- GAME HISTORY
+-- each game creates new entry to table, 
 CREATE TABLE public.player_games (
     id SERIAL PRIMARY KEY,
     players_username VARCHAR(50),
@@ -45,6 +50,7 @@ CREATE TABLE public.player_games (
     FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
 );
 
+-- players game history/record recorded
 CREATE TABLE public.player_history (
     players_username VARCHAR(50),
     wins INTEGER,
@@ -53,7 +59,9 @@ CREATE TABLE public.player_history (
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE
 )
 
--- Tutorial Levels Table
+
+-- TUTORIALS
+-- stores which tutorials player has done
 CREATE TABLE public.tutorial_levels (
     level_id SERIAL PRIMARY KEY,
     level INTEGER CHECK (level > 0),
@@ -64,6 +72,9 @@ CREATE TABLE public.tutorial_levels (
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE
 );
 
+
+--LEADERBOARD
+-- stores leaderboard scores
 CREATE TABLE public.leaderboard (
     players_username VARCHAR(50),
     players_leaderboard_score INTEGER,
@@ -71,6 +82,7 @@ CREATE TABLE public.leaderboard (
 
 );
 
+--sorts scores in descending order
 SELECT 
     players_username,
     players_leaderboard_score,
@@ -78,11 +90,9 @@ SELECT
 FROM public.leaderboard;
 
 
-
-
--- Created new database features for firewall game
-
-CREATE TABLE public.game_state (
+-- FIREWALL
+-- whether game is running, what players are doing, game score
+CREATE TABLE public.firewall_game_state (
     game_id INTEGER PRIMARY KEY,
     attacker_username VARCHAR(50),
     defender_username VARCHAR(50),
@@ -96,7 +106,7 @@ CREATE TABLE public.game_state (
     FOREIGN KEY (defender_username) REFERENCES players(username) ON DELETE CASCADE
 );
 
--- different attacking/defending tools the players will use
+-- different attacking/defending tools, their effectiveness, cooldowns,
 CREATE TABLE public.player_tools (
     tool_id SERIAL PRIMARY KEY,
     players_username VARCHAR(50),
@@ -108,7 +118,8 @@ CREATE TABLE public.player_tools (
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE
 );
 
-CREATE TABLE public.player_game_actions (
+-- actions players are performing, records time can be used to notify other player x seconds after
+CREATE TABLE public.player_actions (
     action_id SERIAL PRIMARY KEY,
     game_id INTEGER,
     player_username VARCHAR(50),
@@ -120,7 +131,7 @@ CREATE TABLE public.player_game_actions (
     FOREIGN KEY (player_username) REFERENCES public.players(username) ON DELETE CASCADE
 );
 
--- timer of how long attacker has to retrieve all information
+-- game timer
 CREATE TABLE public.match_timers (
     game_id INTEGER PRIMARY KEY,
     match_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -129,6 +140,7 @@ CREATE TABLE public.match_timers (
     FOREIGN KEY (game_id) REFERENCES public.games(game_id) ON DELETE CASCADE
 );
 
+-- not sure if this is necessary just yet
 CREATE TABLE public.player_progress (
     players_username VARCHAR(50),
     current_game_id INTEGER,
