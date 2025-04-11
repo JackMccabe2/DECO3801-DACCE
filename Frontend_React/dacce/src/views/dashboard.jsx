@@ -33,6 +33,9 @@ function Dashboard({ onNavigate }) {
                 text="Leaderboard"
                 textcolour="var(--black)"
                 background="var(--white)"
+                onClick={() => {
+                  onNavigate("leaderboard");
+                }}
               />
             </Col>
             <Col xs={12} md={5} className="justify-content-center">

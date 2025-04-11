@@ -8,6 +8,7 @@ import Background from "../src/components/background";
 import Dashboard from "./views/dashboard";
 import PlayGame from "./views/playGame";
 import Game from "./views/game";
+import Leaderboard from "./views/leaderboard";
 
 import Signup from "./views/signup";
 import Login from "./views/login";
@@ -39,6 +40,7 @@ function App() {
         {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
         {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
         {currentView === "game" && <Game onNavigate={renderView} />}
+        {currentView === "leaderboard" && <Leaderboard onNavigate={renderView} />}
       </div>
       <Background />
     </WebSocketProvider>

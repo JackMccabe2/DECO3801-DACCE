@@ -79,7 +79,7 @@ const Navbar = ({ currentView, onNavigate }) => {
                 <a className="fs-5 mx-5 menu-item" href="#profile">
                   <IoPersonCircleOutline className="menu-icon" /> &nbsp; Profile
                 </a>
-                <a className="fs-5 mx-5 menu-item" href="#leaderboard">
+                <a className="fs-5 mx-5 menu-item" onClick={() => onNavigate("leaderboard")}>
                   <PiRankingFill className="menu-icon" /> &nbsp; Leaderboard
                 </a>
                 <a className="fs-5 mx-5 menu-item" href="#history">
