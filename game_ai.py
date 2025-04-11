@@ -57,24 +57,17 @@ def caesar_cipher_puzzle():
 
 def xor_aes():
     import random
-
     print("\nXOR Puzzle - Learn AddRoundKey!\n")
     # can change the range here as a difficulty parameter
     plaintext = bytes([random.randint(0, 255) for _ in range(2)])
     key = bytes([random.randint(0, 255) for _ in range(2)])
     expected = bytes([p ^ k for p, k in zip(plaintext, key)])
-
-    print(f"Plaintext : {plaintext.hex()}")
-    print(f"Key       : {key.hex()}")
-    print("Enter the result of XOR-ing each byte:")
+    
+    question = f"Plaintext : {plaintext.hex()}\nKey       : {key.hex()}\nEnter the result of XOR-ing each byte:"
 
     answer = input("Your answer: ").strip().lower()
-
-    if answer == expected.hex():
-        print("Correct!")
-    else:
-        print(f"Not quite! The correct answer was: {expected.hex()}")
     # return question, answer separate as a JSON
+    return question, answer
 
 def play_puzzle(puzzle_vector):
 
