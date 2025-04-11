@@ -1,7 +1,8 @@
 import "./App.css";
 import { useState } from "react";
 import React from "react";
-import { WebSocketProvider } from "./utils/socketContext";
+import { WebSocketProvider } from "./contexts/WebSocketContext";
+import { UserProvider } from "./contexts/UserContext";
 
 import Landing from "./views/landing";
 import Background from "../src/components/background";
@@ -18,22 +19,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 function App() {
   // Set different views for the app.
   const [currentView, setCurrentView] = useState("landing");
-  // Do nothing if current view is landing, otherwise set new view.
+
   const renderView = (view) => {
-    if (view === currentView) {
-      return;
-    }
+    if (view === currentView) return;
     setCurrentView(view);
   };
 
   return (
-    <>
-      <WebSocketProvider>
+    <UserProvider>
+    <WebSocketProvider>
       <div className="view-container">
-        {/* Only show header when views are not any of the following */}
         {currentView !== "landing" &&
           currentView !== "signup" &&
-          currentView !== "login" && (
+          currentView !== "login" && 
+          currentView !== "game" && (
             <Header currentView={currentView} onNavigate={renderView} />
           )}
         {currentView === "landing" && <Landing onNavigate={renderView} />}
@@ -42,10 +41,12 @@ function App() {
         {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
         {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
         {currentView === "game" && <Game onNavigate={renderView} />}
+        {currentView === "game" && <Game onNavigate={renderView} />}
+        {/* {currentView === "game" && <Game onNavigate={renderView} />} */}
       </div>
       <Background />
-      </WebSocketProvider>
-    </>
+    </WebSocketProvider>
+    </UserProvider>
   );
 }
 

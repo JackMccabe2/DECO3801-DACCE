@@ -1,40 +1,53 @@
+import { useState } from "react";
 import "../css/login.css";
 import Button from "../components/button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
-
-import { useState } from "react";
-import { useWebSocket } from "../utils/socketContext";
+import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
 
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Signup = ({ onNavigate }) => {
-  const [username, setUsername] = useState("");
-  const socket = useWebSocket();
+  const { user, setUser } = useUser();
+  const [tempUsername, setTempUsername] = useState("");
+  const { sendMessage, handleRequest } = useWebSocket();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("username: ", username);
-    if (socket) {
-      const payload = {
-        method: "createPlayer", // The method we will handle in the server
-        params: {
-          username: username,
-          firewall_skill: 1,
-          encipher_skill: 1,
-          leaderboard_score: 0,
-        },
-      };
-      console.log("sending player");
-      // Send the message to the server
-      socket.send(JSON.stringify(payload));
-    } else if (!socket) {
-      console.error("WebSocket is not connected!");
-    }
+  const handleClick = (page) => {
+    handleRequest(
+      page,
+      { type: "NAV", message: page },
+      onNavigate, // success callback
+      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
+    );
   };
 
+  const handleSignup = async ( page ) => {
+    
+    if (tempUsername  === "") {
+      alert("Username blank");
+      return;
+    }
+
+    const loginPayload = { type: "POST", username: tempUsername };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK USER CREATED") {
+        alert("user created: " + tempUsername + "!");
+        setUser(response.user);
+        onNavigate(page)
+      } else if (response.status === "ERR USER EXISTS") {
+        alert("A user with this username already exists.");
+        return;
+      } else {
+        console.error("Login failed:", response.message);
+        return;
+      }
+    });
+  }
+    
   return (
     <Container
       fluid
@@ -44,7 +57,7 @@ const Signup = ({ onNavigate }) => {
         <Col xs={12}>
           <h1 className="text-center mb-4 mt-4">SIGN UP</h1>
         </Col>
-        <Col xs={12} className="">
+        <Col xs={12}>
           <Form.Group>
             <Form.Label className="custom-label text-start w-100">
               Create a username
@@ -53,7 +66,8 @@ const Signup = ({ onNavigate }) => {
               type="text"
               placeholder="e.g. Alex #3312"
               className="custom-input-field"
-              onChange={(e) => setUsername(e.target.value)}
+              value={tempUsername}
+              onChange={(e) => setTempUsername(e.target.value)}
             />
           </Form.Group>
         </Col>
@@ -61,7 +75,11 @@ const Signup = ({ onNavigate }) => {
           xs={12}
           className="custom-button d-flex justify-content-center align-self-center"
         >
-          <Button text="Create" colour="yellow" onClick={handleSubmit}/>
+          <Button text="Create" colour="yellow" onClick={() => {
+              handleSignup("dashboard")
+            }}
+            />
+  
         </Col>
         <Col
           xs={12}
@@ -71,7 +89,7 @@ const Signup = ({ onNavigate }) => {
             <span
               className="return-btn"
               style={{ color: "black", cursor: "pointer" }}
-              onClick={() => onNavigate("login")}
+              onClick={() => handleClick("login")}
             >
               Already have an account? LOGIN
             </span>
@@ -83,7 +101,10 @@ const Signup = ({ onNavigate }) => {
                 color: "black",
                 cursor: "pointer",
               }}
-              onClick={() => onNavigate("landing")}
+              onClick={() => {
+                handleClick("landing")
+              }
+            }
             >
               <FaLongArrowAltLeft /> {""}
               Return
