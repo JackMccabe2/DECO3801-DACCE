@@ -147,7 +147,7 @@ puzzle_data = np.array([
 vae_model.load_state_dict(torch.load("vae_model.pth"))
 vae_model.eval()
 # play
-difficulty_vector = torch.tensor([0.7, 0.6, 0.5]) 
+difficulty_vector = torch.tensor([100, 0.6, 0.5]) 
 generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
 
 print("\nGenerated Puzzle:", generated_puzzle)
