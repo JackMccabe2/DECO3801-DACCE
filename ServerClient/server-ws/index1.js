@@ -4,9 +4,7 @@
 const express = require('express');
 const WebSocket = require('ws');
 const { Client } = require('pg');
-const { okMessage } = require('./utils/sendMessage'); // Import functions
-const { createUser } = require('./utils/initPlayer'); // Import functions
-const { loginUser } = require('./utils/loginPlayer')
+const { handleMessage } = require('./utils/handleMessage')
 
 // Initialize Express Server
 const server = express().listen(8080, () => {
@@ -33,27 +31,9 @@ wss.on('connection', (ws) => {
     console.log('[Server] A client was connected.');
 
     ws.on('message', async (message) => {
-        try {
-            const data = JSON.parse(message.toString('utf-8'));
-            console.log('[Server] Received message:', data);
-            if (data.type === 'NAV') {
-                // Send "OK" back to the client
-                await okMessage(ws, data);
-            } else if (data.status === 'log') {
-                console.log('[Client] log: ', data);
-            } else if (data.type === 'POST') {
-                await createUser(ws, data, client);
-            } else if (data.type === 'GET') {
-                await loginUser(ws, data, client)
-            } else {
-                // Send "OK" back to the client
-                await okMessage(ws, data);
-            }
-        } catch (err) {
-            console.error('[Server] Invalid JSON or error:', message);
-            const errorResponse = { status: "ERROR", message: "Invalid JSON or processing error" };
-            ws.send(JSON.stringify(errorResponse)); // Send error message back
-        }
+        
+        await handleMessage(ws, message, client);
+
     });
 
     ws.on('close', () => {
