@@ -10,8 +10,9 @@ CREATE TABLE public.players (
 );
 
 
+
 -- GAMES
--- each game creates new entry
+-- each game creates new entry, right now just covers game types
 CREATE TABLE public.games (
     game_id SERIAL PRIMARY KEY,
     game_type VARCHAR(50) CHECK (game_type IN ('firewall', 'encryption')),
@@ -19,6 +20,17 @@ CREATE TABLE public.games (
     difficulty_rating INTEGER CHECK (difficulty_rating BETWEEN 1 AND 10),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO games (game_name, difficulty)
+VALUES ('Caesar Cipher', 2);
+
+INSERT INTO games (game_name, difficulty)
+VALUES ('AES', 8);
+
+INSERT INTO games (game_name, difficulty)
+VALUES ('XOR gate', 4);
+
+--need to create a table specifically for each individual game/puzzle i think
 
 -- might be able to merge with table below, this one covers both players but still from representation of one player
 CREATE TABLE public.game_results (
@@ -34,6 +46,7 @@ CREATE TABLE public.game_results (
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
     FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
 );
+
 
 
 -- GAME HISTORY
@@ -60,6 +73,7 @@ CREATE TABLE public.player_history (
 )
 
 
+
 -- TUTORIALS
 -- stores which tutorials player has done
 CREATE TABLE public.tutorial_levels (
@@ -71,6 +85,7 @@ CREATE TABLE public.tutorial_levels (
     completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE
 );
+
 
 
 --LEADERBOARD
@@ -88,6 +103,7 @@ SELECT
     players_leaderboard_score,
     RANK() OVER (ORDER BY players_leaderboard_score DESC) AS players_leaderboard_position
 FROM public.leaderboard;
+
 
 
 -- FIREWALL
