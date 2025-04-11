@@ -80,7 +80,8 @@ def play_puzzle(puzzle_vector):
     print(f"Steps Required: {steps}")
     print(f"Entropy Level: {entropy}")
     print(f"Solution Length: {solution_length} bytes")
-    xor_aes()
+    question, answer = xor_aes()
+    return question, answer
 
 # Generating a new puzzle
 def generate_puzzle(model, difficulty_vector):
@@ -145,7 +146,7 @@ generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
 
 print("\nGenerated Puzzle:", generated_puzzle)
 play_puzzle(generated_puzzle) 
-print(play_puzzle())
+
 """
 puzzle_id	UUID	Unique ID for each puzzle
 puzzle_type	TEXT	“AES”, “Firewall”, etc.
