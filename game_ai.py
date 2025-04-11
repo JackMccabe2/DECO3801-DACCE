@@ -75,11 +75,11 @@ def play_puzzle(puzzle_vector):
     entropy = round(puzzle_vector[3], 2)
     solution_length = 4
 
-    print("\n=== Hacking Challenge ===")
-    print(f"Key Length: {key_length}-bit")
-    print(f"Steps Required: {steps}")
-    print(f"Entropy Level: {entropy}")
-    print(f"Solution Length: {solution_length} bytes")
+    #print("\n=== Hacking Challenge ===")
+    #print(f"Key Length: {key_length}-bit")
+    #print(f"Steps Required: {steps}")
+    #print(f"Entropy Level: {entropy}")
+    #print(f"Solution Length: {solution_length} bytes")
     question, answer = xor_aes()
     return question, answer
 
