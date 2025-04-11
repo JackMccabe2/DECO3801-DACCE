@@ -145,7 +145,7 @@ difficulty_vector = torch.tensor([100, 0.6, 0.5])
 generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
 
 print("\nGenerated Puzzle:", generated_puzzle)
-play_puzzle(generated_puzzle) 
+print(play_puzzle(generated_puzzle) )
 
 """
 puzzle_id	UUID	Unique ID for each puzzle
