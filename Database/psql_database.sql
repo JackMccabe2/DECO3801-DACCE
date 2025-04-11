@@ -2,6 +2,7 @@
 -- each user is a new entry to table
 CREATE TABLE public.players (
     username VARCHAR(50) PRIMARY KEY,
+    password VARCHAR(50),
     created_at TIMESTAMP NOT NULL,
     last_active TIMESTAMP NOT NULL,
     firewall_skill INTEGER CHECK (firewall_skill BETWEEN 1 AND 100),
