@@ -114,6 +114,14 @@ def fetch_puzzle_data():
 
 fetch_puzzle_data()
 
+# Sample dataset 
+puzzle_data = np.array([
+    [1, 0.5, 0.2, 0.7, 0.4, 0.3],  
+    [0, 0.8, 0.5, 0.6, 0.2, 0.1],
+    [1, 0.4, 0.3, 0.9, 0.6, 0.7],
+    [0, 0.6, 0.4, 0.8, 0.3, 0.5]
+], dtype=np.float32)
+
 """
 puzzle_id	UUID	Unique ID for each puzzle
 puzzle_type	TEXT	“AES”, “Firewall”, etc.
