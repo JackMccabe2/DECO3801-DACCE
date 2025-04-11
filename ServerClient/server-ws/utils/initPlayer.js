@@ -1,6 +1,6 @@
 
 /*
- * function to add initialize player to database
+ * function to add new player to database
  *
  * 
  * 
