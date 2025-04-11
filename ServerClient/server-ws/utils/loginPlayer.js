@@ -1,5 +1,4 @@
 
-
 /*
  * function to add new player to database
  *
@@ -16,14 +15,14 @@ async function getPlayer(username, client) {
         
         if (result.rows.length === 1) {
             console.log("Player found:", result.rows[0]);
-            return "success"; // Return the player data since there's only one result
+            return {status: "success", data: result.rows[0]}; // Return the player data since there's only one result
         } else {
             console.log("Player not found");
-            return "empty"; // Return null if no player is found
+            return {status: "empty"}; // Return null if no player is found
         }
     } catch (err) {
         console.log("Error executing query:", err);
-        return "error"; // Return "error" if there's an issue with the query
+        return {status: "error"}; // Return "error" if there's an issue with the query
     }
 }
 
@@ -39,12 +38,12 @@ async function loginUser(ws, data, client) {
 
     let response;
 
-    switch (initResult) {
+    switch (initResult.status) {
         case "success":
             response = { 
                 status: "OK USER LOGIN", 
                 message: "user sucessully retrieved", 
-                username: data.username 
+                user: initResult.data
             };
             break;
 

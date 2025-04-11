@@ -10,7 +10,7 @@ import { useUser } from "../contexts/UserContext";
 
 function Dashboard({ onNavigate }) {
   
-  const { username, setUsername } = useUser();
+  const { user, setUser } = useUser();
 
   return (
     <>
@@ -26,7 +26,7 @@ function Dashboard({ onNavigate }) {
           <Col xs={12} md={5} className="justify-content-center">
               <Button
                 btnHover={"dashboard-btn-hover"}
-                text={username}
+                text={user.username}
                 textcolour="var(--black)"
                 background="var(--white)"
               />

@@ -11,7 +11,7 @@ import { useUser } from "../contexts/UserContext";
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Signup = ({ onNavigate }) => {
-  const { username, setUsername } = useUser();
+  const { user, setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
   const { sendMessage, handleRequest } = useWebSocket();
 
@@ -36,7 +36,7 @@ const Signup = ({ onNavigate }) => {
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK USER CREATED") {
         alert("user created: " + tempUsername + "!");
-        setUsername(tempUsername);
+        setUser(response.user);
         onNavigate(page)
       } else if (response.status === "ERR USER EXISTS") {
         alert("A user with this username already exists.");
