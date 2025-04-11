@@ -10,7 +10,20 @@ CREATE TABLE public.players (
     leaderboard_score INTEGER DEFAULT 0
 );
 
+-- when player gets answer wrong, update table by incrementing answer wrong and wrong_answer_question_type
+CREATE TABLE public.current_match (
+    players_username VARCHAR(50),
+    answers_right INTEGER,
+    answers_wrong INTEGER,
+    wrong_answer_question_type REFERENCES games.cipher_method,
+    player_score INTEGER,
+    opponent_score INTEGER,
 
+    
+    
+    FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
+)
+--need to add table for each individual puzzle within a game
 
 -- GAMES
 -- each game creates new entry, right now just covers game types
@@ -22,13 +35,13 @@ CREATE TABLE public.games (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO games (game_name, difficulty)
+INSERT INTO games (cipher_method, difficulty)
 VALUES ('Caesar Cipher', 2);
 
-INSERT INTO games (game_name, difficulty)
+INSERT INTO games (cipher_method, difficulty)
 VALUES ('AES', 8);
 
-INSERT INTO games (game_name, difficulty)
+INSERT INTO games (cipher_method, difficulty)
 VALUES ('XOR gate', 4);
 
 --need to create a table specifically for each individual game/puzzle i think
