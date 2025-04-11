@@ -2,8 +2,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
-from game_ai import play_puzzle
 from torch.utils.data import DataLoader, TensorDataset
+import psycopg2
+import Database
 
 class Encoder(nn.Module):
     def __init__(self, input_dim, latent_dim):
@@ -80,6 +81,38 @@ EPOCHS = 20
 BATCH_SIZE = 16
 LEARNING_RATE = 0.001
 
+def fetch_puzzle_data():
+    conn = psycopg2.connect(
+        host="localhost",
+        database="postgres",
+        user="georgiadocherty",
+        password="D4t4b4se",
+        port=5432
+    )
+
+    cur = conn.cursor()
+    # Need to select games info per session too.
+    query = """ 
+        SELECT
+            encipher_skill
+        FROM players
+    """
+
+    cur.execute(query) 
+    rows = cur.fetchall() # store
+
+    for row in rows:
+        print(row)  # test for if prints like the sample puzzle_data below
+
+    cur.close()
+    conn.close()
+
+    # will adjust puzzle rows to be model-parseable here.
+    
+    return rows
+
+fetch_puzzle_data()
+
 # Sample dataset 
 puzzle_data = np.array([
     [1, 0.5, 0.2, 0.7, 0.4, 0.3],  
@@ -110,12 +143,8 @@ data_loader = DataLoader(dataset, batch_size=BATCH_SIZE)
 vae_model = VAE(INPUT_DIM, LATENT_DIM)
 
 # train
+# need to add a periodic if statement on this to ensure the model isn't trained every time.
 print("Training VAE...")
 train_vae(vae_model, data_loader, epochs=EPOCHS, lr=LEARNING_RATE)
-
-# play
-difficulty_vector = torch.tensor([0.7, 0.6, 0.5])  # Adjusted latent space sampling
-generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
-
-print("\nGenerated Puzzle (Feature Vec ,nbtor):", generated_puzzle)
-play_puzzle(generated_puzzle)
+# Save trained VAE model
+torch.save(vae_model.state_dict(), "vae_model.pth")
