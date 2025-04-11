@@ -48,7 +48,6 @@ def caesar_cipher_puzzle():
     ciphertext = ''.join(chr(((ord(c) - 65 + shift) % 26) + 65) for c in answer)
 
     print(f"Encrypted Message: {ciphertext}")
-    print("Hint: It's a Caesar cipher (A-Z only), and the original word is a 6-letter word.")
     guess = input("Enter the original word: ").strip().upper()
 
     if guess == answer:
@@ -144,6 +143,16 @@ puzzle_data = np.array([
     [0, 0.6, 0.4, 0.8, 0.3, 0.5]
 ], dtype=np.float32)
 
+# initialize model
+vae_model.load_state_dict(torch.load("vae_model.pth"))
+vae_model.eval()
+# play
+difficulty_vector = torch.tensor([0.7, 0.6, 0.5]) 
+generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
+
+print("\nGenerated Puzzle:", generated_puzzle)
+play_puzzle(generated_puzzle) 
+
 """
 puzzle_id	UUID	Unique ID for each puzzle
 puzzle_type	TEXT	“AES”, “Firewall”, etc.
@@ -156,13 +165,3 @@ time_taken	FLOAT	How long the user took (seconds)
 num_incorrect	INTEGER	Number of failed attempts
 solved	BOOLEAN	Did the user succeed
 """
-
-# initialize model
-vae_model.load_state_dict(torch.load("vae_model.pth"))
-vae_model.eval()
-# play
-difficulty_vector = torch.tensor([0.7, 0.6, 0.5]) 
-generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
-
-print("\nGenerated Puzzle:", generated_puzzle)
-play_puzzle(generated_puzzle) 
