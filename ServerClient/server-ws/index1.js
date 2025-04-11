@@ -1,14 +1,10 @@
-/*
-
-Server file that communicates with database
-Call node index1.js to run
-
-*/
+// index1.js
 
 // Dependencies
 const express = require('express');
 const WebSocket = require('ws');
 const { Client } = require('pg');
+const { handleMessage } = require('./utils/handleMessage')
 
 // Initialize Express Server
 const server = express().listen(8080, () => {
@@ -35,76 +31,12 @@ wss.on('connection', (ws) => {
     console.log('[Server] A client was connected.');
 
     ws.on('message', async (message) => {
-        try {
-            const data = JSON.parse(message.toString('utf-8'));
-            console.log('[Server] Received message:', data);
-    
-            // Example: Process received message
-            if (data.navigate === 'signup') {
-                console.log('[Server] Navigating to signup page');
-                // You can call the initializePlayer or any other function here
-                // await createPlayer(data.username, 1, 1, 1);
-            }
-            
-            if (data.status === 'log') {
-                console.log('[Client] log: ', data)
-            } else {
-                // Send "OK" back to the client
-                const response = { status: "OK", message: "Navigation successful" };
-                console.log('[Server] Sending response:', response);
-                ws.send(JSON.stringify(response));
-            }
-        } catch (err) {
-            console.error('[Server] Invalid JSON or error:', message);
-            const errorResponse = { status: "ERROR", message: "Invalid JSON or processing error" };
-            ws.send(JSON.stringify(errorResponse)); // Send error message back
-        }
+        
+        await handleMessage(ws, message, client);
+
     });
-    
 
     ws.on('close', () => {
         console.log('[Server] Client disconnected.');
     });
 });
-
-/**
- * Function to add or update a player in the database
- */
-async function initializePlayer(username) {
-    try {
-        const query = `
-            INSERT INTO players (username, created_at, last_active, firewall_skill, leaderboard_score)
-            VALUES ('`+username+`', '2025-03-28 13:10:11', '2025-03-28 13:10:11', 1, 1)
-        `;
-        
-        await client.query(query);
-        console.log("1 record inserted");
-    } catch (err) {
-        console.error("Error executing query:", err);
-    }
-}
-
-/**
- * Function to create a new player in the database
- * @param {string} username - The username of the player
- * @param {number} firewall_skill - The firewall skill of the player
- * @param {number} leaderboard_score - The leaderboard score of the player
- * @returns {Promise<void>}
- */
-async function createPlayer(username, firewall_skill, encipher_skill, leaderboard_score) {
-    console.log("backend createPlayer called");
-    try {
-        const query = `
-            INSERT INTO players 
-            (username, created_at, last_active, firewall_skill, encipher_skill, leaderboard_score)
-            VALUES ($1, NOW(), NOW(), $2, $3, $4)
-        `;
-
-        const values = [username, firewall_skill, encipher_skill, leaderboard_score];
-
-        await client.query(query, values);
-        console.log("1 record inserted");
-    } catch (err) {
-        console.error("Error executing query:", err);
-    }
-}

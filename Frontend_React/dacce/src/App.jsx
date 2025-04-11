@@ -2,6 +2,7 @@ import "./App.css";
 import { useState } from "react";
 import React from "react";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
+import { UserProvider } from "./contexts/UserContext";
 
 import Landing from "./views/landing";
 import Background from "../src/components/background";
@@ -25,11 +26,12 @@ function App() {
   };
 
   return (
+    <UserProvider>
     <WebSocketProvider>
       <div className="view-container">
         {currentView !== "landing" &&
           currentView !== "signup" &&
-          currentView !== "login" &&
+          currentView !== "login" && 
           currentView !== "game" && (
             <Header currentView={currentView} onNavigate={renderView} />
           )}
@@ -39,10 +41,12 @@ function App() {
         {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
         {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
         {currentView === "game" && <Game onNavigate={renderView} />}
+        {currentView === "game" && <Game onNavigate={renderView} />}
         {/* {currentView === "game" && <Game onNavigate={renderView} />} */}
       </div>
       <Background />
     </WebSocketProvider>
+    </UserProvider>
   );
 }
 
