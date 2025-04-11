@@ -15,8 +15,10 @@ async function handleMessage(ws, message, client) {
             console.log('[Client] log: ', data);
         } else if (data.type === 'POST') {
             await createUser(ws, data, client);
-        } else if (data.type === 'GET') {
+        } else if (data.type === 'GET USER') {
             await loginUser(ws, data, client)
+        } else if (data.type === 'GET PUZZLE') {
+
         } else {
             // Send "OK" back to the client
             await okMessage(ws, data);

@@ -8,11 +8,14 @@ import Form from "react-bootstrap/Form";
 
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
+import { useState } from "react";
+
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Login = ({ onNavigate }) => {
   
-  const { username, setUsername } = useUser();
+  const { user, setUser } = useUser();
+  const [tempUsername, setTempUsername] = useState("");
   const { sendMessage, handleRequest } = useWebSocket();
   
   const handleClick = (page) => {
@@ -26,17 +29,17 @@ const Login = ({ onNavigate }) => {
 
   const handleLogin = async ( page ) => {
     
-    if (username  === "") {
+    if (tempUsername  === "") {
       alert("Username blank");
       return;
     }
 
-    const loginPayload = { type: "GET", username: username };
+    const loginPayload = { type: "GET USER", username: tempUsername };
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK USER LOGIN") {
-        alert("user logged in: " + username + "!");
-        setUsername(username)
+        alert("user logged in: " + tempUsername + "!");
+        setUser(response.user);
         onNavigate(page)
       } else if (response.status === "ERR USER NOT EXIST") {
         alert("There is no user with this username.");
@@ -66,8 +69,8 @@ const Login = ({ onNavigate }) => {
               type="text"
               placeholder="Enter your username"
               className="custom-input-field"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={tempUsername}
+              onChange={(e) => setTempUsername(e.target.value)}
             />
           </Form.Group>
         </Col>
