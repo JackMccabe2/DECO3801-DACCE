@@ -94,8 +94,7 @@ def fetch_puzzle_data():
     # Need to select games info per session too.
     query = """ 
         SELECT
-            encipher_skill,
-            firewall_skill
+            encipher_skill
         FROM players
     """
 

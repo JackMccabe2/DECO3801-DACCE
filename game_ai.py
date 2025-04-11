@@ -74,13 +74,14 @@ def xor_aes():
         print("Correct!")
     else:
         print(f"Not quite! The correct answer was: {expected.hex()}")
+    # return question, answer separate as a JSON
 
 def play_puzzle(puzzle_vector):
 
     key_length = int(1024 + puzzle_vector[1] * 2048)
     steps = int(2 + puzzle_vector[2] * 8)
     entropy = round(puzzle_vector[3], 2)
-    solution_length = 6
+    solution_length = 4
 
     print("\n=== Hacking Challenge ===")
     print(f"Key Length: {key_length}-bit")
@@ -119,7 +120,7 @@ def fetch_puzzle_data():
             firewall_skill
         FROM players
     """
-
+    # ADD GAME INSTANCE STUFFS -> num_incorrect, time_to_complete etc to form difficulty vector 
     cur.execute(query) 
     rows = cur.fetchall() # store
 
@@ -165,3 +166,6 @@ time_taken	FLOAT	How long the user took (seconds)
 num_incorrect	INTEGER	Number of failed attempts
 solved	BOOLEAN	Did the user succeed
 """
+
+# send to server
+# from server, print to frontend terminal
