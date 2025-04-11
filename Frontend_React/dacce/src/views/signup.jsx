@@ -6,10 +6,13 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
+
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Signup = ({ onNavigate }) => {
-  const [username, setUsername] = useState("");
+  const { username, setUsername } = useUser();
+  const [tempUsername, setTempUsername] = useState("");
   const { sendMessage, handleRequest } = useWebSocket();
 
   const handleClick = (page) => {
@@ -23,16 +26,17 @@ const Signup = ({ onNavigate }) => {
 
   const handleSignup = async ( page ) => {
     
-    if (username  === "") {
+    if (tempUsername  === "") {
       alert("Username blank");
       return;
     }
 
-    const loginPayload = { type: "POST", username: username };
+    const loginPayload = { type: "POST", username: tempUsername };
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK USER CREATED") {
-        alert("user created: " + username + "!");
+        alert("user created: " + tempUsername + "!");
+        setUsername(tempUsername);
         onNavigate(page)
       } else if (response.status === "ERR USER EXISTS") {
         alert("A user with this username already exists.");
@@ -62,8 +66,8 @@ const Signup = ({ onNavigate }) => {
               type="text"
               placeholder="e.g. Alex #3312"
               className="custom-input-field"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={tempUsername}
+              onChange={(e) => setTempUsername(e.target.value)}
             />
           </Form.Group>
         </Col>

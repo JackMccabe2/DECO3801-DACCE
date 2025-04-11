@@ -4,7 +4,9 @@
 const express = require('express');
 const WebSocket = require('ws');
 const { Client } = require('pg');
-const { okMessage, createUser, loginUser } = require('./utils/sendMessage'); // Import functions
+const { okMessage } = require('./utils/sendMessage'); // Import functions
+const { createUser } = require('./utils/initPlayer'); // Import functions
+const { loginUser } = require('./utils/loginPlayer')
 
 // Initialize Express Server
 const server = express().listen(8080, () => {
