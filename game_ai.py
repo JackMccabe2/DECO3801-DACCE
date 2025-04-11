@@ -34,10 +34,10 @@ def aes():
 
     guess = input("Enter the decrypted plaintext: ").strip()
     if guess.encode() == plaintext:
-        print("✅ Success! You've decrypted the message.")
+        print("Success! You've decrypted the message.")
         return True
     else:
-        print(f"❌ Incorrect! The correct plaintext was: {plaintext.decode()}")
+        print(f"Incorrect! The correct plaintext was: {plaintext.decode()}")
         return False
     
 def caesar_cipher_puzzle():

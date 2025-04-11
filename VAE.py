@@ -144,6 +144,7 @@ data_loader = DataLoader(dataset, batch_size=BATCH_SIZE)
 vae_model = VAE(INPUT_DIM, LATENT_DIM)
 
 # train
+# need to add a periodic if statement on this to ensure the model isn't trained every time.
 print("Training VAE...")
 train_vae(vae_model, data_loader, epochs=EPOCHS, lr=LEARNING_RATE)
 # Save trained VAE model
