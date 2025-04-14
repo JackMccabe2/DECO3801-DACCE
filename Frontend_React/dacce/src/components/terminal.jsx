@@ -4,7 +4,7 @@ import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import "../css/xterm.css";
 
-const TerminalComponent = () => {
+const TerminalComponent = ({ onCommand }) => {
   const terminalRef = useRef(null);
   const fitAddonRef = useRef(null); // store fitAddon in a ref
 
@@ -19,6 +19,20 @@ const TerminalComponent = () => {
       term.open(terminalRef.current);
       fitAddon.fit();
     }
+
+    const handleInput = (term, input) => {
+      if (onCommand) onCommand(input); // Call parent handler with user input
+  
+      if (input === "help") {
+        term.writeln("Available commands: help, start");
+      } else if (input === "start") {
+        term.writeln("Starting the game...");
+      } else {
+        term.writeln(`Unknown command: ${input}`);
+      }
+  
+      term.write("alex@cool-hack-game % ");
+    };
 
     term.writeln("Welcome to QuantumHeist Terminal 💻");
     term.write("alex@cool-hack-game % ");
