@@ -1,5 +1,5 @@
 // Import React component
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 // Import Bootstrap components
 import Row from "react-bootstrap/Row";
@@ -13,10 +13,32 @@ import "../css/game.css";
 import AppWindow from "../components/appWindow";
 import Terminal from "../components/terminal";
 
+// Import contexts
+import { useWebSocket } from "../contexts/WebSocketContext";
+
 const Game = ({ onNavigate }) => {
 
+  const [puzzle, setPuzzle] = useState("")
+  const { sendMessage } = useWebSocket();
+  const hasFetchedPuzzle = useRef(false);
   // Timer
   const [timeLeft, setTimeLeft] = useState(60); // second
+
+  useEffect(() => {
+
+    if (hasFetchedPuzzle.current) return; // prevent repeat
+    hasFetchedPuzzle.current = true;
+
+    const loginPayload = { type: "GET PUZZLE", message: "payload to get puzzle" };
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "PUZZLE") {
+        setPuzzle(response.data)
+      } else {
+        alert("Get puzzle failed.")
+        return;
+      }
+    });
+  }, []); //
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -86,7 +108,8 @@ const Game = ({ onNavigate }) => {
           </svg>
         }
         title="Encrypted Message..."
-        content="One of the criminals, known as “The Archivist”, always hides messages in old formats so that only those who know the history of encoding can understand them..."
+        content={puzzle.question}
+        //content="One of the criminals, known as “The Archivist”, always hides messages in old formats so that only those who know the history of encoding can understand them..."
       />
 
       {/* Terminal */}

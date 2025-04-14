@@ -23,9 +23,11 @@ import { PiRankingFill } from "react-icons/pi";
 import { LuHistory } from "react-icons/lu";
 import { IoMdSettings } from "react-icons/io";
 import { TbLogout } from "react-icons/tb";
+import { useUser } from "../contexts/UserContext";
 
 const Navbar = ({ currentView, onNavigate }) => {
   const [show, setShow] = useState(false);
+  const { user, setUser } = useUser();
 
   // Toggle the sidemenu
   const menuToggle = () => setShow((prevShow) => !prevShow);
@@ -60,7 +62,7 @@ const Navbar = ({ currentView, onNavigate }) => {
         >
           <div className="custom-nav-profile gap-3">
             <img src={profilePic} className="rounded-circle" alt="Profile" />
-            <span>Alex</span>
+            <span>{user.username}</span>
           </div>
         </Col>
       </Row>
