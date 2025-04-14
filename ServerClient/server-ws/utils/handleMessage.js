@@ -17,6 +17,8 @@ async function handleMessage(ws, message, client) {
             await createUser(ws, data, client);
         } else if (data.type === 'GET USER') {
             await loginUser(ws, data, client);
+        } else if (data.type === 'MULTIPLAYER') {
+            //await initMultiplayer()
         } else if (data.type === 'GET PUZZLE') {
             // Get puzzle question and answer
             await getPuzzle(ws);
