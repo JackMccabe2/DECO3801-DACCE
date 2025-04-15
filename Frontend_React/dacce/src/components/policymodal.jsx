@@ -91,7 +91,7 @@ function PolicyModal({ show, onClose, onConfirm }) {
         <Button variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={onConfirm} disabled={isChecked}>
+        <Button variant="primary" onClick={onConfirm} disabled={!isChecked}>
           Continue
         </Button>
       </Modal.Footer>
