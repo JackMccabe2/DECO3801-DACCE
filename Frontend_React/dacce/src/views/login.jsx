@@ -81,7 +81,7 @@ const Login = ({ onNavigate }) => {
           className="custom-button d-flex justify-content-center align-self-center"
         >
           <Button
-            text="Submit"
+            text="Enter"
             colour="yellow"
             onClick={() => handleLogin("dashboard")}
           />
