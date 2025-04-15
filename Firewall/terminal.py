@@ -49,11 +49,7 @@ def main():
     
     while True:
         command = input(">> ").strip().lower()
-        if command == "help":
-            print_help()
-        else:
-            handle_command(command)
-
+        handle_command(command)
 
 if __name__ == "__main__":
     main()
