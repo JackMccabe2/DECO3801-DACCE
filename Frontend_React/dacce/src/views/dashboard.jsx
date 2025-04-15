@@ -4,10 +4,9 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
-import { useUser } from "../contexts/UserContext";
+import { IoPersonCircleOutline } from "react-icons/io5";
 
 function Dashboard({ onNavigate }) {
-  const { user, setUser } = useUser();
 
   return (
     <>
@@ -16,16 +15,8 @@ function Dashboard({ onNavigate }) {
         {/* Set current view to dashboard and send the prop to navbar/header */}
         {/* <Header currentView="dashboard" onNavigate={onNavigate} /> */}
         <Container fluid className=" d-flex flex-column align-items-center">
-          <Row className="w-100 justify-content-center align-items-center">
-            <Col xs={12} md={6} className="justify-content-center">
-              <Button
-                btnHover={"dashboard-btn-hover"}
-                text={user.username}
-                textcolour="var(--black)"
-                background="var(--white)"
-              />
-            </Col>
-            <Col xs={12} md={6} className="justify-content-center">
+          <Row className="w-100 justify-content-center align-items-center gap-3">
+            <Col xs={12} md={5} className="justify-content-center">
               <Button
                 btnHover={"dashboard-btn-hover"}
                 text="Profile"

@@ -1,5 +1,5 @@
 // Import React component
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 // Import Bootstrap components
 import Row from "react-bootstrap/Row";
@@ -13,10 +13,33 @@ import "../css/game.css";
 import AppWindow from "../components/appWindow";
 import Terminal from "../components/terminal";
 
+// Import contexts
+import { useWebSocket } from "../contexts/WebSocketContext";
+
 const Game = ({ onNavigate }) => {
 
+  const [puzzle, setPuzzle] = useState("")
+  const { sendMessage } = useWebSocket();
+  const hasFetchedPuzzle = useRef(false);
   // Timer
   const [timeLeft, setTimeLeft] = useState(60); // second
+
+  useEffect(() => {
+
+    if (hasFetchedPuzzle.current) return; // prevent repeat
+    hasFetchedPuzzle.current = true;
+
+    const loginPayload = { type: "GET PUZZLE", message: "payload to get puzzle" };
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "PUZZLE") {
+        setPuzzle(response.data)
+        console.log("set answer to: " + response.data.answer)
+      } else {
+        alert("Get puzzle failed.")
+        return;
+      }
+    });
+  }, []); //
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -31,6 +54,22 @@ const Game = ({ onNavigate }) => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const handleTerminalCommand = (input) => {
+    console.log("User entered:", input);
+
+    if (!puzzle || !puzzle.answer) {
+      alert("Puzzle not loaded yet.");
+      return;
+    }
+  
+    if (input === puzzle.answer) {
+      alert("Correct answer!");
+      // Do something like advance stage or send to server
+    } else {
+      alert("Incorrect! Try again." + puzzle.answer);
+    }
+  };
 
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
@@ -86,31 +125,34 @@ const Game = ({ onNavigate }) => {
           </svg>
         }
         title="Encrypted Message..."
-        content="One of the criminals, known as “The Archivist”, always hides messages in old formats so that only those who know the history of encoding can understand them..."
+        content={puzzle.question}
+        //content="One of the criminals, known as “The Archivist”, always hides messages in old formats so that only those who know the history of encoding can understand them..."
       />
 
       {/* Terminal */}
-      <AppWindow
-        positionx="600"
-        positiony="300"
-        width="600"
-        height="fit-content"
-        padding="0"
-        icon={
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            className="bi bi-terminal-fill"
-            viewBox="0 0 16 16"
-          >
-            <path d="M0 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm9.5 5.5h-3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1m-6.354-.354a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2a.5.5 0 1 0-.708.708L4.793 6.5z" />
-          </svg>
-        }
-        title="Terminal"
-        content={<Terminal id="terminal" />}
-      />
+      {puzzle && (
+        <AppWindow
+          positionx="600"
+          positiony="300"
+          width="600"
+          height="fit-content"
+          padding="0"
+          icon={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-terminal-fill"
+              viewBox="0 0 16 16"
+            >
+              <path d="M0 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm9.5 5.5h-3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1m-6.354-.354a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2a.5.5 0 1 0-.708.708L4.793 6.5z" />
+            </svg>
+          }
+          title="Terminal"
+          content={<Terminal onCommand={handleTerminalCommand} />}
+        />
+      )}
     </>
   );
 };

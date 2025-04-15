@@ -57,24 +57,16 @@ def caesar_cipher_puzzle():
 
 def xor_aes():
     import random
-
-    print("\nXOR Puzzle - Learn AddRoundKey!\n")
     # can change the range here as a difficulty parameter
     plaintext = bytes([random.randint(0, 255) for _ in range(2)])
     key = bytes([random.randint(0, 255) for _ in range(2)])
     expected = bytes([p ^ k for p, k in zip(plaintext, key)])
-
-    print(f"Plaintext : {plaintext.hex()}")
-    print(f"Key       : {key.hex()}")
-    print("Enter the result of XOR-ing each byte:")
+    
+    question = f"XOR Puzzle!\nPlaintext : {plaintext.hex()}\nKey       : {key.hex()}\nEnter the result of XOR-ing each byte:"
 
     answer = input("Your answer: ").strip().lower()
-
-    if answer == expected.hex():
-        print("Correct!")
-    else:
-        print(f"Not quite! The correct answer was: {expected.hex()}")
     # return question, answer separate as a JSON
+    return question, answer
 
 def play_puzzle(puzzle_vector):
 
@@ -83,12 +75,13 @@ def play_puzzle(puzzle_vector):
     entropy = round(puzzle_vector[3], 2)
     solution_length = 4
 
-    print("\n=== Hacking Challenge ===")
-    print(f"Key Length: {key_length}-bit")
-    print(f"Steps Required: {steps}")
-    print(f"Entropy Level: {entropy}")
-    print(f"Solution Length: {solution_length} bytes")
-    xor_aes()
+    #print("\n=== Hacking Challenge ===")
+    #print(f"Key Length: {key_length}-bit")
+    #print(f"Steps Required: {steps}")
+    #print(f"Entropy Level: {entropy}")
+    #print(f"Solution Length: {solution_length} bytes")
+    question, answer = xor_aes()
+    return question, answer
 
 # Generating a new puzzle
 def generate_puzzle(model, difficulty_vector):
@@ -152,7 +145,7 @@ difficulty_vector = torch.tensor([100, 0.6, 0.5])
 generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
 
 print("\nGenerated Puzzle:", generated_puzzle)
-play_puzzle(generated_puzzle) 
+print(play_puzzle(generated_puzzle) )
 
 """
 puzzle_id	UUID	Unique ID for each puzzle

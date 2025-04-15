@@ -13,23 +13,25 @@ import { useState } from "react";
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Login = ({ onNavigate }) => {
-  
-  const { user, setUser } = useUser();
+  const { setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
-  const { sendMessage, handleRequest } = useWebSocket();
-  
+  const { sendMessage } = useWebSocket();
+
   const handleClick = (page) => {
-    handleRequest(
-      page,
-      { type: "NAV", message: page },
-      onNavigate, // success callback
-      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
-    );
+    const loginPayload = { type: "NAV", message: page };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        onNavigate(page);
+      } else {
+        alert("Navigation failed.");
+        return;
+      }
+    });
   };
 
-  const handleLogin = async ( page ) => {
-    
-    if (tempUsername  === "") {
+  const handleLogin = async (page) => {
+    if (tempUsername === "") {
       alert("Username blank");
       return;
     }
@@ -38,9 +40,9 @@ const Login = ({ onNavigate }) => {
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK USER LOGIN") {
-        alert("user logged in: " + tempUsername + "!");
+        alert("Welcome back, " + tempUsername + "!");
         setUser(response.user);
-        onNavigate(page)
+        onNavigate(page);
       } else if (response.status === "ERR USER NOT EXIST") {
         alert("There is no user with this username.");
         return;
@@ -50,7 +52,7 @@ const Login = ({ onNavigate }) => {
       }
     });
   };
-  
+
   return (
     <Container
       fluid

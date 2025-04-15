@@ -11,16 +11,21 @@ import Logo from "../assets/chg_logo.png";
 import { useWebSocket } from "../contexts/WebSocketContext";
 
 const Landing = ({ onNavigate }) => {
-  const { isConnected, handleRequest } = useWebSocket();
+  const { isConnected, sendMessage, handleRequest } = useWebSocket();
   ///// cfretes vairale status that can access in whole program that reflects wether the server response is valid
 
   const handleClick = (page) => {
-    handleRequest(
-      page,
-      {type: "NAV", message: page},
-      onNavigate, // success callback
-      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
-    );
+    
+    const loginPayload = { type: "NAV", message: page };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        onNavigate(page)
+      } else {
+        alert("Navigation failed.")
+        return;
+      }
+    });
   };
 
   return (

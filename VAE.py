@@ -132,6 +132,18 @@ randomness_factor	FLOAT	Randomness factor in generation
 time_taken	FLOAT	How long the user took (seconds)
 num_incorrect	INTEGER	Number of failed attempts
 solved	BOOLEAN	Did the user succeed
+
+result_id SERIAL PRIMARY KEY,
+    players_username VARCHAR(50),
+    player_score INTEGER CHECK (player_score BETWEEN 0 AND 5),
+    opponent_score INTEGER CHECK (opponent_score BETWEEN 0 AND 5),
+    game_id INTEGER,
+    difficulty_rating INTEGER,
+    played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    winner_leaderboard_points INTEGER NOT NULL,
+    loser_leaderboard_points INTEGER NOT NULL,
+    FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
+    FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
 """
 
 # convert to PyTorch TensorDataset

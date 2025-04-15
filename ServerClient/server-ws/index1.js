@@ -27,12 +27,19 @@ client.connect()
   .then(() => console.log("Connected to PostgreSQL"))
   .catch(err => console.error("Error connecting to PostgreSQL:", err));
 
+gameId = []
+
 wss.on('connection', (ws) => {
     console.log('[Server] A client was connected.');
 
+    gameId.push(Math.floor(Math.random() * 100))
+
     ws.on('message', async (message) => {
+
+
         
         await handleMessage(ws, message, client);
+        console.log("game ids: " + gameId)
 
     });
 

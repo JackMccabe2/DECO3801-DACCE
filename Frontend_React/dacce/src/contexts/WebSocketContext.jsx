@@ -77,24 +77,10 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
-  const handleRequest = (page, payload, onSuccess, onFailure) => {
-    //const loginPayload = { type: "NAV", username: page };
-  
-    sendMessage(payload, (response) => {
-      if (response.status === "OK") {
-        onSuccess?.(page);
-      } else {
-        console.error("Login failed:", response.message);
-        onFailure?.(response.message);
-      }
-    });
-  };
-
   const value = {
     isConnected,
     message,
     sendMessage,
-    handleRequest,
     ws: ws.current
   };
 
