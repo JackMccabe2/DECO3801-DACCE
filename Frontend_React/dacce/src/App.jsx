@@ -28,24 +28,33 @@ function App() {
 
   return (
     <UserProvider>
-    <WebSocketProvider>
-      <div className="view-container">
+      <WebSocketProvider>
         {currentView !== "landing" &&
           currentView !== "signup" &&
-          currentView !== "login" && 
+          currentView !== "login" &&
           currentView !== "game" && (
             <Header currentView={currentView} onNavigate={renderView} />
           )}
-        {currentView === "landing" && <Landing onNavigate={renderView} />}
-        {currentView === "signup" && <Signup onNavigate={renderView} />}
-        {currentView === "login" && <Login onNavigate={renderView} />}
-        {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
-        {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
-        {currentView === "game" && <Game onNavigate={renderView} />}
-        {currentView === "leaderboard" && <Leaderboard onNavigate={renderView} />}
-      </div>
-      <Background />
-    </WebSocketProvider>
+        <div
+          className="view-container"
+          style={{
+            height: ["landing", "signup", "login", "game"].includes(currentView)
+              ? "100%"
+              : "calc(100% - 82px)",
+          }}
+        >
+          {currentView === "landing" && <Landing onNavigate={renderView} />}
+          {currentView === "signup" && <Signup onNavigate={renderView} />}
+          {currentView === "login" && <Login onNavigate={renderView} />}
+          {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
+          {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
+          {currentView === "game" && <Game onNavigate={renderView} />}
+          {currentView === "leaderboard" && (
+            <Leaderboard onNavigate={renderView} />
+          )}
+        </div>
+        <Background />
+      </WebSocketProvider>
     </UserProvider>
   );
 }

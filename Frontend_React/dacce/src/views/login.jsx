@@ -54,13 +54,13 @@ const Login = ({ onNavigate }) => {
   return (
     <Container
       fluid
-      className="vh-100 d-flex justify-content-center align-items-center"
+      className="d-flex justify-content-center align-items-center"
     >
-      <Row className="custom-content-wrap p-4 rounded">
+      <Row className="custom-content-wrap p-5 rounded">
         <Col xs={12}>
-          <h1 className="text-center mb-4 mt-4">LOGIN</h1>
+          <h1 className="text-center mb-4 mt-4">LOG IN</h1>
         </Col>
-        <Col xs={12} className="">
+        <Col xs={12}>
           <Form.Group>
             <Form.Label className="custom-label text-start w-100">
               Username
@@ -79,14 +79,14 @@ const Login = ({ onNavigate }) => {
           className="custom-button d-flex justify-content-center align-self-center"
         >
           <Button
-            text="Enter"
+            text="Submit"
             colour="yellow"
             onClick={() => handleLogin("dashboard")}
           />
         </Col>
         <Col
           xs={12}
-          className="custom-button d-flex justify-content-center align-self-center"
+          className="custom-button d-flex justify-content-center align-self-center mt-3"
         >
           <div>
             <span

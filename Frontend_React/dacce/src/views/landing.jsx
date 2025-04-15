@@ -26,7 +26,7 @@ const Landing = ({ onNavigate }) => {
   return (
     <Container
       fluid
-      className="vh-100 d-flex flex-column justify-content-center align-items-center"
+      className="d-flex flex-column justify-content-center align-items-center"
     >
       <Row className="justify-content-center align-items-center">
         <Col xs={12} className="justify-content-center align-items-center">

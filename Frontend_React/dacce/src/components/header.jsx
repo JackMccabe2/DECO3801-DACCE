@@ -32,11 +32,11 @@ const Navbar = ({ currentView, onNavigate }) => {
 
   return (
     <Container>
-      <Row className="d-flex align-items-center px-5 py-3">
-        {/* Todo: fix the burger menu position */}
-        <Col xs={1} className="custom-nav-container">
+      <Row className="d-flex align-items-center header-wrap">
+        <Col xs={1} className="custom-nav-container p-0">
+
           {!show && (
-            <Button onClick={menuToggle} className="burger-menu-btn">
+            <Button onClick={menuToggle} className="burger-menu-btn d-flex align-items-center">
               <RxHamburgerMenu />
             </Button>
           )}

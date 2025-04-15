@@ -3,27 +3,21 @@ import Button from "../components/button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import Header from "../components/header";
 
-import { IoPersonCircleOutline } from "react-icons/io5";
 import { useUser } from "../contexts/UserContext";
 
 function Dashboard({ onNavigate }) {
-  
   const { user, setUser } = useUser();
 
   return (
     <>
-      <div className="dashboard-wrap">
+      <div className="dashboard-wrap w-75">
         {/* Update: Moved the header to conditional in App.jsx */}
         {/* Set current view to dashboard and send the prop to navbar/header */}
         {/* <Header currentView="dashboard" onNavigate={onNavigate} /> */}
-        <br />
-        <br />
-        <br />
         <Container fluid className=" d-flex flex-column align-items-center">
-          <Row className="w-100 justify-content-center align-items-center gap-3">
-          <Col xs={12} md={5} className="justify-content-center">
+          <Row className="w-100 justify-content-center align-items-center">
+            <Col xs={12} md={6} className="justify-content-center">
               <Button
                 btnHover={"dashboard-btn-hover"}
                 text={user.username}
@@ -31,7 +25,7 @@ function Dashboard({ onNavigate }) {
                 background="var(--white)"
               />
             </Col>
-            <Col xs={12} md={5} className="justify-content-center">
+            <Col xs={12} md={6} className="justify-content-center">
               <Button
                 btnHover={"dashboard-btn-hover"}
                 text="Profile"
@@ -39,7 +33,9 @@ function Dashboard({ onNavigate }) {
                 background="var(--white)"
               />
             </Col>
-            <Col xs={12} md={5} className="justify-content-center">
+          </Row>
+          <Row className="w-100 justify-content-center align-items-center">
+            <Col xs={12} md={6} className="justify-content-center">
               <Button
                 btnHover={"dashboard-btn-hover"}
                 text="Leaderboard"
@@ -50,7 +46,7 @@ function Dashboard({ onNavigate }) {
                 }}
               />
             </Col>
-            <Col xs={12} md={5} className="justify-content-center">
+            <Col xs={12} md={6} className="justify-content-center">
               <Button
                 btnHover={"dashboard-btn-hover"}
                 text="History"
@@ -58,7 +54,9 @@ function Dashboard({ onNavigate }) {
                 background="var(--white)"
               />
             </Col>
-            <Col xs={12} md={10} className="justify-content-center">
+          </Row>
+          <Row className="w-100 justify-content-center align-items-center gap-3">
+            <Col xs={12} md={12} className="justify-content-center">
               <Button
                 btnHover={"play-btn-hover"}
                 text="Play"

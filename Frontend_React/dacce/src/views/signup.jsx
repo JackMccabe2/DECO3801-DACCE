@@ -17,6 +17,7 @@ const Signup = ({ onNavigate }) => {
   const { sendMessage, handleRequest } = useWebSocket();
 
   const handleClick = (page) => {
+    <PolicyModal show={true} />
     handleRequest(
       page,
       { type: "NAV", message: page },
@@ -51,9 +52,9 @@ const Signup = ({ onNavigate }) => {
   return (
     <Container
       fluid
-      className="vh-100 d-flex justify-content-center align-items-center"
+      className="d-flex justify-content-center align-items-center"
     >
-      <Row className="custom-content-wrap p-4 rounded">
+      <Row className="custom-content-wrap p-5 rounded">
         <Col xs={12}>
           <h1 className="text-center mb-4 mt-4">SIGN UP</h1>
         </Col>
@@ -85,7 +86,7 @@ const Signup = ({ onNavigate }) => {
         </Col>
         <Col
           xs={12}
-          className="custom-button d-flex justify-content-center align-self-center"
+          className="custom-button d-flex justify-content-center align-self-center mt-3"
         >
           <div>
             <span

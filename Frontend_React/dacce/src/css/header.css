@@ -1,6 +1,7 @@
-/* .header-wrap {
-  justify-content: space-between !important;
-} */
+.header-wrap {
+  height: 80px;
+  /* justify-content: space-between !important; */
+}
 
 /* navbar */
 .custom-nav-container {
@@ -79,9 +80,9 @@
 
 /* Todo: Still need to fix the menu position */
 .burger-menu-btn {
-  position: fixed;
-  top: 20px;
-  left: 30px;
+  /* position: fixed; */
+  /* top: 20px;
+  left: 30px; */
   z-index: 1050;
   background-color: transparent !important;
   color: var(--white) !important;

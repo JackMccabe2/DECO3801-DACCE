@@ -1,17 +1,18 @@
-// Import Bootstrap components
-import Container from "react-bootstrap/Container";
+
+
+// Import Components
+import InformationWindow from "../components/informationWindow";
 
 // Import CSS
-import "../css/leaderboard.css"
+import "../css/leaderboard.css";
 
-const Leaderboard = ({ onNavigation }) => {
+const Leaderboard = ({ onNavigate }) => {
+
   return (
     <>
-      <Container className="custom-leaderboard-container">
-        
-      </Container>
+      <InformationWindow title="Leaderboard" onNavigate={onNavigate}/>
     </>
-  )
-}
+  );
+};
 
 export default Leaderboard;

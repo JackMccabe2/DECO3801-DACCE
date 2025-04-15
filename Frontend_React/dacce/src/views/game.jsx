@@ -40,8 +40,8 @@ const Game = ({ onNavigate }) => {
 
   return (
     <>
-      <Container>
-        <Row xs="auto" className="d-flex align-items-start">
+      <Container fluid className="game-wrapper">
+        <Row xs="auto" className="d-flex align-items-start justify-content-start">
           <Col>
             <div className="custom-state-container px-4 py-3 d-flex align-items-center">
               <span className="custom-timer-text">Stage 2</span>

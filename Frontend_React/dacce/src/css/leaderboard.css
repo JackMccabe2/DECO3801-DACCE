@@ -1,3 +1,13 @@
 .custom-leaderboard-container {
-  padding: 50px;
+  border-radius: 10px;
+  height: 80%;
+  background-color: #EAE2B7;
+  box-shadow:
+    0 0 0 10px #FCBF49,
+    5px 8px 4px rgba(0, 0, 0, 0.3);
+  margin-top: 50px;
+}
+
+.custom-leaderboard-data-container {
+  height: 100%;
 }

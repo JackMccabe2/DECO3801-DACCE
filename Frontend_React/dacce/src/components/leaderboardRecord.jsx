@@ -1,6 +1,6 @@
 const LeaderboardRecord = ({ onNavigation }) => {
   return (
-    <Row>
+    <Row height="50px">
       <Col lg={2}>18</Col>
       <Col lg={2}>Alexxxxx</Col>
       <Col lg={4}><div></div></Col>
@@ -8,3 +8,5 @@ const LeaderboardRecord = ({ onNavigation }) => {
     </Row>
   )
 }
+
+export default LeaderboardRecord;

@@ -17,8 +17,8 @@ const wss = new WebSocket.Server({ server });
 // PostgreSQL Connection 
 const client = new Client({
   host: "localhost",
-  user: "jackmccabe",
-  password: "password",
+  user: "wenkao",
+  password: "testtest",
   database: "postgres",
   port: 5432
 });

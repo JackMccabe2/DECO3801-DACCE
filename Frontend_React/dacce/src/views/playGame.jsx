@@ -11,7 +11,7 @@ import "../css/playGame.css";
 const playGame = ({ onNavigate }) => {
   return (
     <>
-      <div className="dashboard-wrap">
+      <div className="dashboard-wrap w-100">
         {/* Update: Moved the header to conditional in App.jsx */}
         {/* <Header /> */}
         <Container className="mt-5">
