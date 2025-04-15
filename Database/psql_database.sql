@@ -15,12 +15,10 @@ CREATE TABLE public.current_match (
     players_username VARCHAR(50),
     answers_right INTEGER,
     answers_wrong INTEGER,
-    wrong_answer_question_type REFERENCES games.cipher_method,
+    wrong_answer_question_type REFERENCES game_types.cipher_method,
     player_score INTEGER,
     opponent_score INTEGER,
 
-    
-    
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
 )
 
@@ -33,30 +31,31 @@ CREATE TABLE public.each_puzzle (
     players_username VARCHAR(50),
     game_id VARCHAR(50),
     duration INTEGER,
-    type_of_puzzle
+    type_of_puzzle VARCHAR(50),
     cipher_method VARCHAR(50),
+    win_loss VARCHAR(4) CHECK (win_loss IN ('win', 'loss')) NOT NULL,
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
-    FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE,
-    FOREIGN KEY (cipher_method) REFERENCES games(cipher_method) ON DELETE CASCADE
+    FOREIGN KEY (game_id) REFERENCES game_types(game_id) ON DELETE CASCADE,
+    FOREIGN KEY (cipher_method) REFERENCES game_types(cipher_method) ON DELETE CASCADE
 )
 
 -- GAMES
 -- each game creates new entry, right now just covers game types
-CREATE TABLE public.games (
+CREATE TABLE public.game_types (
     game_id SERIAL PRIMARY KEY,
     game_type VARCHAR(50) CHECK (game_type IN ('firewall', 'encryption')),
     cipher_method VARCHAR(50),
-    difficulty_rating INTEGER CHECK (difficulty_rating BETWEEN 1 AND 10),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    difficulty_rating INTEGER CHECK (difficulty_rating BETWEEN 1 AND 10), -- might not need this
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- dont really need this i think
 );
 
-INSERT INTO games (cipher_method, difficulty)
+INSERT INTO game_types (cipher_method, difficulty)
 VALUES ('Caesar Cipher', 2);
 
-INSERT INTO games (cipher_method, difficulty)
+INSERT INTO game_types (cipher_method, difficulty)
 VALUES ('AES', 7);
 
-INSERT INTO games (cipher_method, difficulty)
+INSERT INTO game_types (cipher_method, difficulty)
 VALUES ('XOR gate', 4);
 
 --need to create a table specifically for each individual game/puzzle i think
@@ -73,7 +72,7 @@ CREATE TABLE public.game_results (
     winner_leaderboard_points INTEGER NOT NULL,
     loser_leaderboard_points INTEGER NOT NULL,
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
-    FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
+    FOREIGN KEY (game_id) REFERENCES game_types(game_id) ON DELETE CASCADE
 );
 
 
@@ -89,7 +88,7 @@ CREATE TABLE public.player_games (
     leaderboard_points INTEGER,
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
     FOREIGN KEY (opponents_username) REFERENCES players(username) ON DELETE CASCADE,
-    FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
+    FOREIGN KEY (game_id) REFERENCES game_types(game_id) ON DELETE CASCADE
 );
 
 
