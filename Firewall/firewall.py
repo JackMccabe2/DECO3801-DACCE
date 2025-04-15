@@ -1,5 +1,5 @@
 ### main.py
-from terminal import handle_command
+from Firewall.terminal import handle_command
 from modules.game_state import GameState
 
 
