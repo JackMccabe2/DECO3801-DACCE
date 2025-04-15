@@ -1,8 +1,8 @@
 
 const { okMessage } = require('./sendMessage');
 const { createUser } = require('./initPlayer'); // Import functions
-const { loginUser } = require('./loginPlayer')
-
+const { loginUser } = require('./loginPlayer');
+const { getPuzzle } = require('./getPuzzle');
 
 async function handleMessage(ws, message, client) {
     try {
@@ -16,9 +16,12 @@ async function handleMessage(ws, message, client) {
         } else if (data.type === 'POST') {
             await createUser(ws, data, client);
         } else if (data.type === 'GET USER') {
-            await loginUser(ws, data, client)
+            await loginUser(ws, data, client);
+        } else if (data.type === 'MULTIPLAYER') {
+            //await initMultiplayer()
         } else if (data.type === 'GET PUZZLE') {
-
+            // Get puzzle question and answer
+            await getPuzzle(ws);
         } else {
             // Send "OK" back to the client
             await okMessage(ws, data);

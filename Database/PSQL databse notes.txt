@@ -18,6 +18,8 @@ To view database, user and port info:
 Initialize database with:
     psql -U 'username' -d 'database' -a -f 'filename'
 Setup connection with database:
+    const { Client } = require('pg');
+    
     const client = new Client({
         host: "localhost",
         user: "user name",

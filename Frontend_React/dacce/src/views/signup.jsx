@@ -9,24 +9,29 @@ import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 
 import { FaLongArrowAltLeft } from "react-icons/fa";
+import PolicyModal from "../components/policymodal";
 
 const Signup = ({ onNavigate }) => {
   const { user, setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
-  const { sendMessage, handleRequest } = useWebSocket();
+  const { sendMessage } = useWebSocket();
 
   const handleClick = (page) => {
-    handleRequest(
-      page,
-      { type: "NAV", message: page },
-      onNavigate, // success callback
-      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
-    );
+    
+    const loginPayload = { type: "NAV", message: page };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        onNavigate(page)
+      } else {
+        alert("Navigation failed.")
+        return;
+      }
+    });
   };
 
-  const handleSignup = async ( page ) => {
-    
-    if (tempUsername  === "") {
+  const handleSignup = async (page) => {
+    if (tempUsername === "") {
       alert("Username blank");
       return;
     }
@@ -37,7 +42,7 @@ const Signup = ({ onNavigate }) => {
       if (response.status === "OK USER CREATED") {
         alert("user created: " + tempUsername + "!");
         setUser(response.user);
-        onNavigate(page)
+        onNavigate(page);
       } else if (response.status === "ERR USER EXISTS") {
         alert("A user with this username already exists.");
         return;
@@ -46,8 +51,8 @@ const Signup = ({ onNavigate }) => {
         return;
       }
     });
-  }
-    
+  };
+
   return (
     <Container
       fluid
@@ -75,11 +80,13 @@ const Signup = ({ onNavigate }) => {
           xs={12}
           className="custom-button d-flex justify-content-center align-self-center"
         >
-          <Button text="Create" colour="yellow" onClick={() => {
-              handleSignup("dashboard")
+          <Button
+            text="Create"
+            colour="yellow"
+            onClick={() => {
+              handleSignup("dashboard");
             }}
-            />
-  
+          />
         </Col>
         <Col
           xs={12}
@@ -102,9 +109,8 @@ const Signup = ({ onNavigate }) => {
                 cursor: "pointer",
               }}
               onClick={() => {
-                handleClick("landing")
-              }
-            }
+                handleClick("landing");
+              }}
             >
               <FaLongArrowAltLeft /> {""}
               Return
