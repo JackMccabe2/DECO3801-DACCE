@@ -24,6 +24,7 @@ import { LuHistory } from "react-icons/lu";
 import { IoMdSettings } from "react-icons/io";
 import { TbLogout } from "react-icons/tb";
 import { useUser } from "../contexts/UserContext";
+import { MdSpaceDashboard } from "react-icons/md";
 
 const Navbar = ({ currentView, onNavigate }) => {
   const [show, setShow] = useState(false);
@@ -36,9 +37,11 @@ const Navbar = ({ currentView, onNavigate }) => {
     <Container>
       <Row className="d-flex align-items-center header-wrap">
         <Col xs={1} className="custom-nav-container p-0">
-
           {!show && (
-            <Button onClick={menuToggle} className="burger-menu-btn d-flex align-items-center">
+            <Button
+              onClick={menuToggle}
+              className="burger-menu-btn d-flex align-items-center"
+            >
               <RxHamburgerMenu />
             </Button>
           )}
@@ -78,10 +81,17 @@ const Navbar = ({ currentView, onNavigate }) => {
           {currentView !== "dashboard" && (
             <div className="menu-top">
               <div>
+                <a className="fs-5 mx-5 menu-item" href="#dashboard">
+                  <MdSpaceDashboard className="menu-icon" /> &nbsp; Dashboard
+                </a>
                 <a className="fs-5 mx-5 menu-item" href="#profile">
                   <IoPersonCircleOutline className="menu-icon" /> &nbsp; Profile
                 </a>
-                <a className="fs-5 mx-5 menu-item" onClick={() => onNavigate("leaderboard")}>
+                <a
+                  className="fs-5 mx-5 menu-item"
+                  href="#leaderboard"
+                  onClick={() => onNavigate("leaderboard")}
+                >
                   <PiRankingFill className="menu-icon" /> &nbsp; Leaderboard
                 </a>
                 <a className="fs-5 mx-5 menu-item" href="#history">
