@@ -21,7 +21,7 @@ const Signup = ({ onNavigate }) => {
     handleRequest(
       page,
       { type: "NAV", message: page },
-      onNavigate, // success callback
+      onNavigate(page), // success callback
       (errMsg) => alert("Navigation failed:", errMsg) // failure callback
     );
   };
