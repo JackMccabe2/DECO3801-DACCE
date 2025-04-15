@@ -23,7 +23,22 @@ CREATE TABLE public.current_match (
     
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
 )
+
+
+
 --need to add table for each individual puzzle within a game
+-- what type of puzzle, duration, username, whther they got it wrong, 
+
+CREATE TABLE public.each_puzzle (
+    players_username VARCHAR(50),
+    game_id VARCHAR(50),
+    duration INTEGER,
+    type_of_puzzle
+    cipher_method VARCHAR(50),
+    FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
+    FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE,
+    FOREIGN KEY (cipher_method) REFERENCES games(cipher_method) ON DELETE CASCADE
+)
 
 -- GAMES
 -- each game creates new entry, right now just covers game types
@@ -39,7 +54,7 @@ INSERT INTO games (cipher_method, difficulty)
 VALUES ('Caesar Cipher', 2);
 
 INSERT INTO games (cipher_method, difficulty)
-VALUES ('AES', 8);
+VALUES ('AES', 7);
 
 INSERT INTO games (cipher_method, difficulty)
 VALUES ('XOR gate', 4);
@@ -77,6 +92,8 @@ CREATE TABLE public.player_games (
     FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
 );
 
+
+
 -- players game history/record recorded
 CREATE TABLE public.player_history (
     players_username VARCHAR(50),
@@ -110,6 +127,8 @@ CREATE TABLE public.leaderboard (
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE
 
 );
+
+
 
 --sorts scores in descending order
 SELECT 
