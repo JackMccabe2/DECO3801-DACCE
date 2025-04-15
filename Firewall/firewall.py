@@ -1,159 +1,100 @@
-### main.py
-from Firewall.terminal import handle_command
-from modules.game_state import GameState
+import random
+import time
 
+firewall_config = {
+    "firewall_type": "Next-Gen Deep Packet Inspection",
+    "open_ports": [22, 80, 443],
+    "vulnerabilities": {
+        "CVE-2023-44256": "OpenSSH User Enumeration",
+        "CVE-2024-11823": "TLS Downgrade Exploit",
+        "CVE-2022-99813": "Misconfigured Admin Console"
+    },
+    "intrusion_detection": True,
+    "admin_console": "10.0.0.1"
+}
 
-def main():
-    print("Welcome to QuantumHeist v1.0")
-    print("-- Target system detected: firewallcorp.ai")
-    print("-- Objective: Retrieve internal flag behind adaptive firewall.")
-    print("Type 'help' for a list of commands.\n")
+firewall_breached = False
+info_retrieved = False
 
-    game = GameState()
+def slow_print(text, delay=0.03):
+    for c in text:
+        print(c, end='', flush=True)
+        time.sleep(delay)
+    print()
 
-    while not game.finished:
-        try:
-            command = input("QuantumHeist> ")
-            handle_command(command, game)
-        except KeyboardInterrupt:
-            print("\n[-] Session terminated.")
-            break
+def scan_network():
+    slow_print("-- Initiating network scan...")
+    time.sleep(1)
+    slow_print("-- Probing local subnets...")
+    time.sleep(1)
+    slow_print("-- Host 10.0.0.1 responds. Running firewall fingerprint...")
+    time.sleep(1)
+    slow_print("-- Firewall Detected: QuantumNet v3.7")
+    slow_print(f"-- Open Ports: {', '.join(str(p) for p in firewall_config['open_ports'])}")
+    slow_print(f"-- IDS Status: {'ENABLED' if firewall_config['intrusion_detection'] else 'DISABLED'}")
 
+def perform_recon():
+    slow_print("-- Running vulnerability assessment on 10.0.0.1...")
+    time.sleep(1.5)
+    slow_print("-- Enumerating services on open ports...")
+    time.sleep(1)
+    slow_print("-- Analyzing packet signatures...")
+    slow_print("-- Possible vulnerabilities identified:")
+    for vuln, desc in firewall_config["vulnerabilities"].items():
+        slow_print(f"   {vuln} → {desc}")
+    slow_print("-- Note: Exploits may trigger IDS logging.")
 
-if __name__ == "__main__":
-    main()
-
-
-### terminal.py
-from modules import recon, scanner, enumerator, exploiter
-
-def handle_command(cmd, game):
-    args = cmd.strip().split()
-    if not args:
+def exploit_vulnerability():
+    global firewall_breached
+    slow_print("-- Launching exploit tool: `quantum-sploit`")
+    time.sleep(1)
+    outcome = random.randint(1, 10)
+    if firewall_breached:
+        slow_print("-- Access already obtained. No further exploit needed.")
         return
-
-    command = args[0]
-    if command == "help":
-        print("""
-Available commands:
-  recon [target]
-  scan --target <ip> [--stealth]
-  enum --target <ip:port>
-  exploit --target <ip:port> --payload <file>
-  inject --payload <file> [--bypass]
-  tunnel --protocol <type>
-  shell
-  exit
-""")
-    elif command == "recon":
-        recon.run(game, args[1:])
-    elif command == "scan":
-        scanner.run(game, args[1:])
-    elif command == "enum":
-        enumerator.run(game, args[1:])
-    elif command == "exploit":
-        exploiter.run(game, args[1:])
-    elif command == "inject":
-        exploiter.inject(game, args[1:])
-    elif command == "tunnel":
-        exploiter.tunnel(game, args[1:])
-    elif command == "shell":
-        exploiter.shell(game)
-    elif command == "exit":
-        game.finished = True
-        print("-- Exiting QuantumHeist...")
+    if outcome >= 4:
+        firewall_breached = True
+        slow_print("-- Exploit injected... waiting for payload execution...")
+        time.sleep(1)
+        slow_print("-- Payload successful. Admin shell opened at 10.0.0.1:8080")
     else:
-        print("[-] Unknown command. Try 'help'.")
-
-
-### modules/game_state.py
-class GameState:
-    def __init__(self):
-        self.finished = False
-        self.recon_done = False
-        self.ports = {
-            22: "SSH",
-            80: "HTTP",
-            443: "HTTPS",
-            8080: "Tomcat"
-        }
-        self.vulnerable_port = 8080
-        self.shell_active = False
-        self.flag_stolen = False
-        self.target_ip = "192.168.12.66"
-
-
-### modules/recon.py
-def run(game, args):
-    print("-- WHOIS Lookup...")
-    print("    Organization: FirewallCorp AI Security")
-    print("    ASN: 34567")
-    print("    Net Range: 192.168.12.0/24")
-
-    print("\n-- DNS Records...")
-    print(f"    A record: {game.target_ip}")
-    print("    MX record: mail.firewallcorp.ai")
-
-    print("\n-- OSINT Notes:")
-    print("    - CVE-2017-12615 on Tomcat")
-    print("    - Developer email leaked: root@corp.ai")
-    game.recon_done = True
-
-
-### modules/scanner.py
-def run(game, args):
-    print(f"-- Starting scan on target {game.target_ip}...")
-    for port, service in game.ports.items():
-        print(f"    Port {port}/tcp: OPEN ({service})")
-    print("-- Scan complete.")
-
-
-### modules/enumerator.py
-def run(game, args):
-    if not args:
-        print("[-] Usage: enum --target <ip:port>")
-        return
-    print("-- Grabbing banners...")
-    print("    Apache Tomcat/7.0.81 - Vulnerable to CVE-2017-12615")
-    print("    OS: Linux - Kernel 4.15")
-    print("-- Enumeration complete.")
-
-
-### modules/exploiter.py
-def run(game, args):
-    print("-- Deploying exploit to Tomcat...")
-    if game.vulnerable_port == 8080:
-        print("    Upload success! Backdoor.jsp deployed.")
-        game.shell_active = True
-    else:
-        print("[-] Exploit failed. Try a different target or payload.")
-
-
-def inject(game, args):
-    print("-- Injecting payload with firewall bypass attempt...")
-    print("    Payload appears to have evaded basic filters.")
-
-
-def tunnel(game, args):
-    print("-- Establishing SSH tunnel...")
-    print("    Tunnel active. Forwarding traffic through localhost:9000")
-
-
-def shell(game):
-    if not game.shell_active:
-        print("[-] No active shell session. Exploit the system first.")
-        return
-
-    print("-- Interactive shell established. Type 'exit' to quit.")
-    while True:
-        cmd = input("shell$ ")
-        if cmd.strip() == "exit":
-            print("-- Shell session closed.")
-            break
-        elif cmd.strip() == "ls":
-            print("flag.txt  backdoor.jsp  logs/")
-        elif cmd.strip() == "cat flag.txt":
-            print("FLAG{firewall_evaded_successfully}")
-            game.flag_stolen = True
+        slow_print("-- Exploit attempt failed.")
+        if firewall_config["intrusion_detection"]:
+            slow_print("-- ALERT: IDS triggered. Admin has been notified.")
         else:
-            print(f"sh: {cmd}: command not found")
+            slow_print("-- No alert raised. IDS is offline.")
+
+def retrieve_data():
+    global info_retrieved
+    if not firewall_breached:
+        slow_print("-- ACCESS DENIED: You must exploit the firewall first.")
+        return
+    if info_retrieved:
+        slow_print("-- Data has already been extracted from this session.")
+        return
+    slow_print("-- Navigating to /root/secrets.txt on admin console...")
+    time.sleep(1)
+    slow_print("-- Extracting contents...")
+    time.sleep(1)
+    slow_print("-- SUCCESS: File contents:")
+    print()
+    slow_print("    Access Token: QU4N7UM-H31ST-2025")
+    slow_print("    Admin Email: root@quantumcorp.net")
+    slow_print("    SSH Key Fingerprint: 9f:81:02:cc:1d:fa:13")
+    print()
+    info_retrieved = True
+
+def reset_firewall():
+    global firewall_breached, info_retrieved, firewall_config
+    firewall_breached = False
+    info_retrieved = False
+
+    firewall_config["vulnerabilities"] = {
+        "CVE-2023-44256": "OpenSSH User Enumeration",
+        "CVE-2024-11823": "TLS Downgrade Exploit",
+        "CVE-2022-99813": "Misconfigured Admin Console"
+    }
+
+    slow_print("-- Resetting environment...")
+    time.sleep(0.5)
+    slow_print("-- Firewall and session state reset.")

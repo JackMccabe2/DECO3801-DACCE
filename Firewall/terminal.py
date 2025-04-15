@@ -2,9 +2,8 @@ import sys
 import random
 import time
 
-# Simulate a "terminal" command handler that the player interacts with
+# Simulate a terminal
 
-# This will handle the available commands and their functionality
 def handle_command(command):
     if command == "scan":
         scan_network()
@@ -15,35 +14,36 @@ def handle_command(command):
     else:
         print("Unknown command. Type 'help' for available commands.")
 
-# Print the available commands
-def print_help():
-    print("Available commands:")
-    print("  scan - Scan the network for vulnerabilities")
-    print("  recon - Perform reconnaissance on the firewall")
-    print("  exit - Exit the game")
-    print("  help - Show this help message")
+# Print commands
+from Firewall.firewall import scan_network, perform_recon, exploit_vulnerability, retrieve_data, reset_firewall
 
-# Simulate scanning for firewalls (randomly simulate success/failure)
-def scan_network():
-    print("-- Scanning network...")
-    time.sleep(2)  # Simulate the delay of scanning
-    result = random.choice(["Firewall detected!", "No firewall detected."])
-    print(f"-- {result}")
+def handle_command(command):
+    if command == "help":
+        print("-- Available commands:")
+        print("   scan      - Scan the network for open ports and IDS status")
+        print("   recon     - Perform reconnaissance to discover vulnerabilities")
+        print("   exploit   - Attempt to breach the firewall using known exploits")
+        print("   retrieve  - Retrieve sensitive information from the firewall")
+        print("   reset     - Reset the firewall to its default state")
+        print("   exit      - Exit the game")
+    elif command == "scan":
+        scan_network()
+    elif command == "recon":
+        perform_recon()
+    elif command == "exploit":
+        exploit_vulnerability()
+    elif command == "retrieve":
+        retrieve_data()
+    elif command == "reset":
+        reset_firewall()
+    else:
+        print("Unknown command. Type 'help' for available commands.")
 
-# Simulate performing reconnaissance on the firewall
-def perform_recon():
-    print("-- Performing reconnaissance on the firewall...")
-    time.sleep(3)  # Simulate a longer recon process
-    recon_info = random.choice(["Weak password detected", "Encrypted traffic detected", "No vulnerabilities found"])
-    print(f"-- Recon complete: {recon_info}")
-
-# Simulate exiting the game
 def exit_game():
     print("-- Exiting game...")
     time.sleep(1)
     sys.exit()
 
-# Main loop to interact with the user
 def main():
     print("-- Welcome to the QuantumHeist Terminal! Type 'help' for commands.")
     
