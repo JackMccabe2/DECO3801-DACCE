@@ -13,25 +13,27 @@ import { useState } from "react";
 import { FaLongArrowAltLeft } from "react-icons/fa";
 
 const Login = ({ onNavigate }) => {
+  
   const { setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
   const { sendMessage } = useWebSocket();
-
+  
   const handleClick = (page) => {
     const loginPayload = { type: "NAV", message: page };
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK") {
-        onNavigate(page);
+        onNavigate(page)
       } else {
-        alert("Navigation failed.");
+        alert("Navigation failed.")
         return;
       }
     });
   };
 
-  const handleLogin = async (page) => {
-    if (tempUsername === "") {
+  const handleLogin = async ( page ) => {
+    
+    if (tempUsername  === "") {
       alert("Username blank");
       return;
     }
@@ -40,9 +42,9 @@ const Login = ({ onNavigate }) => {
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK USER LOGIN") {
-        alert("Welcome back, " + tempUsername + "!");
+        alert("user logged in: " + tempUsername + "!");
         setUser(response.user);
-        onNavigate(page);
+        onNavigate(page)
       } else if (response.status === "ERR USER NOT EXIST") {
         alert("There is no user with this username.");
         return;
@@ -52,7 +54,7 @@ const Login = ({ onNavigate }) => {
       }
     });
   };
-
+  
   return (
     <Container
       fluid

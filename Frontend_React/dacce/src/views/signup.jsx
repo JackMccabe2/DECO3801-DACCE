@@ -14,40 +14,33 @@ import PolicyModal from "../components/policymodal";
 const Signup = ({ onNavigate }) => {
   const { user, setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
-  const { sendMessage, handleRequest } = useWebSocket();
-  const [showPolicyModal, setShowPolicyModal] = useState(false);
+  const { sendMessage } = useWebSocket();
 
   const handleClick = (page) => {
-    handleRequest(
-      page,
-      { type: "NAV", message: page },
-      onNavigate(page), // success callback
-      (errMsg) => alert("Navigation failed:", errMsg) // failure callback
-    );
-  };
+    
+    const loginPayload = { type: "NAV", message: page };
 
-  // Show the private policy modal when the "Create" button is clicked.
-  const handleCreateClick = () => {
-    if (tempUsername === "") {
-      alert("Please enter a valid username.");
-      return;
-    }
-    setShowPolicyModal(true);
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        onNavigate(page)
+      } else {
+        alert("Navigation failed.")
+        return;
+      }
+    });
   };
 
   const handleSignup = async (page) => {
-    // if (tempUsername === "") {
-    //   alert("Username blank");
-    //   return;
-    // }
-
-    setShowPolicyModal(false);
+    if (tempUsername === "") {
+      alert("Username blank");
+      return;
+    }
 
     const loginPayload = { type: "POST", username: tempUsername };
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK USER CREATED") {
-        alert("User created: " + tempUsername + "!");
+        alert("user created: " + tempUsername + "!");
         setUser(response.user);
         onNavigate(page);
       } else if (response.status === "ERR USER EXISTS") {
@@ -91,8 +84,7 @@ const Signup = ({ onNavigate }) => {
             text="Create"
             colour="yellow"
             onClick={() => {
-              // handleSignup("dashboard");
-              handleCreateClick("dashboard");
+              handleSignup("dashboard");
             }}
           />
         </Col>
@@ -126,14 +118,6 @@ const Signup = ({ onNavigate }) => {
           </div>
         </Col>
       </Row>
-
-      {showPolicyModal && (
-        <PolicyModal
-          show={true}
-          onConfirm={() => handleSignup("dashboard")}
-          onClose={() => setShowPolicyModal(false)}
-        />
-      )}
     </Container>
   );
 };
