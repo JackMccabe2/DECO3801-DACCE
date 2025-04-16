@@ -32,12 +32,10 @@ gameId = []
 wss.on('connection', (ws) => {
     console.log('[Server] A client was connected.');
 
-    gameId.push(Math.floor(Math.random() * 100))
-
     ws.on('message', async (message) => {
         
-        await handleMessage(ws, message, client);
-        console.log("game ids: " + gameId)
+        await handleMessage(ws, message, client, gameId);
+        //console.log("game ids: " + gameId)
 
     });
 

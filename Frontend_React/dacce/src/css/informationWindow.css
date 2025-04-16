@@ -33,3 +33,12 @@
   right: -30px;
   cursor: pointer;
 }
+
+.scrollable-table {
+  max-height: 300px; /* Adjust height as needed */
+  overflow-y: auto;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: white;
+}

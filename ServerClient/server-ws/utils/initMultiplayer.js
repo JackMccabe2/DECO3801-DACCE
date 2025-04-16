@@ -1,15 +1,17 @@
 
-async function getPuzzle(ws) {
-    
-    response = {status: "PUZZLE", 
-        data: 
-            {question: "whats the most youve ever lost on a coin toss",
-                answer: "everything"
-            }
-        }
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-    ws.send(JSON.stringify(response));
+async function initMultiplayer(ws, gameId) {
+    
+    gameId.push(Math.floor(Math.random() * 100))
+
+    await wait(1000);
+    console.log(gameId)
+
+
 
 }
 
-module.exports = { getPuzzle };
+module.exports = { initMultiplayer };
