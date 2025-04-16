@@ -35,8 +35,6 @@ wss.on('connection', (ws) => {
     gameId.push(Math.floor(Math.random() * 100))
 
     ws.on('message', async (message) => {
-
-
         
         await handleMessage(ws, message, client);
         console.log("game ids: " + gameId)
