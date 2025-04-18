@@ -44,7 +44,7 @@ const Matching = ({ onNavigate }) => {
             <h1>{formatTime(timer)}</h1>
           </div>
         </Col>
-        <Col xs={12} className="custom-title text-center mb-5">
+        <Col xs={12} className="custom-title text-center mb-1">
           <h1>Matching Player...</h1>
         </Col>
       </Row>
