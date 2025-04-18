@@ -28,8 +28,16 @@ const playGame = ({ onNavigate }) => {
             </Col>
             <Col sm={12} md={5} lg={5} className="custom-playmode-container">
               <h4 className="custom-title">PvC</h4>
-              <Button text="Single Player" colour="yellow"></Button>
-              <Button text="Multi Player" colour="yellow"></Button>
+              <Button
+                text="Single Player"
+                colour="yellow"
+                onClick={() => onNavigate("matching")}
+              ></Button>
+              <Button
+                text="Multi Player"
+                colour="yellow"
+                onClick={() => onNavigate("matching")}
+              ></Button>
             </Col>
           </Row>
         </Container>

@@ -12,6 +12,7 @@ import Game from "./views/game";
 import Leaderboard from "./views/leaderboard";
 import MatchHistory from "./views/matchHistory";
 import Matching from "./views/matching";
+import MatchFound from "./views/matchfound";
 
 import Signup from "./views/signup";
 import Login from "./views/login";
@@ -35,6 +36,7 @@ function App() {
           currentView !== "signup" &&
           currentView !== "login" &&
           currentView !== "matching" &&
+          currentView !== "matchfound" &&
           currentView !== "game" && (
             <Header currentView={currentView} onNavigate={renderView} />
           )}
@@ -52,6 +54,9 @@ function App() {
           {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
           {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
           {currentView === "matching" && <Matching onNavigate={renderView} />}
+          {currentView === "matchfound" && (
+            <MatchFound onNavigate={renderView} />
+          )}
           {currentView === "game" && <Game onNavigate={renderView} />}
           {currentView === "leaderboard" && (
             <Leaderboard onNavigate={renderView} />

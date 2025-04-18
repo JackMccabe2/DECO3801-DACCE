@@ -4,13 +4,17 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 
+import Matched from "./matchfound";
+
 import ProfilePhoto from "../assets/profile.png";
 
 import "../css/matching.css";
 
 const Matching = ({ onNavigate }) => {
   const [timer, setTimer] = useState(0);
+  const [dots, setDots] = useState("");
 
+  // Timer
   useEffect(() => {
     const interval = setInterval(() => {
       setTimer((prev) => prev + 1);
@@ -28,6 +32,21 @@ const Matching = ({ onNavigate }) => {
     )}`;
   };
 
+  // Dots effect
+  useEffect(() => {
+    const dotInterval = setInterval(() => {
+      setDots((prev) => (prev.length < 3 ? prev + "." : ""));
+    }, 500);
+
+    return () => clearInterval(dotInterval);
+  }, []);
+
+  // Hard coded a timer here to simulate the matching process.
+  // To-do: Replace this with our server response (& player data)?
+  if (timer >= 5) {
+    return <Matched onNavigate={onNavigate} />;
+  }
+
   return (
     <Container
       fluid
@@ -44,8 +63,8 @@ const Matching = ({ onNavigate }) => {
             <h1>{formatTime(timer)}</h1>
           </div>
         </Col>
-        <Col xs={12} className="custom-title text-center mb-1">
-          <h1>Matching Player...</h1>
+        <Col xs={12} className="custom-match-title text-center mb-1">
+          <h1>Matching Player{dots}</h1>
         </Col>
       </Row>
 
