@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-// import Button from "react-bootstrap/Button";
+
 import Button from "../components/button";
 import ProfilePhoto from "../assets/profile.png";
 
@@ -12,7 +12,7 @@ const Matched = ({ onNavigate }) => {
   const [timer, setTimer] = useState(30);
   const maxTime = 30;
 
-  // Countdown timer, resets the page to "matching" when the timer reaches 0
+  // Countdown timer, resets the page to "playgame/matching" when the timer reaches 0
   useEffect(() => {
     const interval = setInterval(() => {
       setTimer((prev) => {
