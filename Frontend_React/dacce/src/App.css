@@ -40,26 +40,4 @@
   flex-direction: column;
 }
 
-/* .header {
-  display: flex;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  height: 15%;
-  width: 100%;
-  padding: 2rem 2rem 0 2rem;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: nowrap;
-}
 
-.main-content {
-  display: flex;
-  flex: 1;
-  width: 100%;
-  padding: 2rem;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: nowrap;
-} */

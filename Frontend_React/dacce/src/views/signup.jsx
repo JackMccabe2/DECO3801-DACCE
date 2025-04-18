@@ -12,8 +12,9 @@ import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 
 import { FaLongArrowAltLeft } from "react-icons/fa";
+import { PiSmileyFill } from "react-icons/pi";
+import { PiSmileySadFill } from "react-icons/pi";
 import { MdError } from "react-icons/md";
-import { FaCheckCircle } from "react-icons/fa";
 
 import PolicyModal from "../components/policymodal";
 
@@ -40,7 +41,7 @@ const Signup = ({ onNavigate }) => {
   const handleCreateClick = () => {
     if (tempUsername === "") {
       setToastMessage("Please enter a valid username.");
-      setToastType("error");
+      setToastType("blank");
       setShowToast(true);
       return;
     }
@@ -63,7 +64,7 @@ const Signup = ({ onNavigate }) => {
           onNavigate(page);
         }, 3000);
       } else if (response.status === "ERR USER EXISTS") {
-        setToastMessage("A user with this username already exists.");
+        setToastMessage("Username already exists.");
         setToastType("error");
         setShowToast(true);
         return;
@@ -175,20 +176,29 @@ const Signup = ({ onNavigate }) => {
                 textAlign: "center",
               }}
             >
-              {toastType === "error" && (
+              {toastType === "blank" && (
                 <MdError
                   style={{
                     marginRight: "0.5rem",
-                    fontSize: "1.2rem",
+                    fontSize: "1.5rem",
+                    color: "var(--dark-red)",
+                  }}
+                />
+              )}
+              {toastType === "error" && (
+                <PiSmileySadFill
+                  style={{
+                    marginRight: "0.5rem",
+                    fontSize: "1.5rem",
                     color: "var(--dark-red)",
                   }}
                 />
               )}
               {toastType === "success" && (
-                <FaCheckCircle
+                <PiSmileyFill
                   style={{
                     marginRight: "0.5rem",
-                    fontSize: "1.2rem",
+                    fontSize: "1.5rem",
                     color: "var(--dark-green)",
                   }}
                 />
