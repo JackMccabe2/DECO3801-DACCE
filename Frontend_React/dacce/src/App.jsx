@@ -10,6 +10,7 @@ import Dashboard from "./views/dashboard";
 import PlayGame from "./views/playGame";
 import Game from "./views/game";
 import Leaderboard from "./views/leaderboard";
+import MatchHistory from "./views/matchHistory";
 
 import Signup from "./views/signup";
 import Login from "./views/login";
@@ -52,6 +53,7 @@ function App() {
           {currentView === "leaderboard" && (
             <Leaderboard onNavigate={renderView} />
           )}
+          {currentView === "history" && <MatchHistory onNavigate={renderView} />}
         </div>
         <Background />
       </WebSocketProvider>

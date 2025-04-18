@@ -40,9 +40,12 @@ function Dashboard({ onNavigate }) {
             <Col xs={12} md={6} className="justify-content-center">
               <Button
                 btnHover={"dashboard-btn-hover"}
-                text="History"
+                text="Match History"
                 textcolour="var(--black)"
                 background="var(--white)"
+                onClick={() => {
+                  onNavigate("history");
+                }}
               />
             </Col>
           </Row>

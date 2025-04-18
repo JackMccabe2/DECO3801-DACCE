@@ -1,0 +1,81 @@
+.custom-matchhistory-container {
+  border-radius: 10px;
+  height: 88%;
+  background-color: #eae2b7;
+  box-shadow: 0 0 0 10px #fcbf49, 5px 8px 4px rgba(0, 0, 0, 0.3);
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.custom-matchhistory-data-container {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 0;
+  height: 90%;
+}
+
+.custom-matchhistory-record-container {
+  overflow-y: scroll;
+  height: calc(100% - 70px);
+}
+
+.custom-trapezoid {
+  width: 500px;
+  height: 80px;
+  background-image: linear-gradient(to right, #fcbf49, #96722b);
+  border-radius: 20px;
+  transform: perspective(300px) rotateX(3deg) skewX(-10deg);
+  color: white;
+  display: flex;
+  font-size: 3rem;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  top: -50px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.custom-close-btn {
+  width: 60px;
+  height: auto;
+  display: flexbox;
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  cursor: pointer;
+}
+
+.custom-matchhistory-title {
+  font-size: 1.5rem;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+}
+
+.custom-matchhistory-record {
+  font-size: 1.5rem;
+  height: 50px;
+  display: flex;
+  background-color: var(--dark-blue);
+  color: white;
+  padding: 40px 0px;
+  text-align: center;
+  align-content: center;
+  border-radius: 30px;
+  border: solid 5px white;
+  box-shadow: 5px 8px 4px rgba(0, 0, 0, 0.3);
+}
+
+.win {
+  background-color: var(--green);
+}
+
+.defeat {
+  background-color: var(--red);
+}

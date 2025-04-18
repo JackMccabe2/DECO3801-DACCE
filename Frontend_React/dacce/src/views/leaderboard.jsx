@@ -69,7 +69,7 @@ const Leaderboard = ({ onNavigate }) => {
             fluid
             className="custom-leaderboard-record-container m-0 mt-4"
           >
-            {leaderboardData.map((record, index) => (
+            {leaderboardData?.map((record, index) => (
               <LeaderboardRecord data={record} key={index} />
             ))}
           </Container>
