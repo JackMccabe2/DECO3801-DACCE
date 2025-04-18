@@ -15,6 +15,7 @@ import { useState } from "react";
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import { PiSmileyFill } from "react-icons/pi";
 import { PiSmileySadFill } from "react-icons/pi";
+import { MdError } from "react-icons/md";
 
 const Login = ({ onNavigate }) => {
   const { setUser } = useUser();
@@ -39,7 +40,9 @@ const Login = ({ onNavigate }) => {
 
   const handleLogin = async (page) => {
     if (tempUsername === "") {
-      alert("Username blank");
+      setToastMessage("Please enter a valid username.");
+      setToastType("blank");
+      setShowToast(true);
       return;
     }
 
@@ -154,6 +157,15 @@ const Login = ({ onNavigate }) => {
                 textAlign: "center",
               }}
             >
+              {toastType === "blank" && (
+                <MdError
+                  style={{
+                    marginRight: "0.5rem",
+                    fontSize: "1.5rem",
+                    color: "var(--dark-red)",
+                  }}
+                />
+              )}
               {toastType === "error" && (
                 <PiSmileySadFill
                   style={{
