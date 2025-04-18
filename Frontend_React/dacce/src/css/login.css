@@ -35,3 +35,19 @@
 .return-btn:hover {
     color: #333 !important;
 }
+
+
+.custom-toast.error {
+  background-color: var(--lightest-red) !important;
+  color: var(--dark-red) !important; 
+}
+
+.custom-toast.success {
+  background-color: var(--lightest-green) !important;
+  color: var(--dark-green) !important;
+}
+
+.custom-toast-body {
+  font-size: 1rem;
+  letter-spacing: 1px;
+}

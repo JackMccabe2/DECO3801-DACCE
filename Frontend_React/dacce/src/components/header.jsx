@@ -112,6 +112,7 @@ const Navbar = ({ currentView, onNavigate }) => {
               onClick={() => {
                 if (window.confirm("Are you sure you want to log out?")) {
                   onNavigate("landing");
+                  window.location.reload();
                 }
               }}
             >

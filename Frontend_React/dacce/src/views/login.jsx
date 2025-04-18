@@ -5,17 +5,24 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
+import Toast from "react-bootstrap/Toast";
+import ToastContainer from "react-bootstrap/ToastContainer";
 
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 import { useState } from "react";
 
 import { FaLongArrowAltLeft } from "react-icons/fa";
+import { PiSmileyFill } from "react-icons/pi";
+import { PiSmileySadFill } from "react-icons/pi";
 
 const Login = ({ onNavigate }) => {
   const { setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
   const { sendMessage } = useWebSocket();
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("error");
 
   const handleClick = (page) => {
     const loginPayload = { type: "NAV", message: page };
@@ -40,11 +47,20 @@ const Login = ({ onNavigate }) => {
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK USER LOGIN") {
-        alert("Welcome back, " + tempUsername + "!");
-        setUser(response.user);
-        onNavigate(page);
+        setToastMessage(
+          "Welcome back, " + tempUsername + "! " + "Redirecting..."
+        );
+        setToastType("success");
+        setShowToast(true);
+
+        setTimeout(() => {
+          setUser(response.user);
+          onNavigate(page);
+        }, 2000);
       } else if (response.status === "ERR USER NOT EXIST") {
-        alert("There is no user with this username.");
+        setToastMessage("There is no user with this username.");
+        setToastType("error");
+        setShowToast(true);
         return;
       } else {
         console.error("Login failed:", response.message);
@@ -73,6 +89,11 @@ const Login = ({ onNavigate }) => {
               className="custom-input-field"
               value={tempUsername}
               onChange={(e) => setTempUsername(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleLogin("dashboard");
+                }
+              }}
             />
           </Form.Group>
         </Col>
@@ -114,6 +135,48 @@ const Login = ({ onNavigate }) => {
           </div>
         </Col>
       </Row>
+
+      {/* Popup message with delay and autohide (Style changes depend on condition) */}
+      <ToastContainer position="top-center" className="p-4 mt-3">
+        <Toast
+          className={`custom-toast ${toastType}`}
+          onClose={() => setShowToast(false)}
+          show={showToast}
+          delay={3000}
+          autohide
+        >
+          <Toast.Body className="custom-toast-body">
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+              }}
+            >
+              {toastType === "error" && (
+                <PiSmileySadFill
+                  style={{
+                    marginRight: "0.5rem",
+                    fontSize: "1.5rem",
+                    color: "var(--dark-red)",
+                  }}
+                />
+              )}
+              {toastType === "success" && (
+                <PiSmileyFill
+                  style={{
+                    marginRight: "0.5rem",
+                    fontSize: "1.5rem",
+                    color: "var(--dark-green)",
+                  }}
+                />
+              )}
+              {toastMessage}
+            </div>
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
     </Container>
   );
 };

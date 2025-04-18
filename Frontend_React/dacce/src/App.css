@@ -2,14 +2,20 @@
   height: 100vh;
   padding: 2rem;
   text-align: center;
+  letter-spacing: 1px;
+
   
   --yellow: #FCBF49;
   --light-yellow: #EAE2B7;
   --red: #D62828;
   --lighter-red: #D44949;
+  --lightest-red: #f8d7da;
+  --dark-red:#721c24;
   --orange: #F77F00;
   --dark-blue: #003049;
   --green: #00CB76;
+  --lightest-green: #d4edda;
+  --dark-green:#155724;
   --white: #FFF;
   --black: #000;
   --grey: #f0f0f0;
