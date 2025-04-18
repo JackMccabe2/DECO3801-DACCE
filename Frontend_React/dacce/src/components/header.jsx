@@ -104,7 +104,14 @@ const Navbar = ({ currentView, onNavigate }) => {
                 >
                   <PiRankingFill className="menu-icon" /> &nbsp; Leaderboard
                 </a>
-                <a className="fs-5 mx-5 menu-item" href="#history">
+                <a
+                  className="fs-5 mx-5 menu-item"
+                  href="#history"
+                  onClick={() => {
+                    onNavigate("history");
+                    setShow(false);
+                  }}
+                >
                   <LuHistory className="menu-icon" /> &nbsp; History
                 </a>
               </div>
