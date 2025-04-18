@@ -81,7 +81,14 @@ const Navbar = ({ currentView, onNavigate }) => {
           {currentView !== "dashboard" && (
             <div className="menu-top">
               <div>
-                <a className="fs-5 mx-5 menu-item" href="#dashboard">
+                <a
+                  className="fs-5 mx-5 menu-item"
+                  href="#dashboard"
+                  onClick={() => {
+                    onNavigate("dashboard");
+                    setShow(false);
+                  }}
+                >
                   <MdSpaceDashboard className="menu-icon" /> &nbsp; Dashboard
                 </a>
                 <a className="fs-5 mx-5 menu-item" href="#profile">
@@ -90,7 +97,10 @@ const Navbar = ({ currentView, onNavigate }) => {
                 <a
                   className="fs-5 mx-5 menu-item"
                   href="#leaderboard"
-                  onClick={() => onNavigate("leaderboard")}
+                  onClick={() => {
+                    onNavigate("leaderboard");
+                    setShow(false);
+                  }}
                 >
                   <PiRankingFill className="menu-icon" /> &nbsp; Leaderboard
                 </a>

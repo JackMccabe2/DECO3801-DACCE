@@ -21,7 +21,7 @@ const playGame = ({ onNavigate }) => {
               <Button
                 text="Find Match"
                 colour="yellow"
-                onClick={() => onNavigate("game")}
+                onClick={() => onNavigate("matching")}
               ></Button>
               <Col sm={12} md={2} lg={2}></Col>
               <Button text="Invite" colour="orange"></Button>

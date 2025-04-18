@@ -7,7 +7,6 @@ import Row from "react-bootstrap/Row";
 import { IoPersonCircleOutline } from "react-icons/io5";
 
 function Dashboard({ onNavigate }) {
-
   return (
     <>
       <div className="dashboard-wrap w-75">
