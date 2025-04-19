@@ -63,12 +63,13 @@ const Matching = ({ onNavigate }) => {
             <h1>{formatTime(timer)}</h1>
           </div>
         </Col>
-        <Col xs={12} className="custom-match-title text-center mb-1">
+        <Col xs={12} className="custom-matching-title text-center mb-1">
           <h1>Matching Player{dots}</h1>
         </Col>
       </Row>
 
       {/* Profile */}
+      {/* Shared profile photo settings: matching.css & matchfound.css & gameload.css */}
       <Row className="custom-profile-row d-flex align-items-center justify-content-center">
         <Col xs={4} className="d-flex justify-content-end">
           <img
