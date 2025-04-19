@@ -40,9 +40,15 @@ export const options = {
       display: false,
     },
   },
+  scales: {
+    y: {
+      min: 0,
+      max: 100,
+    },
+  }
 };
 
-const labels = ["Leaderboard Score", "Firewall Skill", "Encipher Skill"];
+const labels = ["Firewall Skill", "Encipher Skill"];
 
 // Run npm install first to run chart.js library
 // Data can be replaced with the actual data from the database
@@ -50,7 +56,7 @@ const data = {
   labels,
   datasets: [
     {
-      data: [1000, 40, 10],  // Change value here
+      data: [40, 10],  // Change value here
       backgroundColor: 'rgba(255, 99, 132, 0.5)',
     },
   ],
