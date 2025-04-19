@@ -22,6 +22,9 @@ function Dashboard({ onNavigate }) {
                 text="Profile"
                 textcolour="var(--black)"
                 background="var(--white)"
+                onClick={() => {
+                  onNavigate("profile");
+                }}
               />
             </Col>
           </Row>

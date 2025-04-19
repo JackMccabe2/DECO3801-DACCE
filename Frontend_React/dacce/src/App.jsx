@@ -11,6 +11,7 @@ import PlayGame from "./views/playGame";
 import Game from "./views/game";
 import Leaderboard from "./views/leaderboard";
 import MatchHistory from "./views/matchHistory";
+import Profile from "./views/profile";
 
 import Signup from "./views/signup";
 import Login from "./views/login";
@@ -48,6 +49,7 @@ function App() {
           {currentView === "signup" && <Signup onNavigate={renderView} />}
           {currentView === "login" && <Login onNavigate={renderView} />}
           {currentView === "dashboard" && <Dashboard onNavigate={renderView} />}
+          {currentView === "profile" && <Profile onNavigate={renderView} />}
           {currentView === "playgame" && <PlayGame onNavigate={renderView} />}
           {currentView === "game" && <Game onNavigate={renderView} />}
           {currentView === "leaderboard" && (
