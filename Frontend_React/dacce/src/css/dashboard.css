@@ -13,5 +13,5 @@
 
 
 .play-btn-hover:hover {
-  background-color: var(--lighter-red) !important;
+  background-color: var(--hover-red) !important;
 }
