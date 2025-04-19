@@ -30,7 +30,7 @@ const GameLoad = ({ onNavigate }) => {
 
   const barWidth = timer >= maxTime ? 100 : (timer / maxTime) * 100;
 
-  //   Dots effect
+  // Dots effect
   useEffect(() => {
     const dotInterval = setInterval(() => {
       setDots((prev) => (prev.length < 3 ? prev + "." : ""));
