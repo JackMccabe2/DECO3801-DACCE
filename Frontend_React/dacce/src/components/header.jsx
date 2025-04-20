@@ -91,7 +91,14 @@ const Navbar = ({ currentView, onNavigate }) => {
                 >
                   <MdSpaceDashboard className="menu-icon" /> &nbsp; Dashboard
                 </a>
-                <a className="fs-5 mx-5 menu-item" href="#profile">
+                <a
+                  className="fs-5 mx-5 menu-item"
+                  href="#profile"
+                  onClick={() => {
+                    onNavigate("profile");
+                    setShow(false);
+                  }}
+                >
                   <IoPersonCircleOutline className="menu-icon" /> &nbsp; Profile
                 </a>
                 <a
