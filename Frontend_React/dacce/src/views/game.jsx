@@ -5,6 +5,10 @@ import React, { useEffect, useState, useRef } from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 // Import CSS
 import "../css/game.css";
@@ -17,29 +21,30 @@ import Terminal from "../components/terminal";
 import { useWebSocket } from "../contexts/WebSocketContext";
 
 const Game = ({ onNavigate }) => {
-
-  const [puzzle, setPuzzle] = useState("")
+  const [puzzle, setPuzzle] = useState("");
   const { sendMessage } = useWebSocket();
   const hasFetchedPuzzle = useRef(false);
   // Timer
   const [timeLeft, setTimeLeft] = useState(60); // second
 
   useEffect(() => {
-
     if (hasFetchedPuzzle.current) return; // prevent repeat
     hasFetchedPuzzle.current = true;
 
-    const loginPayload = { type: "GET PUZZLE", message: "payload to get puzzle" };
+    const loginPayload = {
+      type: "GET PUZZLE",
+      message: "payload to get puzzle",
+    };
     sendMessage(loginPayload, (response) => {
       if (response.status === "PUZZLE") {
-        setPuzzle(response.data)
-        console.log("set answer to: " + response.data.answer)
+        setPuzzle(response.data);
+        console.log("set answer to: " + response.data.answer);
       } else {
-        alert("Get puzzle failed.")
+        alert("Get puzzle failed.");
         return;
       }
     });
-  }, []); //
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -62,7 +67,7 @@ const Game = ({ onNavigate }) => {
       alert("Puzzle not loaded yet.");
       return;
     }
-  
+
     if (input === puzzle.answer) {
       alert("Correct answer!");
       // Do something like advance stage or send to server
@@ -77,10 +82,18 @@ const Game = ({ onNavigate }) => {
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const leaveGame = () => {
+    setShowLeaveModal(true);
+  };
+
   return (
     <>
       <Container fluid className="game-wrapper">
-        <Row xs="auto" className="d-flex align-items-start justify-content-start">
+        <Row
+          xs="auto"
+          className="d-flex align-items-start justify-content-start"
+        >
           <Col>
             <div className="custom-state-container px-4 py-3 d-flex align-items-center">
               <span className="custom-timer-text">Stage 2</span>
@@ -104,6 +117,109 @@ const Game = ({ onNavigate }) => {
           </Col>
         </Row>
       </Container>
+
+      {/* Tool Window */}
+      <AppWindow
+        positionx="250"
+        positiony="100"
+        width="200"
+        height="100"
+        padding="3"
+        icon={
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            className="bi bi-wrench"
+            viewBox="0 0 16 16"
+          >
+            <path d="M.102 2.223A3.004 3.004 0 0 0 3.78 5.897l6.341 6.252A3.003 3.003 0 0 0 13 16a3 3 0 1 0-.851-5.878L5.897 3.781A3.004 3.004 0 0 0 2.223.1l2.141 2.142L4 4l-1.757.364zm13.37 9.019.528.026.287.445.445.287.026.529L15 13l-.242.471-.026.529-.445.287-.287.445-.529.026L13 15l-.471-.242-.529-.026-.287-.445-.445-.287-.026-.529L11 13l.242-.471.026-.529.445-.287.287-.445.529-.026L13 11z" />
+          </svg>
+        }
+        title="Toolbox"
+        content={
+          <>
+            <Row className="d-flex align-items-center justify-content-center">
+              <Col className="d-flex align-items-center justify-content-center">
+                <OverlayTrigger
+                  key="bottom"
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id="tooltip-bottom">Game Tips</Tooltip>
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="30"
+                    height="30"
+                    fill="currentColor"
+                    className="bi bi-info-circle-fill custom-icon"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2" />
+                  </svg>
+                </OverlayTrigger>
+              </Col>
+              <Col className="d-flex align-items-center justify-content-center">
+                <OverlayTrigger
+                  key="bottom"
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id="tooltip-bottom">Leave the game</Tooltip>
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="30"
+                    height="30"
+                    fill="currentColor"
+                    className="bi bi-door-closed-fill custom-icon"
+                    viewBox="0 0 16 16"
+                    onClick={() => {
+                      leaveGame();
+                    }}
+                  >
+                    <path d="M12 1a1 1 0 0 1 1 1v13h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2a1 1 0 0 1 1-1zm-2 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
+                  </svg>
+                </OverlayTrigger>
+              </Col>
+            </Row>
+          </>
+        }
+      />
+
+      {showLeaveModal && (
+        <div className="modal-overlay">
+          <div className="modal show" style={{ display: "block" }}>
+            <Modal.Dialog className="modal-dialog-centered">
+              <Modal.Header closeButton onHide={() => setShowLeaveModal(false)}>
+                <Modal.Title>Leave Game?</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <p>
+                  Your progress will be recorded as a failure, and you’ll lose
+                  100 points on the leaderboard score. Still want to leave?
+                </p>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowLeaveModal(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => onNavigate("dashboard")}
+                >
+                  Confirm
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </div>
+        </div>
+      )}
 
       {/* Puzzle */}
       <AppWindow
