@@ -163,7 +163,7 @@ if __name__ == "__main__":
         difficulty_vector = torch.tensor([0.7, 0.6, 0.5])
         generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
         puzzle = xor_aes()
-        print(json.dumps(puzzle))
+        #print(json.dumps(puzzle))
 
 """
 puzzle_id	UUID	Unique ID for each puzzle
