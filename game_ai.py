@@ -7,6 +7,8 @@ from VAE import vae_model
 from torch.utils.data import DataLoader, TensorDataset
 import psycopg2
 import Database
+import json
+import sys
 
 def aes():
     from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -62,11 +64,20 @@ def xor_aes():
     key = bytes([random.randint(0, 255) for _ in range(2)])
     expected = bytes([p ^ k for p, k in zip(plaintext, key)])
     
-    question = f"XOR Puzzle!\nPlaintext : {plaintext.hex()}\nKey       : {key.hex()}\nEnter the result of XOR-ing each byte:"
+    #question = f"XOR Puzzle!\nPlaintext : {plaintext.hex()}\nKey       : {key.hex()}\nEnter the result of XOR-ing each byte:"
+    question = {
+        "puzzle": "XOR",
+        "plaintext": plaintext.hex(),
+        "key": key.hex(),
+        "instruction": "Enter the result of XOR-ing each byte (in hex):"
+    }
 
     answer = input("Your answer: ").strip().lower()
-    # return question, answer separate as a JSON
-    return question, answer
+    #return question, answer
+    return {
+        "question": question,
+        "answer": expected.hex()
+    }
 
 def play_puzzle(puzzle_vector):
 
@@ -146,6 +157,13 @@ generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
 
 print("\nGenerated Puzzle:", generated_puzzle)
 print(play_puzzle(generated_puzzle) )
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "xor_aes":
+        difficulty_vector = torch.tensor([0.7, 0.6, 0.5])
+        generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
+        puzzle = xor_aes()
+        print(json.dumps(puzzle))
 
 """
 puzzle_id	UUID	Unique ID for each puzzle
