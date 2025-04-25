@@ -14,7 +14,10 @@ async function handleMessage(ws, message, client, gameId) {
             // Send "OK" back to the client
             await okMessage(ws, data);
         } else if (data.status === 'log') {
-            console.log('[Client] log: ', data);
+            console.log('[Client] log: ' + data);
+        } else if (data.type === 'log') {
+            console.log('[Client] log username: ' + data.username);
+            await initMultiplayer(ws, gameId, data.username);
         } else if (data.type === 'POST') {
             await createUser(ws, data, client);
         } else if (data.type === 'GET USER') {

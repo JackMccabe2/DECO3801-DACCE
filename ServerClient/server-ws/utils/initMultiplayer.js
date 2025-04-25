@@ -3,14 +3,14 @@ function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function initMultiplayer(ws, gameId) {
+async function initMultiplayer(ws, gameId, username) {
     
-    gameId.push(Math.floor(Math.random() * 100))
+    const id = Math.random().toString(16).slice(2);
+
+    gameId.push({ [id]: username });
 
     await wait(1000);
     console.log(gameId)
-
-
 
 }
 
