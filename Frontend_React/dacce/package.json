@@ -13,14 +13,8 @@
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
     "bootstrap": "^5.3.3",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
     "chart": "^0.1.2",
     "chart.js": "^4.4.9",
->>>>>>> Stashed changes
     "html5-websocket": "^2.0.4",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
