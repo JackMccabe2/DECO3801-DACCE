@@ -8,11 +8,27 @@ import Matched from "./matchfound";
 
 import ProfilePhoto from "../assets/profile.png";
 
+import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
+
 import "../css/matching.css";
 
 const Matching = ({ onNavigate }) => {
   const [timer, setTimer] = useState(0);
   const [dots, setDots] = useState("");
+  const { user } = useUser();
+  const { sendMessage } = useWebSocket();
+
+  // Set user game
+  useEffect(() => {
+      const loginPayload = { type: "log", 
+        data: "initialise game",
+        username: user.username
+       };
+  
+      sendMessage(loginPayload, (response) => {
+      });
+  }, []);
 
   // Timer
   useEffect(() => {
