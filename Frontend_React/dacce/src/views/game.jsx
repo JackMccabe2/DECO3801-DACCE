@@ -19,10 +19,12 @@ import Terminal from "../components/terminal";
 
 // Import contexts
 import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
 
 const Game = ({ onNavigate }) => {
   const [puzzle, setPuzzle] = useState("");
   const { sendMessage } = useWebSocket();
+  const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
   // Timer
   const [timeLeft, setTimeLeft] = useState(60); // second
@@ -85,6 +87,19 @@ const Game = ({ onNavigate }) => {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const leaveGame = () => {
     setShowLeaveModal(true);
+  };
+
+  const exitMultiplayerGame = (user) => {
+    const loginPayload = { type: "EXIT M GAME", message: user };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        return;
+      } else {
+        alert("Leaving game failed.");
+        return;
+      }
+    });
   };
 
   return (
@@ -211,7 +226,10 @@ const Game = ({ onNavigate }) => {
                 </Button>
                 <Button
                   variant="primary"
-                  onClick={() => onNavigate("dashboard")}
+                  onClick={() => {
+                    exitMultiplayerGame(user);
+                    onNavigate("dashboard")}
+                  }
                 >
                   Confirm
                 </Button>

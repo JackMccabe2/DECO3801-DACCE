@@ -4,7 +4,8 @@ const { createUser } = require('./initPlayer'); // Import functions
 const { loginUser } = require('./loginPlayer');
 const { initMultiplayer } = require('./initMultiplayer');
 const { getPuzzle } = require('./getPuzzle');
-const { getLeaderboard } = require('./getLeaderboard')
+const { getLeaderboard } = require('./getLeaderboard');
+const { leaveMultiplayerGame } = require('./leaveMultiplayerGame');
 
 async function handleMessage(ws, message, client, gameId) {
     try {
@@ -29,7 +30,9 @@ async function handleMessage(ws, message, client, gameId) {
         } else if (data.type === 'GET PUZZLE') {
             // Get puzzle question and answer
             await getPuzzle(ws);
-            await initMultiplayer(ws, gameId);
+            //await initMultiplayer(ws, gameId);
+        } else if (data.type === 'EXIT M GAME') {
+            await leaveMultiplayerGame(ws, gameId, data);
         } else {
             // Send "OK" back to the client
             await okMessage(ws, data);
