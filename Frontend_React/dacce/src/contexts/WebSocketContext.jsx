@@ -17,8 +17,16 @@ export const WebSocketProvider = ({ children }) => {
 
     ws.current.onopen = () => {
       console.log("WebSocket connected");
-      setIsConnected(true);
-      ws.current.send(JSON.stringify({ type: "init", username: "connection" }));
+      const loginPayload = { type: "init", username: "connection" };
+      
+      sendMessage(loginPayload, (response) => {
+        if (response.status === "OK") {
+          setIsConnected(true);
+        } else {
+          alert("Unable to connect.");
+          return;
+        }
+      });
     };
     
     ws.current.onmessage = (event) => {

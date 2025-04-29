@@ -1,10 +1,11 @@
 // index1.js
 
 // Dependencies
-const express = require('express');
-const WebSocket = require('ws');
-const { Client } = require('pg');
-const { handleMessage } = require('./utils/handleMessage')
+import express from 'express';
+import { WebSocketServer } from 'ws';
+import pkg from 'pg';
+const { Client } = pkg;
+import { handleMessage } from './utils/handleMessage.js';
 
 // Initialize Express Server
 const server = express().listen(8080, () => {
@@ -12,9 +13,10 @@ const server = express().listen(8080, () => {
 });
 
 // Initialize WebSocket Server
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocketServer({ server }); // Use WebSocketServer here
 
 // PostgreSQL Connection 
+
 const client = new Client({
   host: "localhost",
   user: "jackmccabe",
@@ -26,12 +28,22 @@ const client = new Client({
 /*
 const client = new Client({
   host: "localhost",
-  user: "josh",
-  password: "password1",
+  user: "georgiadocherty",
+  password: "password",
   database: "postgres",
   port: 5432
 });
 */
+/*
+const client = new Client({
+  host: "localhost
+  user: "josh",
+  password: "password1",
+  database: "postgres",
+  port: 5432"
+  });
+*/
+
 client.connect()
   .then(() => console.log("Connected to PostgreSQL"))
   .catch(err => console.error("Error connecting to PostgreSQL:", err));
@@ -47,7 +59,6 @@ wss.on('connection', (ws) => {
         
         await handleMessage(ws, message, client, gameId, activeUsers);
 
-        //console.log(ws.userId)
     });
 
     ws.on('close', () => {

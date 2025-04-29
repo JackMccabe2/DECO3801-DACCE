@@ -5,30 +5,7 @@
  * 
  * 
  */
-async function getLeaderboard(ws, client) {
-    /*
-    try {
-        const query = `
-            SELECT username, leaderboard_score
-            FROM players
-            ORDER BY leaderboard_score DESC
-        `;
-
-        
-        const result = await client.query(query);
-        
-        if (result.rows.length === 1) {
-            console.log("Player found:", result.rows[0]);
-            return {status: "success", data: result.rows[0]}; // Return the player data since there's only one result
-        } else {
-            console.log("Player not found");
-            return {status: "empty"}; // Return null if no player is found
-        }
-    } catch (err) {
-        console.log("Error executing query:", err);
-        return {status: "error"}; // Return "error" if there's an issue with the query
-    }
-    */
+export async function getLeaderboard(ws, client) {
 
     let response;
 
@@ -66,5 +43,3 @@ async function getLeaderboard(ws, client) {
       console.log('[Server] Sending response:', response);
       ws.send(JSON.stringify(response));
 }
-
-module.exports = { getLeaderboard };
