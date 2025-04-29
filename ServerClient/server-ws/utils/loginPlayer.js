@@ -14,7 +14,7 @@ async function getPlayer(username, client) {
         const result = await client.query(query);
         
         if (result.rows.length === 1) {
-            console.log("Player found:", result.rows[0]);
+            console.log("Player found:", result.rows[0].username);
             return {status: "success", data: result.rows[0]}; // Return the player data since there's only one result
         } else {
             console.log("Player not found");
@@ -30,11 +30,19 @@ async function getPlayer(username, client) {
  *  function to attempt to create specified user
  *  sends response back to client
  */
-async function loginUser(ws, data, client) {
-    console.log("USER GET INITIATED: " + data.username);
+async function loginUser(ws, data, client, activeUsers) {
 
-    const initResult = await getPlayer(data.username, client);  // Ensure you await the result if it's asynchronous
-    console.log("Get result: " + initResult);
+    let initResult;
+
+    const index = activeUsers.indexOf(data.username);
+    if (index !== -1) {
+        initResult = {status: "active"}
+    } else {
+        initResult = await getPlayer(data.username, client);  // Ensure you await the result if it's asynchronous
+    }
+    //console.log("Get result: " + initResult);
+
+
 
     let response;
 
@@ -45,13 +53,23 @@ async function loginUser(ws, data, client) {
                 message: "user sucessully retrieved", 
                 user: initResult.data
             };
+            activeUsers.push(data.username);
+            ws.userId = data.username;
             break;
 
         case "empty":
             response = { 
                 status: "ERR USER NOT EXIST", 
                 message: "user does not exists in the database", 
-                username: data.username 
+                user: data.username 
+            };
+            break;
+
+        case "active":
+            response = {
+                status: "USER ACTIVE",
+                message: "user already login into the game",
+                user: data.username
             };
             break;
 
@@ -59,12 +77,12 @@ async function loginUser(ws, data, client) {
             response = { 
                 status: "ERR OCCURRED", 
                 message: "error occurred when adding user", 
-                username: data.username 
+                user: data.username 
             };
             break;
     }
 
-    console.log('[Server] Sending response:', response);
+    console.log('[Server] Sending response:', response.status,data.username);
     ws.send(JSON.stringify(response));
 }
 

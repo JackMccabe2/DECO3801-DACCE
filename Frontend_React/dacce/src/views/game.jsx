@@ -89,8 +89,8 @@ const Game = ({ onNavigate }) => {
     setShowLeaveModal(true);
   };
 
-  const exitMultiplayerGame = (user) => {
-    const loginPayload = { type: "EXIT M GAME", message: user };
+  const exitGame = (user) => {
+    const loginPayload = { type: "EXIT GAME", message: user };
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK") {
@@ -227,7 +227,7 @@ const Game = ({ onNavigate }) => {
                 <Button
                   variant="primary"
                   onClick={() => {
-                    exitMultiplayerGame(user);
+                    exitGame(user);
                     onNavigate("dashboard")}
                   }
                 >

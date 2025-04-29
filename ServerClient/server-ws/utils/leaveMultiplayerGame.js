@@ -7,10 +7,10 @@ async function leaveMultiplayerGame(ws, gameIdList, data) {
 
     // Loop through each object inside the array
     for (let i = 0; i < gameIdList.length; i++) {
-        const game = gameIdList[i]; // { fd57ab679ea8c: 'jack' }
+        const game = gameIdList[i];
 
         for (const [id, user] of Object.entries(game)) {
-            if (user === username) {
+            if (user.users === username) {
                 // Found the user, now remove the entry
                 delete game[id];
                 userRemoved = true;
