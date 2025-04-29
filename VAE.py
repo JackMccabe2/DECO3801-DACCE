@@ -96,7 +96,7 @@ def fetch_puzzle_data():
         SELECT
             player_score
             opponent_score
-            difficulty_rating
+            
         FROM game_results
     """
 
