@@ -96,7 +96,8 @@ def fetch_puzzle_data():
         SELECT
             player_score
             opponent_score
-            
+            game_id
+            difficulty_rating
         FROM game_results
     """
 
@@ -114,7 +115,8 @@ def fetch_puzzle_data():
     return rows
 
 fetch_puzzle_data()
-print(fetch_puzzle_data())
+#print(fetch_puzzle_data())
+# passes an array atm
 
 # Sample dataset 
 puzzle_data = np.array([
