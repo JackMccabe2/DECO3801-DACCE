@@ -16,9 +16,20 @@ const server = express().listen(8080, () => {
 const wss = new WebSocketServer({ server }); // Use WebSocketServer here
 
 // PostgreSQL Connection 
+
+/*
 const client = new Client({
   host: "localhost",
   user: "jackmccabe",
+  password: "password",
+  database: "postgres",
+  port: 5432
+});
+*/
+
+const client = new Client({
+  host: "localhost",
+  user: "georgiadocherty",
   password: "password",
   database: "postgres",
   port: 5432
@@ -28,25 +39,23 @@ client.connect()
   .then(() => console.log("Connected to PostgreSQL"))
   .catch(err => console.error("Error connecting to PostgreSQL:", err));
 
-let gameId = []
-let activeUsers = []
+gameId = []
 
 wss.on('connection', (ws) => {
     console.log('[Server] A client was connected.');
-    ws.userId = null;
+
+    gameId.push(Math.floor(Math.random() * 100))
 
     ws.on('message', async (message) => {
-        
-        await handleMessage(ws, message, client, gameId, activeUsers);
 
-        //console.log(ws.userId)
+
+        
+        await handleMessage(ws, message, client);
+        console.log("game ids: " + gameId)
+
     });
 
     ws.on('close', () => {
-      const index = activeUsers.indexOf(ws.userId);
-      if (index !== -1) {
-        activeUsers.splice(index, 1);
-      }
-      console.log('[Server] Client disconnected. Updated active users: ' + activeUsers);
+        console.log('[Server] Client disconnected.');
     });
 });
