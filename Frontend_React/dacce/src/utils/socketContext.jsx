@@ -45,6 +45,7 @@ export const WebSocketProvider = ({ children }) => {
 
     rws.addEventListener("close", () => {
       console.log("[Client] Connection closed.");
+      alert("WebSocket connection closed. Please refresh the page or try again later.");
     });
 
     rws.onerror = (err) => {
@@ -52,6 +53,7 @@ export const WebSocketProvider = ({ children }) => {
       if (err.code === "EHOSTDOWN") {
         console.log("[Client] Error: server down.");
       }
+      alert("WebSocket error occurred. Please check your internet connection or the server status.");
     };
 
     // Cleanup WebSocket connection when component is unmounted or when connection is closed

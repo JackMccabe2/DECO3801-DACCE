@@ -8,6 +8,9 @@ import Matched from "./matchfound";
 
 import ProfilePhoto from "../assets/profile.png";
 
+import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
+
 import "../css/matching.css";
 
 const Matching = ({ onNavigate }) => {

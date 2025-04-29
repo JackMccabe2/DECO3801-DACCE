@@ -30,7 +30,7 @@ async function initializePlayer(username, client) {
  *  function to attempt to create specified user
  *  sends response back to client
  */
-async function createUser(ws, data, client) {
+async function createUser(ws, data, client, activeUsers) {
     console.log("USER CREATION INITIATED: " + data.username);
 
     const initResult = await initializePlayer(data.username, client);  // Ensure you await the result if it's asynchronous
@@ -45,13 +45,15 @@ async function createUser(ws, data, client) {
                 message: "user successfully created", 
                 user: initResult.data
             };
+            activeUsers.push(user.username);
+            ws.userId = data.username;
             break;
 
         case "duplicate":
             response = { 
                 status: "ERR USER EXISTS", 
                 message: "user already exists in the database", 
-                username: data.username 
+                user: data.username 
             };
             break;
 
@@ -59,12 +61,12 @@ async function createUser(ws, data, client) {
             response = { 
                 status: "ERR OCCURRED", 
                 message: "error occurred when adding user", 
-                username: data.username 
+                user: data.username 
             };
             break;
     }
 
-    console.log('[Server] Sending response:', response);
+    console.log('[Server] Sending response:', response.status, response.username);
     ws.send(JSON.stringify(response));
 }
 

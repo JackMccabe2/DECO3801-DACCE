@@ -19,7 +19,7 @@ import { MdError } from "react-icons/md";
 import PolicyModal from "../components/policymodal";
 
 const Signup = ({ onNavigate }) => {
-  const { user, setUser } = useUser();
+  const { setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
   const { sendMessage, handleRequest } = useWebSocket();
   const [showPolicyModal, setShowPolicyModal] = useState(false);

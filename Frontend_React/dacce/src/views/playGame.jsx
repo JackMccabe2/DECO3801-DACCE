@@ -8,7 +8,32 @@ import Header from "../components/header";
 // Import CSS
 import "../css/playGame.css";
 
+// Import Context variables
+import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
+
 const playGame = ({ onNavigate }) => {
+  
+  const { user } = useUser();
+  const { sendMessage } = useWebSocket();
+
+
+  const initGame = (gamemode, page) => {
+    const loginPayload = { type: "INIT GAME", 
+      gamemode: gamemode,
+      user: user
+     };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        onNavigate(page);
+      } else {
+        alert("Unable to initialise game.");
+        return;
+      }
+    });
+  };
+
   return (
     <>
       <div className="dashboard-wrap w-100">
@@ -21,7 +46,7 @@ const playGame = ({ onNavigate }) => {
               <Button
                 text="Find Match"
                 colour="yellow"
-                onClick={() => onNavigate("matching")}
+                onClick={() => initGame("M","matching")}
               ></Button>
               <Col sm={12} md={2} lg={2}></Col>
               <Button text="Invite" colour="orange"></Button>
@@ -31,12 +56,12 @@ const playGame = ({ onNavigate }) => {
               <Button
                 text="Single Player"
                 colour="yellow"
-                onClick={() => onNavigate("matching")}
+                onClick={() => onNavigate("S","game")}
               ></Button>
               <Button
                 text="Multi Player"
                 colour="yellow"
-                onClick={() => onNavigate("matching")}
+                onClick={() => onNavigate("M","matching")}
               ></Button>
             </Col>
           </Row>

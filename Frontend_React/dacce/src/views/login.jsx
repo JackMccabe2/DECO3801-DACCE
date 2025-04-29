@@ -65,6 +65,11 @@ const Login = ({ onNavigate }) => {
         setToastType("error");
         setShowToast(true);
         return;
+      } else if (response.status === "USER ACTIVE") {
+        setToastMessage("User is already logged in.");
+        setToastType("error");
+        setShowToast(true);
+        return;
       } else {
         console.error("Login failed:", response.message);
         return;
