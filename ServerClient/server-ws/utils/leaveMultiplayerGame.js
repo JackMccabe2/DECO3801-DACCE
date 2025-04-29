@@ -1,8 +1,8 @@
 
 export async function leaveMultiplayerGame(ws, gameIdList, data) {
-    console.log("data: ", data);
+    //console.log("data: ", data);
 
-    const username = data.message.username; // Correct field
+    const username = data.message.username;
     let userRemoved = false;
 
     // Loop through each object inside the array
@@ -24,7 +24,7 @@ export async function leaveMultiplayerGame(ws, gameIdList, data) {
                 break;
             }
         }
-        if (userRemoved) break; // No need to keep looping
+        if (userRemoved) break;
     }
 
     if (!userRemoved) {
@@ -42,5 +42,3 @@ export async function leaveMultiplayerGame(ws, gameIdList, data) {
 
     console.log("gameIdList: ", JSON.stringify(gameIdList, null, 2));
 }
-
-//module.exports = { leaveMultiplayerGame };

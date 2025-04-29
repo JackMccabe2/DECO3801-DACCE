@@ -29,6 +29,19 @@ const Game = ({ onNavigate }) => {
   // Timer
   const [timeLeft, setTimeLeft] = useState(60); // second
 
+  const exitGame = (user) => {
+    const loginPayload = { type: "EXIT GAME", message: user };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        return;
+      } else {
+        alert("Leaving game failed.");
+        return;
+      }
+    });
+  };
+
   useEffect(() => {
     if (hasFetchedPuzzle.current) return; // prevent repeat
     hasFetchedPuzzle.current = true;
@@ -87,19 +100,6 @@ const Game = ({ onNavigate }) => {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const leaveGame = () => {
     setShowLeaveModal(true);
-  };
-
-  const exitGame = (user) => {
-    const loginPayload = { type: "EXIT GAME", message: user };
-
-    sendMessage(loginPayload, (response) => {
-      if (response.status === "OK") {
-        return;
-      } else {
-        alert("Leaving game failed.");
-        return;
-      }
-    });
   };
 
   return (

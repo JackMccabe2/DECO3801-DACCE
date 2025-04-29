@@ -4,5 +4,3 @@ export async function okMessage(ws, data) {
     console.log('[Server] Sending response:', response.status + " " + data.type);
     ws.send(JSON.stringify(response));
 }
-
-//module.exports = { okMessage };

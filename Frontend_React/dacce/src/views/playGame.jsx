@@ -56,12 +56,12 @@ const playGame = ({ onNavigate }) => {
               <Button
                 text="Single Player"
                 colour="yellow"
-                onClick={() => onNavigate("S","game")}
+                onClick={() => initGame("S","game")}
               ></Button>
               <Button
                 text="Multi Player"
                 colour="yellow"
-                onClick={() => onNavigate("M","matching")}
+                onClick={() => initGame("M","matching")}
               ></Button>
             </Col>
           </Row>

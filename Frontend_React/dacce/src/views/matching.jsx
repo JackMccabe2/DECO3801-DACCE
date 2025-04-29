@@ -16,6 +16,21 @@ import "../css/matching.css";
 const Matching = ({ onNavigate }) => {
   const [timer, setTimer] = useState(0);
   const [dots, setDots] = useState("");
+  const { sendMessage } = useWebSocket();
+  const { user } = useUser();
+
+  const exitGame = (user) => {
+    const loginPayload = { type: "EXIT GAME", message: user };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        return;
+      } else {
+        alert("Leaving game failed.");
+        return;
+      }
+    });
+  };
 
   // Timer
   useEffect(() => {
@@ -104,7 +119,11 @@ const Matching = ({ onNavigate }) => {
               letterSpacing: "0.1em",
               fontSize: "1.5em",
             }}
-            onClick={() => onNavigate("playgame")}
+            onClick={() => {
+              exitGame(user);
+              onNavigate("playgame");
+              }
+            }
           >
             Cancel
           </Button>

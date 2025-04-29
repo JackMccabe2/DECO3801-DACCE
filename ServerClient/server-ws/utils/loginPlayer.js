@@ -85,5 +85,3 @@ export async function loginUser(ws, data, client, activeUsers) {
     console.log('[Server] Sending response:', response.status,data.username);
     ws.send(JSON.stringify(response));
 }
-
-//module.exports = { loginUser };

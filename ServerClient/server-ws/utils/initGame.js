@@ -1,10 +1,6 @@
 
 import { okMessage } from './sendMessage.js';
 
-function wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 export async function initGame(ws, gameId, data) {
 
     const id = Math.random().toString(16).slice(2);
@@ -19,5 +15,3 @@ export async function initGame(ws, gameId, data) {
     okMessage(ws,"SENT OK")
 
 }
-
-//module.exports = { initGame };

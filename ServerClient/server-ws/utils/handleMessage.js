@@ -7,10 +7,10 @@ import { getPuzzle } from './getPuzzle.js';
 import { getLeaderboard } from './getLeaderboard.js';
 import { leaveMultiplayerGame } from './leaveMultiplayerGame.js';
 
-export async function handleMessage(ws, message, client, gameId, activeUsers, currentUser) {
+export async function handleMessage(ws, message, client, gameId, activeUsers) {
     try {
         const data = JSON.parse(message.toString('utf-8'));
-        console.log('[Server] Received message:', data);
+        console.log('[Server] Received message:', data.type);
         if (data.type === 'NAV') {
             // Send "OK" back to the client
             await okMessage(ws, data);
@@ -27,13 +27,11 @@ export async function handleMessage(ws, message, client, gameId, activeUsers, cu
         } else if (data.type === 'INIT GAME') {
             await initGame(ws, gameId, data);
         } else if (data.type === 'GET PUZZLE') {
-            // Get puzzle question and answer
+            
             await getPuzzle(ws);
-            //await initMultiplayer(ws, gameId);
         } else if (data.type === 'EXIT GAME') {
             await leaveMultiplayerGame(ws, gameId, data);
         } else {
-            // Send "OK" back to the client
             await okMessage(ws, data);
         }
     } catch (err) {
@@ -42,5 +40,3 @@ export async function handleMessage(ws, message, client, gameId, activeUsers, cu
         ws.send(JSON.stringify(errorResponse)); // Send error message back
     }
 }
-
-//module.exports = { handleMessage };
