@@ -23,6 +23,15 @@ const client = new Client({
   port: 5432
 });
 
+/*
+const client = new Client({
+  host: "localhost",
+  user: "josh",
+  password: "password1",
+  database: "postgres",
+  port: 5432
+});
+*/
 client.connect()
   .then(() => console.log("Connected to PostgreSQL"))
   .catch(err => console.error("Error connecting to PostgreSQL:", err));
