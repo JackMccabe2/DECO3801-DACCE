@@ -1,5 +1,5 @@
 
-async function leaveMultiplayerGame(ws, gameIdList, data) {
+export async function leaveMultiplayerGame(ws, gameIdList, data) {
     console.log("data: ", data);
 
     const username = data.message.username; // Correct field
@@ -43,4 +43,4 @@ async function leaveMultiplayerGame(ws, gameIdList, data) {
     console.log("gameIdList: ", JSON.stringify(gameIdList, null, 2));
 }
 
-module.exports = { leaveMultiplayerGame };
+//module.exports = { leaveMultiplayerGame };

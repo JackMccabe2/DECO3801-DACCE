@@ -1,13 +1,13 @@
 
-const { okMessage } = require('./sendMessage');
-const { createUser } = require('./initPlayer'); // Import functions
-const { loginUser } = require('./loginPlayer');
-const { initGame } = require('./initGame');
-const { getPuzzle } = require('./getPuzzle');
-const { getLeaderboard } = require('./getLeaderboard');
-const { leaveMultiplayerGame } = require('./leaveMultiplayerGame');
+import { okMessage } from './sendMessage.js';
+import { createUser } from './initPlayer.js'; // Import functions
+import { loginUser } from './loginPlayer.js';
+import { initGame } from './initGame.js';
+import { getPuzzle } from './getPuzzle.js';
+import { getLeaderboard } from './getLeaderboard.js';
+import { leaveMultiplayerGame } from './leaveMultiplayerGame.js';
 
-async function handleMessage(ws, message, client, gameId, activeUsers, currentUser) {
+export async function handleMessage(ws, message, client, gameId, activeUsers, currentUser) {
     try {
         const data = JSON.parse(message.toString('utf-8'));
         console.log('[Server] Received message:', data);
@@ -43,4 +43,4 @@ async function handleMessage(ws, message, client, gameId, activeUsers, currentUs
     }
 }
 
-module.exports = { handleMessage };
+//module.exports = { handleMessage };

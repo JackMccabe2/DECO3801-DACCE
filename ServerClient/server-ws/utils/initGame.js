@@ -1,11 +1,11 @@
 
-const { okMessage } = require('./sendMessage');
+import { okMessage } from './sendMessage.js';
 
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function initGame(ws, gameId, data) {
+export async function initGame(ws, gameId, data) {
 
     const id = Math.random().toString(16).slice(2);
     //const id = "test"
@@ -20,4 +20,4 @@ async function initGame(ws, gameId, data) {
 
 }
 
-module.exports = { initGame };
+//module.exports = { initGame };

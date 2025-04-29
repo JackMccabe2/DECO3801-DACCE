@@ -1,5 +1,5 @@
 
-async function getPuzzle(ws) {
+export async function getPuzzle(ws) {
     
     response = {status: "PUZZLE", 
         data: 
@@ -12,4 +12,4 @@ async function getPuzzle(ws) {
 
 }
 
-module.exports = { getPuzzle };
+//module.exports = { getPuzzle };

@@ -1,10 +1,11 @@
 // index1.js
 
 // Dependencies
-const express = require('express');
-const WebSocket = require('ws');
-const { Client } = require('pg');
-const { handleMessage } = require('./utils/handleMessage')
+import express from 'express';
+import { WebSocketServer } from 'ws';  // Changed import here
+import pkg from 'pg';
+const { Client } = pkg;
+import { handleMessage } from './utils/handleMessage.js';
 
 // Initialize Express Server
 const server = express().listen(8080, () => {
@@ -12,7 +13,7 @@ const server = express().listen(8080, () => {
 });
 
 // Initialize WebSocket Server
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocketServer({ server }); // Use WebSocketServer here
 
 // PostgreSQL Connection 
 const client = new Client({

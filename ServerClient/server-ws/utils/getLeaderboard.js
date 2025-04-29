@@ -5,7 +5,7 @@
  * 
  * 
  */
-async function getLeaderboard(ws, client) {
+export async function getLeaderboard(ws, client) {
     /*
     try {
         const query = `
@@ -67,4 +67,4 @@ async function getLeaderboard(ws, client) {
       ws.send(JSON.stringify(response));
 }
 
-module.exports = { getLeaderboard };
+//module.exports = { getLeaderboard };
