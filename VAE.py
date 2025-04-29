@@ -94,8 +94,11 @@ def fetch_puzzle_data():
     # Need to select games info per session too.
     query = """ 
         SELECT
-            encipher_skill
-        FROM players
+            player_score
+            opponent_score
+            game_id
+            difficulty_rating
+        FROM game_results
     """
 
     cur.execute(query) 
@@ -112,6 +115,7 @@ def fetch_puzzle_data():
     return rows
 
 fetch_puzzle_data()
+print(fetch_puzzle_data())
 
 # Sample dataset 
 puzzle_data = np.array([
