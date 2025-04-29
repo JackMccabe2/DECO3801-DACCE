@@ -17,7 +17,6 @@ const wss = new WebSocketServer({ server }); // Use WebSocketServer here
 
 // PostgreSQL Connection 
 
-
 const client = new Client({
   host: "localhost",
   user: "jackmccabe",
@@ -25,7 +24,6 @@ const client = new Client({
   database: "postgres",
   port: 5432
 });
-
 
 /*
 const client = new Client({
@@ -52,7 +50,6 @@ wss.on('connection', (ws) => {
         
         await handleMessage(ws, message, client, gameId, activeUsers);
 
-        //console.log(ws.userId)
     });
 
     ws.on('close', () => {
