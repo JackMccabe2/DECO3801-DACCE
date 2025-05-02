@@ -6,6 +6,7 @@ import { initGame } from './initGame.js';
 import { getPuzzle } from './getPuzzle.js';
 import { getLeaderboard } from './getLeaderboard.js';
 import { leaveMultiplayerGame } from './leaveMultiplayerGame.js';
+import { checkDuplicateUser } from './checkDuplicateUser.js';
 
 export async function handleMessage(ws, message, client, gameId, activeUsers) {
     try {
@@ -20,6 +21,8 @@ export async function handleMessage(ws, message, client, gameId, activeUsers) {
             console.log('[Client] log username: ' + data.username);
         } else if (data.type === 'POST') {
             await createUser(ws, data, client, activeUsers);
+        } else if (data.type === 'POST DUP') {
+            await checkDuplicateUser(ws, data.username,client);
         } else if (data.type === 'GET USER') {
             await loginUser(ws, data, client, activeUsers);
         } else if (data.type === 'GET LEADERBOARD') {

@@ -62,7 +62,7 @@ const Matching = ({ onNavigate }) => {
   // Hard coded a timer here to simulate the matching process.
   // To-do: Replace this with our server response (& player data)?
   if (timer >= 5) {
-    return <Matched onNavigate={onNavigate} />;
+    //return <Matched onNavigate={onNavigate} />;
   }
 
   return (
