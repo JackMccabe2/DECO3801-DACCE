@@ -13,16 +13,11 @@ import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 
 const playGame = ({ onNavigate }) => {
-  
   const { user } = useUser();
   const { sendMessage } = useWebSocket();
 
-
   const initGame = (gamemode, page) => {
-    const loginPayload = { type: "INIT GAME", 
-      gamemode: gamemode,
-      user: user
-     };
+    const loginPayload = { type: "INIT GAME", gamemode: gamemode, user: user };
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK") {
@@ -46,22 +41,28 @@ const playGame = ({ onNavigate }) => {
               <Button
                 text="Find Match"
                 colour="yellow"
-                onClick={() => initGame("M","matching")}
+                onClick={() => initGame("M", "matching")}
               ></Button>
               <Col sm={12} md={2} lg={2}></Col>
-              <Button text="Invite" colour="orange"></Button>
+              <Button
+                text="Invite"
+                colour="orange"
+                onClick={() => {
+                  onNavigate("error");
+                }}
+              ></Button>
             </Col>
             <Col sm={12} md={5} lg={5} className="custom-playmode-container">
               <h4 className="custom-title">PvC</h4>
               <Button
                 text="Single Player"
                 colour="yellow"
-                onClick={() => initGame("S","game")}
+                onClick={() => initGame("S", "game")}
               ></Button>
               <Button
                 text="Multi Player"
                 colour="yellow"
-                onClick={() => initGame("M","matching")}
+                onClick={() => initGame("M", "matching")}
               ></Button>
             </Col>
           </Row>

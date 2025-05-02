@@ -26,6 +26,7 @@ const Signup = ({ onNavigate }) => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("error");
+  
 
   const handleClick = (page) => {
     <PolicyModal show={true} />;
@@ -116,6 +117,7 @@ const Signup = ({ onNavigate }) => {
             onClick={() => {
               handleCreateClick("dashboard");
             }}
+          
           />
         </Col>
         <Col

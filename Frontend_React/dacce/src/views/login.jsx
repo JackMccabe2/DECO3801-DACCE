@@ -85,7 +85,10 @@ const Login = ({ onNavigate }) => {
   return (
     <Container
       fluid
-      className="d-flex justify-content-center align-items-center"
+      // className="d-flex justify-content-center align-items-center" 
+      className={`d-flex justify-content-center align-items-center ${
+        toastType === "success" ? "loading-cursor" : ""
+      }`}
     >
       <Row className="custom-content-wrap p-5 rounded">
         <Col xs={12}>
@@ -102,10 +105,18 @@ const Login = ({ onNavigate }) => {
               className="custom-input-field"
               value={tempUsername}
               onChange={(e) => setTempUsername(e.target.value)}
+              // onKeyDown={(e) => {
+              //   if (e.key === "Enter" && pressed == false) {
+              //     setPressed(true);
+              //     handleLogin("dashboard");
+              //   }
+              // }}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && pressed == false) {
+                if (e.key === "Enter" && pressed === false && toastType !== "success") {
                   setPressed(true);
-                  handleLogin("dashboard");
+                  handleLogin("dashboard").finally(() => {
+                    setPressed(false);
+                  });
                 }
               }}
             />
@@ -118,7 +129,14 @@ const Login = ({ onNavigate }) => {
           <Button
             text="Enter"
             colour="yellow"
-            onClick={() => handleLogin("dashboard")}
+            // onClick={() => handleLogin("dashboard")}
+            onClick={() => {
+              if (toastType !== "success") {
+                handleLogin("dashboard");
+              }
+            }}
+            disabled={toastType === "success"} 
+            className={toastType === "success" ? "disabled-button" : ""}
           />
         </Col>
         <Col

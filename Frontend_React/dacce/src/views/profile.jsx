@@ -22,16 +22,11 @@ import "../css/profile.css";
 import CancelBtn from "../assets/cancel.png";
 import ProfilePic from "../assets/profile.png";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Legend);
 
 export const options = {
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       display: false,
@@ -45,7 +40,7 @@ export const options = {
       min: 0,
       max: 100,
     },
-  }
+  },
 };
 
 const labels = ["Firewall Skill", "Encipher Skill"];
@@ -56,8 +51,8 @@ const data = {
   labels,
   datasets: [
     {
-      data: [40, 10],  // Change value here
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      data: [40, 10], // Change value here
+      backgroundColor: "rgba(255, 99, 132, 0.5)",
     },
   ],
 };
@@ -74,12 +69,12 @@ const Profile = ({ onNavigate }) => {
           onClick={() => onNavigate("dashboard")}
         />
         <Container fluid className="custom-profile-data-container m-0">
-          <Row className="h-100 d-flex align-items-center">
+          <Row className="d-flex align-content-center h-100 py-3">
             <Col
               xs={12}
               md={3}
               lg={3}
-              className="custom-profile-info-container d-flex align-items-start"
+              className="custom-profile-info-container d-flex align-items-start h-100"
             >
               <img src={ProfilePic} className="custom-profile-pic mb-5" />
               <h5>User Name</h5>
@@ -121,10 +116,12 @@ const Profile = ({ onNavigate }) => {
               xs={12}
               md={9}
               lg={9}
-              className="d-flex flex-column align-items-start p-5"
+              className="d-flex flex-column align-items-start p-5 h-100"
             >
               <h5 className="mb-5">Skill Analysis</h5>
-              <Bar options={options} data={data} />
+              <div style={{ width: "100%", height: "100%" }}>
+                <Bar options={options} data={data} />
+              </div>
             </Col>
           </Row>
         </Container>

@@ -102,6 +102,10 @@ const Game = ({ onNavigate }) => {
     setShowLeaveModal(true);
   };
 
+  const errortest = () => {
+    return redirect
+  }
+
   return (
     <>
       <Container fluid className="game-wrapper">
