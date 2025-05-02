@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../css/login.css";
 import Button from "../components/button";
 import Col from "react-bootstrap/Col";
@@ -21,6 +21,7 @@ import PolicyModal from "../components/policymodal";
 const Signup = ({ onNavigate }) => {
   const { setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
+  const [pressed, setPressed] = useState("");
   const { sendMessage, handleRequest } = useWebSocket();
   const [showPolicyModal, setShowPolicyModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -28,25 +29,36 @@ const Signup = ({ onNavigate }) => {
   const [toastType, setToastType] = useState("error");
   
 
-  const handleClick = (page) => {
+  useEffect(() => {
+    setPressed(false);
+  }, []);
+
+  // create function to check if username is available
+  const checkDup = async (page) => {
+    setShowPolicyModal(false);
+
+    const loginPayload = { type: "POST DUP", username: tempUsername };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        setShowPolicyModal(true);
+      } else if (response.status === "ERR USER EXISTS") {
+        setToastMessage("Username already exists.");
+        setToastType("error");
+        setShowToast(true);
+        return;
+      }
+    });
+  };
+
+  const showPolicy = (page) => {
     <PolicyModal show={true} />;
     handleRequest(
       page,
-      { type: "NAV", message: page },
+      { type: "OK", message: page },
       onNavigate(page), // success callback
       (errMsg) => alert("Navigation failed:", errMsg) // failure callback
     );
-  };
-
-  // Show the private policy modal when the "Create" button is clicked.
-  const handleCreateClick = () => {
-    if (tempUsername === "") {
-      setToastMessage("Please enter a valid username.");
-      setToastType("blank");
-      setShowToast(true);
-      return;
-    }
-    setShowPolicyModal(true);
   };
 
   const handleSignup = async (page) => {
@@ -60,9 +72,10 @@ const Signup = ({ onNavigate }) => {
         setToastType("success");
         setShowToast(true);
 
+        setPressed(true);
         setTimeout(() => {
           setUser(response.user);
-          onNavigate(page);
+          onNavigate(page)
         }, 3000);
       } else if (response.status === "ERR USER EXISTS") {
         setToastMessage("Username already exists.");
@@ -99,9 +112,13 @@ const Signup = ({ onNavigate }) => {
               className="custom-input-field"
               value={tempUsername}
               onChange={(e) => setTempUsername(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleCreateClick("dashboard");
+              onKeyDown={async (e) => {
+                if (e.key === "Enter" && !pressed) {
+                  setPressed(true);
+                  const success = await checkDup("dashboard");
+                  if (!success) {
+                    setPressed(false);
+                  }
                 }
               }}
             />
@@ -114,8 +131,14 @@ const Signup = ({ onNavigate }) => {
           <Button
             text="Create"
             colour="yellow"
-            onClick={() => {
-              handleCreateClick("dashboard");
+            onClick={async () => {
+              if (!pressed) {
+                setPressed(true);
+                const success = await checkDup("dashboard");
+                if (!success) {
+                  setPressed(false);
+                }
+              }
             }}
           
           />
@@ -128,7 +151,7 @@ const Signup = ({ onNavigate }) => {
             <span
               className="return-btn"
               style={{ color: "black", cursor: "pointer" }}
-              onClick={() => handleClick("login")}
+              onClick={() => handleSignup("login")}
             >
               Already have an account? LOGIN
             </span>
@@ -141,7 +164,7 @@ const Signup = ({ onNavigate }) => {
                 cursor: "pointer",
               }}
               onClick={() => {
-                handleClick("landing");
+                handleSignup("landing");
               }}
             >
               <FaLongArrowAltLeft /> {""}
