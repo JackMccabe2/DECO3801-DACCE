@@ -30,11 +30,10 @@ async function initializePlayer(username, client) {
  *  function to attempt to create specified user
  *  sends response back to client
  */
-async function createUser(ws, data, client, activeUsers) {
+export async function createUser(ws, data, client, activeUsers) {
     console.log("USER CREATION INITIATED: " + data.username);
 
     const initResult = await initializePlayer(data.username, client);  // Ensure you await the result if it's asynchronous
-    console.log("Init result: " + initResult.data);
 
     let response;
 
@@ -69,5 +68,3 @@ async function createUser(ws, data, client, activeUsers) {
     console.log('[Server] Sending response:', response.status, response.username);
     ws.send(JSON.stringify(response));
 }
-
-module.exports = { createUser };

@@ -10,7 +10,7 @@ import ToastContainer from "react-bootstrap/ToastContainer";
 
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import { PiSmileyFill } from "react-icons/pi";
@@ -20,10 +20,15 @@ import { MdError } from "react-icons/md";
 const Login = ({ onNavigate }) => {
   const { setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
+  const [pressed, setPressed] = useState("");
   const { sendMessage } = useWebSocket();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("error");
+
+  useEffect(() => {
+    setPressed(false);
+  }, []);
 
   const handleClick = (page) => {
     const loginPayload = { type: "NAV", message: page };
@@ -98,7 +103,8 @@ const Login = ({ onNavigate }) => {
               value={tempUsername}
               onChange={(e) => setTempUsername(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === "Enter" && pressed == false) {
+                  setPressed(true);
                   handleLogin("dashboard");
                 }
               }}

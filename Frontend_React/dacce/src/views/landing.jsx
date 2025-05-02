@@ -11,7 +11,7 @@ import Logo from "../assets/chg_logo.png";
 import { useWebSocket } from "../contexts/WebSocketContext";
 
 const Landing = ({ onNavigate }) => {
-  const { isConnected, sendMessage, handleRequest } = useWebSocket();
+  const { isConnected, sendMessage } = useWebSocket();
   ///// cfretes vairale status that can access in whole program that reflects wether the server response is valid
 
   const handleClick = (page) => {
@@ -27,6 +27,17 @@ const Landing = ({ onNavigate }) => {
       }
     });
   };
+
+  if (!isConnected) {
+    return (
+      <Container
+        fluid
+        className="d-flex flex-column justify-content-center align-items-center"
+      >
+        <h2 style={{ color: "white" }}>Loading...</h2>
+      </Container>
+    );
+  }
 
   return (
     <Container
