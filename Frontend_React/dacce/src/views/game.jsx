@@ -86,10 +86,10 @@ const Game = ({ onNavigate }) => {
   const handleTerminalCommand = (input) => {
     console.log("User entered:", input);
 
-    //if (!puzzle || !puzzle.answer) {
-    //  alert("Puzzle not loaded yet.");
-    //  return;
-    //}
+    if (!puzzle || !puzzle.answer) {
+      alert("Puzzle not loaded yet.");
+      return;
+    }
 
     if (input == puzzle.answer) {
       alert("Correct answer!")
