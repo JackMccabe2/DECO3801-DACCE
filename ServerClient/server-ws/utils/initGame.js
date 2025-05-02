@@ -20,7 +20,7 @@ export async function initGame(ws, gameId, data) {
         const key = Object.keys(obj)[0]; // Get the dynamic key like '859353ec9410f'
         console.log("gamemode: ",obj[key].gamemode,"number users:",obj[key].users.length)
 
-        
+        // change so that it matches most to user score IFFFFF multiple games present
         if (obj[key].gamemode === 'M' && obj[key].users.length === 1) {
           console.log("FOUDN MATCHDFS");
           obj[key].users.push(data.user.username);
@@ -39,15 +39,6 @@ export async function initGame(ws, gameId, data) {
     //console.log(gameId);
     console.dir(gameId, {depth: null});
 
-    
-    /*
-    gameId.forEach(item => {
-        const id = Object.keys(item)[0];
-        const users = item[id].users;
-        console.log(`ID: ${id}`);
-        console.log('Users:', users);
-      });      
-      */
 
     okMessage(ws,"SENT OK")
 
