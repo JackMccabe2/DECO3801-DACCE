@@ -6,6 +6,7 @@ import { initGame } from './initGame.js';
 import { getPuzzle } from './getPuzzle.js';
 import { getLeaderboard } from './getLeaderboard.js';
 import { leaveMultiplayerGame } from './leaveMultiplayerGame.js';
+import { deleteUser } from './deleteUser.js';
 import { checkDuplicateUser } from './checkDuplicateUser.js';
 
 export async function handleMessage(ws, message, client, gameId, activeUsers) {
@@ -25,12 +26,13 @@ export async function handleMessage(ws, message, client, gameId, activeUsers) {
             await checkDuplicateUser(ws, data.username,client);
         } else if (data.type === 'GET USER') {
             await loginUser(ws, data, client, activeUsers);
+        } else if (data.type === 'DELETE USER') {
+            await deleteUser(ws, data, client, activeUsers);
         } else if (data.type === 'GET LEADERBOARD') {
             await getLeaderboard(ws, client);
         } else if (data.type === 'INIT GAME') {
             await initGame(ws, gameId, data);
         } else if (data.type === 'GET PUZZLE') {
-            
             await getPuzzle(ws);
         } else if (data.type === 'EXIT GAME') {
             await leaveMultiplayerGame(ws, gameId, data);
