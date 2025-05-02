@@ -44,41 +44,43 @@ const Login = ({ onNavigate }) => {
   };
 
   const handleLogin = async (page) => {
-    if (tempUsername === "") {
-      setToastMessage("Please enter a valid username.");
-      setToastType("blank");
-      setShowToast(true);
-      return;
-    }
-
-    const loginPayload = { type: "GET USER", username: tempUsername };
-
-    sendMessage(loginPayload, (response) => {
-      if (response.status === "OK USER LOGIN") {
-        setToastMessage(
-          "Welcome back, " + tempUsername + "! " + "Redirecting..."
-        );
-        setToastType("success");
+    return new Promise((resolve) => {
+      if (tempUsername === "") {
+        setToastMessage("Please enter a valid username.");
+        setToastType("blank");
         setShowToast(true);
-
-        setTimeout(() => {
-          setUser(response.user);
-          onNavigate(page);
-        }, 2000);
-      } else if (response.status === "ERR USER NOT EXIST") {
-        setToastMessage("There is no user with this username.");
-        setToastType("error");
-        setShowToast(true);
-        return;
-      } else if (response.status === "USER ACTIVE") {
-        setToastMessage("User is already logged in.");
-        setToastType("error");
-        setShowToast(true);
-        return;
-      } else {
-        console.error("Login failed:", response.message);
+        resolve(false);
         return;
       }
+  
+      const loginPayload = { type: "GET USER", username: tempUsername };
+  
+      sendMessage(loginPayload, (response) => {
+        if (response.status === "OK USER LOGIN") {
+          setToastMessage("Welcome back, " + tempUsername + "! Redirecting...");
+          setToastType("success");
+          setShowToast(true);
+  
+          setTimeout(() => {
+            setUser(response.user);
+            onNavigate(page);
+          }, 2000);
+          resolve(true);
+        } else if (response.status === "ERR USER NOT EXIST") {
+          setToastMessage("There is no user with this username.");
+          setToastType("error");
+          setShowToast(true);
+          resolve(false);
+        } else if (response.status === "USER ACTIVE") {
+          setToastMessage("User is already logged in.");
+          setToastType("error");
+          setShowToast(true);
+          resolve(false);
+        } else {
+          console.error("Login failed:", response.message);
+          resolve(false);
+        }
+      });
     });
   };
 
@@ -102,10 +104,13 @@ const Login = ({ onNavigate }) => {
               className="custom-input-field"
               value={tempUsername}
               onChange={(e) => setTempUsername(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && pressed == false) {
+              onKeyDown={async (e) => {
+                if (e.key === "Enter" && !pressed) {
                   setPressed(true);
-                  handleLogin("dashboard");
+                  const success = await handleLogin("dashboard");
+                  if (!success) {
+                    setPressed(false);
+                  }
                 }
               }}
             />
