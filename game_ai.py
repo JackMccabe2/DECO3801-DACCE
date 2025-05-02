@@ -57,6 +57,79 @@ def caesar_cipher_puzzle():
     else:
         print(f"Nope! The correct answer was: {answer}")
 
+# the following puzzles of AES aim to break up the steps used in AES decryption
+# and teach them seperately
+
+def subbytes_aes():
+    print("\nSubBytes Puzzle - Learn AES Byte Substitution\n")
+    # the scale for this question is too large right now!! (too difficult)
+    s_box = [
+        0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
+        0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76
+    ]
+
+    # Generate a short 4-byte input for simplicity
+    input_block = bytes([random.randint(0, 15) for _ in range(4)])
+    expected = bytes([s_box[b] for b in input_block])
+
+    print(f"Input Bytes: {input_block.hex()}")
+    print("Apply the SubBytes step using the AES S-box.")
+    print("Enter the substituted output (in hex, 8 characters):")
+
+    answer = input("Your answer: ").strip().lower()
+
+    if answer == expected.hex():
+        print("Correct!")
+    else:
+        print(f"Incorrect. Expected: {expected.hex()}")
+
+def shiftrows_aes():
+    print("\n🌀 ShiftRows Puzzle - Learn AES Row Shifting!\n")
+    # the scale for this question is too large right now!! (too difficult)
+    block = [i for i in range(16)] 
+    # 16-byte block as a 4x4 matrix
+    print("Original 4x4 state matrix (row-major order):")
+    for i in range(4):
+        print(block[i::4])  # print as matrix
+
+    # e.g. rows shifted left by 0, 1, 2, 3
+    state = [block[i::4] for i in range(4)]  # columns -> rows
+    for r in range(4):
+        state[r] = state[r][r:] + state[r][:r]  # shifting row
+
+    # back into state
+    shifted = [state[i % 4][i // 4] for i in range(16)]
+
+    print("\nAfter ShiftRows, enter the new block as hex characters (no spaces):")
+    answer = input("Your answer: ").strip().lower()
+    expected = ''.join([format(b, '02x') for b in shifted])
+
+    if answer == expected:
+        print("Correct!")
+    else:
+        print("Incorrect. Expected:", expected)
+
+def mixcolumns_aes():
+    print("\Mix Columns Puzzle\n")
+    # note: simplify to addition modulo 256 instead of full AES field math, will fix more for
+    # appropriate difficulty
+    # 1 column = 4 bytes
+    column = [random.randint(0, 255) for _ in range(4)]
+    mix_vector = [2, 1, 1, 3]  # a matrix
+
+    print("Input column: ", column)
+    print("Mix vector:   ", mix_vector)
+    mixed = [(column[i] + mix_vector[i]) % 256 for i in range(4)]
+
+    print("Enter the resulting column as 8 hex digits (e.g. 'asdfghjk'):")
+    answer = input("Your answer: ").strip().lower()
+    expected = ''.join([format(b, '02x') for b in mixed])
+
+    if answer == expected:
+        print("Correct!")
+    else:
+        print("Incorrect. Expected:", expected)
+
 def xor_aes():
     import random
     # can change the range here as a difficulty parameter
@@ -64,7 +137,6 @@ def xor_aes():
     key = bytes([random.randint(0, 255) for _ in range(2)])
     expected = bytes([p ^ k for p, k in zip(plaintext, key)])
     
-    #question = f"XOR Puzzle!\nPlaintext : {plaintext.hex()}\nKey       : {key.hex()}\nEnter the result of XOR-ing each byte:"
     question = {
         "puzzle": "XOR",
         "plaintext": plaintext.hex(),
@@ -100,13 +172,6 @@ def generate_puzzle(model, difficulty_vector):
         generated_puzzle = model.decoder(difficulty_vector)
     return generated_puzzle.numpy()
 
-# Constants
-INPUT_DIM = 6     
-LATENT_DIM = 3     
-EPOCHS = 20
-BATCH_SIZE = 16
-LEARNING_RATE = 0.001
-
 def fetch_puzzle_data():
     conn = psycopg2.connect(
         host="localhost",
@@ -120,9 +185,11 @@ def fetch_puzzle_data():
     # Need to select games info per session too.
     query = """ 
         SELECT
-            encipher_skill,
-            firewall_skill
-        FROM players
+            result_id,
+            opponent_score
+            played_at
+            difficulty_rating
+        FROM game_results
     """
     # ADD GAME INSTANCE STUFFS -> num_incorrect, time_to_complete etc to form difficulty vector 
     cur.execute(query) 
