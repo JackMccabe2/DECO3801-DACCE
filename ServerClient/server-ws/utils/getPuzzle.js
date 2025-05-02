@@ -10,9 +10,8 @@ export async function getPuzzle(ws) {
     
       python.stdout.on('end', () => {
         const puzzle = JSON.parse(dataString);
-        console.log(dataString, " AAAAA")
-        console.log(puzzle.question, " AAAAA")
-        console.log(puzzle.answer, " BBBBB")
+        console.log(puzzle.question, " <--- question")
+        console.log(puzzle.answer, " <-- answer")
         
         const response = {
           status: "PUZZLE",
