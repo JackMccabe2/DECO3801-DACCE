@@ -1,12 +1,27 @@
+import { spawn } from 'child_process';
 
 export async function getPuzzle(ws) {
-    const response = {status: "PUZZLE", 
-        data: 
-            {question: "whats the most youve ever lost on a coin toss",
-                answer: "everything"
-            }
-        };
-
-    ws.send(JSON.stringify(response));
+    const python = spawn('python3', ['../../game_ai.py']);
+    let dataString = '';
     
+    python.stdout.on('data', (data) => {
+        dataString += data.toString();
+      });
+    
+      python.stdout.on('end', () => {
+        const puzzle = JSON.parse(dataString);
+        console.log(dataString, " AAAAA")
+        console.log(puzzle.question, " AAAAA")
+        console.log(puzzle.answer, " BBBBB")
+        
+        const response = {
+          status: "PUZZLE",
+          data: {
+            question: puzzle.question,
+            answer: puzzle.answer
+          }
+        };
+    
+        ws.send(JSON.stringify(response));
+      });
 }

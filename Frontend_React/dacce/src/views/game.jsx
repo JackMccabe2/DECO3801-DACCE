@@ -22,7 +22,10 @@ import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 
 const Game = ({ onNavigate }) => {
-  const [puzzle, setPuzzle] = useState("");
+  const [puzzle, setPuzzle] = useState({
+    question: null,
+    answer: null
+  });
   const { sendMessage } = useWebSocket();
   const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
@@ -50,10 +53,15 @@ const Game = ({ onNavigate }) => {
       type: "GET PUZZLE",
       message: "payload to get puzzle",
     };
-    sendMessage(loginPayload, (response) => {
+  sendMessage(loginPayload, (response) => {
       if (response.status === "PUZZLE") {
-        setPuzzle(response.data);
+        setPuzzle({
+          question: response.data.question,
+          answer: response.data.answer
+        });
+        puzzle.answer = response.data.answer
         console.log("set answer to: " + response.data.answer);
+        // it def reads data.answer here
       } else {
         alert("Get puzzle failed.");
         return;
@@ -78,16 +86,16 @@ const Game = ({ onNavigate }) => {
   const handleTerminalCommand = (input) => {
     console.log("User entered:", input);
 
-    if (!puzzle || !puzzle.answer) {
-      alert("Puzzle not loaded yet.");
-      return;
-    }
+    //if (!puzzle || !puzzle.answer) {
+    //  alert("Puzzle not loaded yet.");
+    //  return;
+    //}
 
-    if (input === puzzle.answer) {
-      alert("Correct answer!");
+    if (input == puzzle.answer) {
+      alert("Correct answer!")
       // Do something like advance stage or send to server
     } else {
-      alert("Incorrect! Try again." + puzzle.answer);
+      alert("Incorrect! Try again.");
     }
   };
 

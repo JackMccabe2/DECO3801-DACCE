@@ -66,7 +66,7 @@ def train_vae(model, data_loader, epochs=20, lr=0.001):
             loss.backward()
             optimizer.step()
             epoch_loss += loss.item()
-        print(f"Epoch {epoch+1}, Loss: {epoch_loss / len(data_loader)}")
+        #print(f"Epoch {epoch+1}, Loss: {epoch_loss / len(data_loader)}")
 
 # Generating a new puzzle
 def generate_puzzle(model, difficulty_vector):
@@ -94,18 +94,19 @@ def fetch_puzzle_data():
     # Need to select games info per session too.
     query = """ 
         SELECT
-            player_score
-            opponent_score
-            game_id
-            difficulty_rating
+            result_id
         FROM game_results
     """
+    #opponent_score
+    #played_at
+    #difficulty_rating
+    
 
     cur.execute(query) 
     rows = cur.fetchall() # store
 
-    for row in rows:
-        print(row)  # test for if prints like the sample puzzle_data below
+    #for row in rows:
+        #print(row)  # test for if prints like the sample puzzle_data below
 
     cur.close()
     conn.close()
@@ -161,7 +162,7 @@ vae_model = VAE(INPUT_DIM, LATENT_DIM)
 
 # train
 # need to add a periodic if statement on this to ensure the model isn't trained every time.
-print("Training VAE...")
+#print("Training VAE...")
 train_vae(vae_model, data_loader, epochs=EPOCHS, lr=LEARNING_RATE)
 # Save trained VAE model
 torch.save(vae_model.state_dict(), "vae_model.pth")

@@ -110,7 +110,7 @@ def shiftrows_aes():
         print("Incorrect. Expected:", expected)
 
 def mixcolumns_aes():
-    print("\Mix Columns Puzzle\n")
+    print("\nMix Columns Puzzle\n")
     # note: simplify to addition modulo 256 instead of full AES field math, will fix more for
     # appropriate difficulty
     # 1 column = 4 bytes
@@ -137,14 +137,10 @@ def xor_aes():
     key = bytes([random.randint(0, 255) for _ in range(2)])
     expected = bytes([p ^ k for p, k in zip(plaintext, key)])
     
-    question = {
-        "puzzle": "XOR",
-        "plaintext": plaintext.hex(),
-        "key": key.hex(),
-        "instruction": "Enter the result of XOR-ing each byte (in hex):"
-    }
+    question = "instruction: Enter the hex result of XOR-ing each byte \nplaintext: ", plaintext.hex(), "\nkey: ", key.hex()
+    
 
-    answer = input("Your answer: ").strip().lower()
+    #answer = input("Your answer: ").strip().lower()
     #return question, answer
     return {
         "question": question,
@@ -185,18 +181,18 @@ def fetch_puzzle_data():
     # Need to select games info per session too.
     query = """ 
         SELECT
-            result_id,
-            opponent_score
-            played_at
-            difficulty_rating
+            result_id
         FROM game_results
     """
+#opponent_score
+#played_at
+#difficulty_rating
     # ADD GAME INSTANCE STUFFS -> num_incorrect, time_to_complete etc to form difficulty vector 
     cur.execute(query) 
     rows = cur.fetchall() # store
 
-    for row in rows:
-        print(row)  # test for if prints like the sample puzzle_data below
+    #for row in rows:
+        #print(row)  # test for if prints like the sample puzzle_data below
 
     cur.close()
     conn.close()
@@ -222,16 +218,18 @@ vae_model.eval()
 difficulty_vector = torch.tensor([100, 0.6, 0.5]) 
 generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
 
-print("\nGenerated Puzzle:", generated_puzzle)
-print(play_puzzle(generated_puzzle) )
+#print("\nGenerated Puzzle:", generated_puzzle)
+#print(play_puzzle(generated_puzzle) )
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "xor_aes":
-        difficulty_vector = torch.tensor([0.7, 0.6, 0.5])
-        generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
-        puzzle = xor_aes()
-        output = json.dumps(puzzle)
-        print(json.dumps(puzzle))
+    #if len(sys.argv) > 1 and sys.argv[1] == "xor_aes":
+        #difficulty_vector = torch.tensor([0.7, 0.6, 0.5])
+        #generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
+    puzzle = xor_aes()
+    output = json.dumps(puzzle)
+    print(json.dumps(puzzle))
+    #print(json.dumps(puzzle))
+        
 
 """
 puzzle_id	UUID	Unique ID for each puzzle
