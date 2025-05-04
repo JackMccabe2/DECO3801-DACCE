@@ -70,11 +70,13 @@ const Login = ({ onNavigate }) => {
           setToastMessage("There is no user with this username.");
           setToastType("error");
           setShowToast(true);
+          setPressed(false);
           resolve(false);
         } else if (response.status === "USER ACTIVE") {
           setToastMessage("User is already logged in.");
           setToastType("error");
           setShowToast(true);
+          setPressed(false);
           resolve(false);
         } else {
           console.error("Login failed:", response.message);

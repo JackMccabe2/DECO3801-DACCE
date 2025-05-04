@@ -29,7 +29,7 @@ const Game = ({ onNavigate }) => {
   // Timer
   const [timeLeft, setTimeLeft] = useState(60); // second
 
-  const exitGame = (user) => {
+  const exitGame = async (user) => {
     const loginPayload = { type: "EXIT GAME", message: user };
 
     sendMessage(loginPayload, (response) => {
@@ -230,8 +230,8 @@ const Game = ({ onNavigate }) => {
                 </Button>
                 <Button
                   variant="primary"
-                  onClick={() => {
-                    exitGame(user);
+                  onClick={ async () => {
+                    await exitGame(user);
                     onNavigate("dashboard")}
                   }
                 >
