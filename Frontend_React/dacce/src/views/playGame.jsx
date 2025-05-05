@@ -14,13 +14,16 @@ import { useUser } from "../contexts/UserContext";
 
 const playGame = ({ onNavigate }) => {
   const { user } = useUser();
-  const { sendMessage } = useWebSocket();
+  const { sendMessage, gameState, setGameState } = useWebSocket();
 
   const initGame = (gamemode, page) => {
     const loginPayload = { type: "INIT GAME", gamemode: gamemode, user: user };
 
     sendMessage(loginPayload, (response) => {
-      if (response.status === "OK") {
+      if (response.status === "OK GOT GAME") {
+
+        setGameState(response.message);
+        //alert("set message to "+response.message);
         onNavigate(page);
       } else {
         alert("Unable to initialise game.");

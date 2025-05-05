@@ -6,6 +6,7 @@ const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [gameState, setGameState] = useState(null);
   const [message, setMessage] = useState(null); // single message or last message
   const ws = useRef(null);
 
@@ -33,26 +34,32 @@ export const WebSocketProvider = ({ children }) => {
       const response = JSON.parse(event.data);
       console.log('[Client] Received message:', response);
 
-      // Set the latest message (can be used in UI)
+      // Show alert if status/message format is present
+      if (response?.status && response?.message !== undefined) {
+        //alert(`Status: ${response.status}\nMessage: ${JSON.stringify(response.message)}`);
+      }
+
       setMessage(response);
 
-      // Handle any matching pending responses
-      pendingResponses.current.forEach((callbackObj) => {
-        callbackObj.callback(response);
+      pendingResponses.current.forEach(({ callback }) => {
+        callback(response);
       });
 
-      // Clear all handlers after use (or optionally keep them conditionally)
       pendingResponses.current = [];
     };
 
     ws.current.onerror = (error) => {
       console.error("WebSocket error:", error);
       setIsConnected(false);
+      alert("connection error");
+      // ADD "ON NAVIGATE" TO SERVER CONNECTION ERROR PAGE
     };
 
     ws.current.onclose = () => {
       console.log("WebSocket connection closed");
       setIsConnected(false);
+      alert("connection closed");
+       // ADD "ON NAVIGATE" TO SERVER CONNECTION ERROR PAGE
     };
 
     return () => {
@@ -87,7 +94,9 @@ export const WebSocketProvider = ({ children }) => {
 
   const value = {
     isConnected,
-    message,
+    gameState, 
+    setGameState,
+    //message,
     sendMessage,
     ws: ws.current
   };

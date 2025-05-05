@@ -23,7 +23,7 @@ import { useUser } from "../contexts/UserContext";
 
 const Game = ({ onNavigate }) => {
   const [puzzle, setPuzzle] = useState("");
-  const { sendMessage } = useWebSocket();
+  const { gameState, sendMessage } = useWebSocket();
   const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
   // Timer
