@@ -22,16 +22,11 @@ import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 
 const Game = ({ onNavigate }) => {
-<<<<<<< HEAD
   const [puzzle, setPuzzle] = useState({
     question: null,
     answer: null
-  });
-  const { sendMessage } = useWebSocket();
-=======
-  const [puzzle, setPuzzle] = useState("");
+  });  
   const { gameState, sendMessage } = useWebSocket();
->>>>>>> 757963958bad787eb717d21a0dfb165717e5af13
   const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
   // Timer
@@ -58,6 +53,7 @@ const Game = ({ onNavigate }) => {
       type: "GET PUZZLE",
       message: "payload to get puzzle",
     };
+
   sendMessage(loginPayload, (response) => {
       if (response.status === "PUZZLE") {
         setPuzzle({
