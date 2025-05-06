@@ -46,11 +46,11 @@ const client = new Client({
 */
 /*
 const client = new Client({
-  host: "localhost
+  host: "localhost",
   user: "josh",
   password: "password1",
   database: "postgres",
-  port: 5432"
+  port: 5432
   });
 */
 
