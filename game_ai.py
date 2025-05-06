@@ -71,17 +71,15 @@ def subbytes_aes():
     # Generate a short 4-byte input for simplicity
     input_block = bytes([random.randint(0, 15) for _ in range(4)])
     expected = bytes([s_box[b] for b in input_block])
-
-    print(f"Input Bytes: {input_block.hex()}")
-    print("Apply the SubBytes step using the AES S-box.")
-    print("Enter the substituted output (in hex, 8 characters):")
-
-    answer = input("Your answer: ").strip().lower()
-
-    if answer == expected.hex():
-        print("Correct!")
-    else:
-        print(f"Incorrect. Expected: {expected.hex()}")
+    question = {
+        "instruction": "Apply the SubBytes step using the AES S-box. Enter the substituted output (in hex, 8 characters).",
+        "input_bytes": input_block.hex(),
+        "s_box": s_box
+    }
+    return {
+        "question": question,
+        "answer": expected.hex()
+    }
 
 def shiftrows_aes():
     print("\n🌀 ShiftRows Puzzle - Learn AES Row Shifting!\n")
