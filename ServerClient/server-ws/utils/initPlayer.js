@@ -44,7 +44,7 @@ export async function createUser(ws, data, client, activeUsers) {
                 message: "user successfully created", 
                 user: initResult.data
             };
-            activeUsers.push(user.username);
+            activeUsers.push(data.username);
             ws.userId = data.username;
             break;
 
@@ -65,6 +65,6 @@ export async function createUser(ws, data, client, activeUsers) {
             break;
     }
 
-    console.log('[Server] Sending response:', response.status, response.username);
+    console.log('[Server] Sending response:', response.status, response.user.username);
     ws.send(JSON.stringify(response));
 }

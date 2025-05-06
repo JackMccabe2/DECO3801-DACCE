@@ -44,48 +44,55 @@ const Login = ({ onNavigate }) => {
   };
 
   const handleLogin = async (page) => {
-    if (tempUsername === "") {
-      setToastMessage("Please enter a valid username.");
-      setToastType("blank");
-      setShowToast(true);
-      return;
-    }
-
-    const loginPayload = { type: "GET USER", username: tempUsername };
-
-    sendMessage(loginPayload, (response) => {
-      if (response.status === "OK USER LOGIN") {
-        setToastMessage(
-          "Welcome back, " + tempUsername + "! " + "Redirecting..."
-        );
-        setToastType("success");
+    return new Promise((resolve) => {
+      if (tempUsername === "") {
+        setToastMessage("Please enter a valid username.");
+        setToastType("blank");
         setShowToast(true);
-
-        setTimeout(() => {
-          setUser(response.user);
-          onNavigate(page);
-        }, 2000);
-      } else if (response.status === "ERR USER NOT EXIST") {
-        setToastMessage("There is no user with this username.");
-        setToastType("error");
-        setShowToast(true);
-        return;
-      } else if (response.status === "USER ACTIVE") {
-        setToastMessage("User is already logged in.");
-        setToastType("error");
-        setShowToast(true);
-        return;
-      } else {
-        console.error("Login failed:", response.message);
+        resolve(false);
         return;
       }
+  
+      const loginPayload = { type: "GET USER", username: tempUsername };
+  
+      sendMessage(loginPayload, (response) => {
+        if (response.status === "OK USER LOGIN") {
+          setToastMessage("Welcome back, " + tempUsername + "! Redirecting...");
+          setToastType("success");
+          setShowToast(true);
+  
+          setTimeout(() => {
+            setUser(response.user);
+            onNavigate(page);
+          }, 2000);
+          resolve(true);
+        } else if (response.status === "ERR USER NOT EXIST") {
+          setToastMessage("There is no user with this username.");
+          setToastType("error");
+          setShowToast(true);
+          setPressed(false);
+          resolve(false);
+        } else if (response.status === "USER ACTIVE") {
+          setToastMessage("User is already logged in.");
+          setToastType("error");
+          setShowToast(true);
+          setPressed(false);
+          resolve(false);
+        } else {
+          console.error("Login failed:", response.message);
+          resolve(false);
+        }
+      });
     });
   };
 
   return (
     <Container
       fluid
-      className="d-flex justify-content-center align-items-center"
+      // className="d-flex justify-content-center align-items-center" 
+      className={`d-flex justify-content-center align-items-center ${
+        toastType === "success" ? "loading-cursor" : ""
+      }`}
     >
       <Row className="custom-content-wrap p-5 rounded">
         <Col xs={12}>
@@ -102,10 +109,14 @@ const Login = ({ onNavigate }) => {
               className="custom-input-field"
               value={tempUsername}
               onChange={(e) => setTempUsername(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && pressed == false) {
+              onKeyDown={async (e) => {
+                if (e.key === "Enter" && !pressed && toastType !== "success") {
                   setPressed(true);
-                  handleLogin("dashboard");
+                  const success = await handleLogin("dashboard").finally(() => {
+                    if (!success) {
+                      setPressed(false);
+                    }
+                  });
                 }
               }}
             />
@@ -118,7 +129,14 @@ const Login = ({ onNavigate }) => {
           <Button
             text="Enter"
             colour="yellow"
-            onClick={() => handleLogin("dashboard")}
+            // onClick={() => handleLogin("dashboard")}
+            onClick={() => {
+              if (toastType !== "success") {
+                handleLogin("dashboard");
+              }
+            }}
+            disabled={toastType === "success"} 
+            className={toastType === "success" ? "disabled-button" : ""}
           />
         </Col>
         <Col

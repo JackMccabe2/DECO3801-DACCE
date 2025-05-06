@@ -15,6 +15,7 @@ import Profile from "./views/profile";
 import Matching from "./views/matching";
 import MatchFound from "./views/matchfound";
 import GameLoad from "./views/gameload";
+import Error from "./views/error";
 
 import Signup from "./views/signup";
 import Login from "./views/login";
@@ -40,6 +41,7 @@ function App() {
           currentView !== "matching" &&
           currentView !== "matchfound" &&
           currentView !== "gameload" &&
+          currentView !== "error" &&
           currentView !== "game" && (
             <Header currentView={currentView} onNavigate={renderView} />
           )}
@@ -69,6 +71,7 @@ function App() {
           {currentView === "history" && (
             <MatchHistory onNavigate={renderView} />
           )}
+          {currentView === "error" && <Error onNavigate={renderView} />}
         </div>
         <Background />
       </WebSocketProvider>

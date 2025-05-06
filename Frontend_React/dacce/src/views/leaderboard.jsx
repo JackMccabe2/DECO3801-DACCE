@@ -38,6 +38,46 @@ const Leaderboard = ({ onNavigate }) => {
     });
   }, []);
 
+  const updateLeaderBoard = async () => {
+    const loginPayload = {
+      type: "GET LEADERBOARD",
+      message: "payload to get leaderboard",
+    };
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "SUCCESS") {
+        setLeaderboardData(response.data);
+        console.log("set answer to: " + response.data.answer);
+      } else if (response.status === "EMPTY") {
+        //const leaderboardData = "Unable to retrieve leaderboard results."
+        setLeaderboardData("leadernoard empty");
+      } else {
+        setLeaderboardData("error retrieving leaderboard");
+      }
+    });
+  };
+
+  const handleDeletePlayer = async (playerRecord) => {
+    alert(`Deleting player: ${playerRecord.name}`);
+
+    const loginPayload = {
+      type: "DELETE USER",
+      username: playerRecord.name,
+    };
+    await sendMessage(loginPayload, async (response) => {
+      if (response.status === "OK USER DELETED") {
+        await updateLeaderBoard()
+        console.log("set answer to: " + response.data.answer);
+      } else if (response.status === "ERROR") {
+        //const leaderboardData = "Unable to retrieve leaderboard results."
+        alert("error deleteing user");
+      } else {
+        alert(response.status);
+      }
+    });
+
+    // Add logic to call a delete API or update state
+  };
+
   return (
     <>
       <Container className="custom-leaderboard-container">
@@ -64,13 +104,21 @@ const Leaderboard = ({ onNavigate }) => {
             <Col xs={3} md={3} lg={4}>
               Win Rate
             </Col>
+            <Col xs={3} md={3} lg={4}>
+              Delete
+            </Col>
           </Row>
           <Container
             fluid
             className="custom-leaderboard-record-container m-0 mt-4"
           >
             {leaderboardData?.map((record, index) => (
-              <LeaderboardRecord data={record} key={index} />
+              <LeaderboardRecord
+              data={record}
+              key={index}
+              onDelete={() => handleDeletePlayer(record)}
+            />
+            
             ))}
           </Container>
         </Container>

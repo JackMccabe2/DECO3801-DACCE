@@ -22,17 +22,22 @@ import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 
 const Game = ({ onNavigate }) => {
+<<<<<<< HEAD
   const [puzzle, setPuzzle] = useState({
     question: null,
     answer: null
   });
   const { sendMessage } = useWebSocket();
+=======
+  const [puzzle, setPuzzle] = useState("");
+  const { gameState, sendMessage } = useWebSocket();
+>>>>>>> 757963958bad787eb717d21a0dfb165717e5af13
   const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
   // Timer
   const [timeLeft, setTimeLeft] = useState(60); // second
 
-  const exitGame = (user) => {
+  const exitGame = async (user) => {
     const loginPayload = { type: "EXIT GAME", message: user };
 
     sendMessage(loginPayload, (response) => {
@@ -109,6 +114,10 @@ const Game = ({ onNavigate }) => {
   const leaveGame = () => {
     setShowLeaveModal(true);
   };
+
+  const errortest = () => {
+    return redirect
+  }
 
   return (
     <>
@@ -234,8 +243,8 @@ const Game = ({ onNavigate }) => {
                 </Button>
                 <Button
                   variant="primary"
-                  onClick={() => {
-                    exitGame(user);
+                  onClick={ async () => {
+                    await exitGame(user);
                     onNavigate("dashboard")}
                   }
                 >

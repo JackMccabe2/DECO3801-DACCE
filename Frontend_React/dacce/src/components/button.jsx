@@ -12,10 +12,13 @@ const Button = ({
   fontsize,
   padding,
   margin,
+  disabled,
 }) => {
   // Can add different styles here, customisable for each button
   const btnStyle = {
-    cursor: "pointer",
+    // cursor: "pointer",
+    cursor: disabled ? "not-allowed" : "pointer",
+    pointerEvents: disabled ? "none" : "auto",
     color: textcolour,
     backgroundColor: background,
     fontSize: fontsize,
@@ -27,9 +30,12 @@ const Button = ({
   return (
     <>
       <div
-        className={`${btnHover} custom-universal-btn custom-playgame-btn btn-${colour}`}
+        className={`${btnHover} custom-universal-btn custom-playgame-btn btn-${colour} ${
+          disabled ? "disabled-button" : ""
+        }`}
         style={btnStyle}
-        onClick={onClick}
+        // onClick={onClick}
+        onClick={!disabled ? onClick : undefined}
       >
         {text}
       </div>

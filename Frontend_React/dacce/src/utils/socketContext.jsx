@@ -1,3 +1,7 @@
+
+// DEPRECIATED FILE!!!
+
+/*
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Html5WebSocket } from "html5-websocket";
 import ReconnectingWebSocket from "reconnecting-websocket";
@@ -69,3 +73,4 @@ export const WebSocketProvider = ({ children }) => {
     </WebSocketContext.Provider>
   );
 };
+*/
