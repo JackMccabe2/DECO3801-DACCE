@@ -22,57 +22,50 @@ import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 
 const Game = ({ onNavigate }) => {
-<<<<<<< HEAD
-  const [puzzle, setPuzzle] = useState({
-    question: null,
-    answer: null
-  });
-  const { sendMessage } = useWebSocket();
-=======
-  const [puzzle, setPuzzle] = useState("");
+  const [puzzle, setPuzzle] = useState({ question: null, answer: null });
   const [opponent, setOpponent] = useState("");
   const { gameState, sendMessage } = useWebSocket();
->>>>>>> 757963958bad787eb717d21a0dfb165717e5af13
   const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
+  const [loading, setLoading] = useState(true);
+
   // Timer
-  const [timeLeft, setTimeLeft] = useState(60); // second
+  const [timeLeft, setTimeLeft] = useState(60);
 
   const exitGame = async (user) => {
     const loginPayload = { type: "EXIT GAME", message: user };
-
     sendMessage(loginPayload, (response) => {
-      if (response.status === "OK") {
-        return;
-      } else {
+      if (response.status !== "OK") {
         alert("Leaving game failed.");
-        return;
       }
     });
   };
 
   useEffect(() => {
-    if (hasFetchedPuzzle.current) return; // prevent repeat
-    hasFetchedPuzzle.current = true;
+    const fetchPuzzle = async () => {
+      if (hasFetchedPuzzle.current) return;
+      hasFetchedPuzzle.current = true;
 
-    const loginPayload = {
-      type: "GET PUZZLE",
-      message: "payload to get puzzle",
+      const loginPayload = {
+        type: "GET PUZZLE",
+        message: "payload to get puzzle",
+      };
+
+      await sendMessage(loginPayload, (response) => {
+        if (response.status === "PUZZLE") {
+          setPuzzle({
+            question: response.data.question,
+            answer: response.data.answer,
+          });
+          console.log("set answer to: " + response.data.answer);
+          setLoading(false);
+        } else {
+          alert("Get puzzle failed.");
+        }
+      });
     };
-  sendMessage(loginPayload, (response) => {
-      if (response.status === "PUZZLE") {
-        setPuzzle({
-          question: response.data.question,
-          answer: response.data.answer
-        });
-        puzzle.answer = response.data.answer
-        console.log("set answer to: " + response.data.answer);
-        // it def reads data.answer here
-      } else {
-        alert("Get puzzle failed.");
-        return;
-      }
-    });
+
+    fetchPuzzle();
   }, []);
 
   useEffect(() => {
@@ -91,14 +84,13 @@ const Game = ({ onNavigate }) => {
 
   const handleTerminalCommand = (input) => {
     console.log("User entered:", input);
-
     if (!puzzle || !puzzle.answer) {
       alert("Puzzle not loaded yet.");
       return;
     }
 
     if (input == puzzle.answer) {
-      alert("Correct answer!")
+      alert("Correct answer!");
       // Do something like advance stage or send to server
     } else {
       alert("Incorrect! Try again.");
@@ -116,12 +108,29 @@ const Game = ({ onNavigate }) => {
     setShowLeaveModal(true);
   };
 
-  const errortest = () => {
-    return redirect
-  }
-
   return (
     <>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            height: "100vh",
+            width: "100vw",
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            color: "#fff",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+            fontSize: "2rem",
+          }}
+        >
+          Loading...
+        </div>
+      )}
+
       <Container fluid className="game-wrapper">
         <Row
           xs="auto"
@@ -178,9 +187,7 @@ const Game = ({ onNavigate }) => {
                 <OverlayTrigger
                   key="bottom"
                   placement="bottom"
-                  overlay={
-                    <Tooltip id="tooltip-bottom">Game Tips</Tooltip>
-                  }
+                  overlay={<Tooltip id="tooltip-bottom">Game Tips</Tooltip>}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -198,9 +205,7 @@ const Game = ({ onNavigate }) => {
                 <OverlayTrigger
                   key="bottom"
                   placement="bottom"
-                  overlay={
-                    <Tooltip id="tooltip-bottom">Leave the game</Tooltip>
-                  }
+                  overlay={<Tooltip id="tooltip-bottom">Leave the game</Tooltip>}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -209,9 +214,7 @@ const Game = ({ onNavigate }) => {
                     fill="currentColor"
                     className="bi bi-door-closed-fill custom-icon"
                     viewBox="0 0 16 16"
-                    onClick={() => {
-                      leaveGame();
-                    }}
+                    onClick={() => leaveGame()}
                   >
                     <path d="M12 1a1 1 0 0 1 1 1v13h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2a1 1 0 0 1 1-1zm-2 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
                   </svg>
@@ -244,10 +247,10 @@ const Game = ({ onNavigate }) => {
                 </Button>
                 <Button
                   variant="primary"
-                  onClick={ async () => {
+                  onClick={async () => {
                     await exitGame(user);
-                    onNavigate("dashboard")}
-                  }
+                    onNavigate("dashboard");
+                  }}
                 >
                   Confirm
                 </Button>
@@ -278,7 +281,6 @@ const Game = ({ onNavigate }) => {
         }
         title={`Encrypted Message... ${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: `}
         content={puzzle.question}
-        //content="One of the criminals, known as “The Archivist”, always hides messages in old formats so that only those who know the history of encoding can understand them..."
       />
 
       {/* Terminal */}
