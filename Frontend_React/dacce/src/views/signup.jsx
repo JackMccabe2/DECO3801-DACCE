@@ -16,6 +16,8 @@ import { PiSmileyFill } from "react-icons/pi";
 import { PiSmileySadFill } from "react-icons/pi";
 import { MdError } from "react-icons/md";
 
+import btnClickSound from "../assets/music/button_click_2_pop.mp3";
+
 import PolicyModal from "../components/policymodal";
 
 const Signup = ({ onNavigate }) => {
@@ -27,7 +29,6 @@ const Signup = ({ onNavigate }) => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("error");
-  
 
   useEffect(() => {
     setPressed(false);
@@ -75,7 +76,7 @@ const Signup = ({ onNavigate }) => {
         setPressed(true);
         setTimeout(() => {
           setUser(response.user);
-          onNavigate(page)
+          onNavigate(page);
         }, 3000);
       } else if (response.status === "ERR USER EXISTS") {
         setToastMessage("Username already exists.");
@@ -97,7 +98,7 @@ const Signup = ({ onNavigate }) => {
       fluid
       className="d-flex justify-content-center align-items-center"
     >
-      <Row className="custom-content-wrap p-5 rounded">
+      <Row className="custom-content-wrap p-5 rounded h-100">
         <Col xs={12}>
           <h1 className="text-center mb-4 mt-4">SIGN UP</h1>
         </Col>
@@ -114,6 +115,8 @@ const Signup = ({ onNavigate }) => {
               onChange={(e) => setTempUsername(e.target.value)}
               onKeyDown={async (e) => {
                 if (e.key === "Enter" && !pressed) {
+                  const audio = new Audio(btnClickSound);
+                  audio.play();
                   setPressed(true);
                   const success = await checkDup("dashboard");
                   if (!success) {
@@ -121,6 +124,14 @@ const Signup = ({ onNavigate }) => {
                   }
                 }
               }}
+            />
+            <Form.Label className="custom-label text-start w-100 mt-3">
+              Create a password
+            </Form.Label>
+            <Form.Control
+              type="text"
+              className="custom-input-field"
+              value={tempUsername}
             />
           </Form.Group>
         </Col>
@@ -140,7 +151,6 @@ const Signup = ({ onNavigate }) => {
                 }
               }
             }}
-          
           />
         </Col>
         <Col

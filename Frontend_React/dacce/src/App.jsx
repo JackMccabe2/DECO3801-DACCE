@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
 import { UserProvider } from "./contexts/UserContext";
@@ -23,14 +23,92 @@ import Header from "./components/header";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
+// Landing page music still TBD
+import landingMusic from "./assets/music/landing page 2.mp3";
+import inGameMusic from "./assets/music/in game.mp3";
+import dashboardMusic from "./assets/music/dashboard and others 2.mp3";
+import matchingMusic from "./assets/music/pairing match.mp3";
+
 function App() {
   // Set different views for the app.
   const [currentView, setCurrentView] = useState("landing");
+  const [audio, setAudio] = useState(null);
 
   const renderView = (view) => {
     if (view === currentView) return;
     setCurrentView(view);
   };
+
+  // Play audio based on different views
+  useEffect(() => {
+    const viewToAudioMap = {
+      sharedLandingAudio: landingMusic,
+      sharedDashboardAudio: dashboardMusic,
+      sharedinGameAudio: inGameMusic,
+      sharedMatchingAudio: matchingMusic,
+    };
+
+    const sharedLandingAudio = ["signup", "login", "error"];
+    const sharedDashboardAudio = [
+      "dashboard",
+      "profile",
+      "playgame",
+      "leaderboard",
+      "history",
+    ];
+    const sharedinGameAudio = ["game"];
+    const sharedMatchingAudio = ["matching", "matchfound", "gameload"];
+
+    let audioToPlay = null;
+    if (sharedLandingAudio.includes(currentView)) {
+      audioToPlay = viewToAudioMap["sharedLandingAudio"];
+    } else if (sharedDashboardAudio.includes(currentView)) {
+      audioToPlay = viewToAudioMap["sharedDashboardAudio"];
+    } else if (sharedinGameAudio.includes(currentView)) {
+      audioToPlay = viewToAudioMap["sharedinGameAudio"];
+    } else if (sharedMatchingAudio.includes(currentView)) {
+      audioToPlay = viewToAudioMap["sharedMatchingAudio"];
+    }
+
+    // Normalise audioToPlay to absolute path (avoid replaying the same audio when views are the same)
+    const newAudioSrc = audioToPlay
+      ? new URL(audioToPlay, window.location.origin).href
+      : null;
+
+    if (audio && audio.src === newAudioSrc) {
+      return;
+    }
+
+    if (audio) {
+      audio.pause();
+    }
+
+    // Set audio fade-in on view change
+    if (audioToPlay) {
+      const newAudio = new Audio(audioToPlay);
+      newAudio.loop = true;
+      newAudio.volume = 0;
+
+      newAudio
+        .play()
+        .then(() => {
+          setAudio(newAudio);
+
+          let volume = 0;
+          const fadeInInterval = setInterval(() => {
+            if (volume < 1) {
+              volume += 0.1;
+              newAudio.volume = Math.min(volume, 1);
+            } else {
+              clearInterval(fadeInInterval);
+            }
+          }, 500);
+        })
+        .catch((error) => {
+          console.error("Audio playback error:", error);
+        });
+    }
+  }, [currentView]);
 
   return (
     <UserProvider>

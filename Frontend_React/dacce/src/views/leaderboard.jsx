@@ -16,6 +16,8 @@ import CancelBtn from "../assets/cancel.png";
 import { useState, useEffect } from "react";
 import { useWebSocket } from "../contexts/WebSocketContext";
 
+import btnCloseSound from "../assets/music/button_close.mp3";
+
 const Leaderboard = ({ onNavigate }) => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const { sendMessage } = useWebSocket();
@@ -65,7 +67,7 @@ const Leaderboard = ({ onNavigate }) => {
     };
     await sendMessage(loginPayload, async (response) => {
       if (response.status === "OK USER DELETED") {
-        await updateLeaderBoard()
+        await updateLeaderBoard();
         console.log("set answer to: " + response.data.answer);
       } else if (response.status === "ERROR") {
         //const leaderboardData = "Unable to retrieve leaderboard results."
@@ -87,7 +89,11 @@ const Leaderboard = ({ onNavigate }) => {
           src={CancelBtn}
           alt="Close"
           className="custom-close-btn"
-          onClick={() => onNavigate("dashboard")}
+          onClick={() => {
+            const audio = new Audio(btnCloseSound);
+            audio.play();
+            onNavigate("dashboard");
+          }}
         />
 
         <Container fluid className="custom-leaderboard-data-container p-0">
@@ -114,11 +120,10 @@ const Leaderboard = ({ onNavigate }) => {
           >
             {leaderboardData?.map((record, index) => (
               <LeaderboardRecord
-              data={record}
-              key={index}
-              onDelete={() => handleDeletePlayer(record)}
-            />
-            
+                data={record}
+                key={index}
+                onDelete={() => handleDeletePlayer(record)}
+              />
             ))}
           </Container>
         </Container>

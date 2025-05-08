@@ -50,9 +50,6 @@ const playGame = ({ onNavigate }) => {
               <Button
                 text="Invite"
                 colour="orange"
-                onClick={() => {
-                  onNavigate("error");
-                }}
               ></Button>
             </Col>
             <Col sm={12} md={5} lg={5} className="custom-playmode-container">
