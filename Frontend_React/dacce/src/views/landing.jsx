@@ -15,14 +15,13 @@ const Landing = ({ onNavigate }) => {
   ///// cfretes vairale status that can access in whole program that reflects wether the server response is valid
 
   const handleClick = (page) => {
-    
     const loginPayload = { type: "NAV", message: page };
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK") {
-        onNavigate(page)
+        onNavigate(page);
       } else {
-        alert("Navigation failed.")
+        alert("Navigation failed.");
         return;
       }
     });
@@ -55,8 +54,7 @@ const Landing = ({ onNavigate }) => {
               colour="yellow"
               onClick={() => {
                 handleClick("signup");
-                }
-              }
+              }}
             />
           </Col>
           <Col sm={12} md={4} lg={4}>

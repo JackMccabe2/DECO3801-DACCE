@@ -2,6 +2,8 @@
 import "../css/playGame.css";
 import "../css/button.css";
 
+import btnClickSound from "../assets/music/button_click_2_pop.mp3";
+
 const Button = ({
   text,
   colour,
@@ -27,6 +29,17 @@ const Button = ({
     textAlign: "center",
   };
 
+  const handleClick = () => {
+    if (!disabled) {
+      const audio = new Audio(btnClickSound);
+      audio.play();
+
+      if (onClick) {
+        onClick();
+      }
+    }
+  };
+
   return (
     <>
       <div
@@ -35,7 +48,8 @@ const Button = ({
         }`}
         style={btnStyle}
         // onClick={onClick}
-        onClick={!disabled ? onClick : undefined}
+        // onClick={!disabled ? onClick : undefined}
+        onClick={handleClick}
       >
         {text}
       </div>

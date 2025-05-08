@@ -12,6 +12,8 @@ import "../css/history.css";
 // Import Assets
 import CancelBtn from "../assets/cancel.png";
 
+import btnCloseSound from "../assets/music/button_close.mp3";
+
 const MatchHistory = ({ onNavigate }) => {
   // Just for testing, can be replace with real data from the database
   // Contains match result (win/Defeat), opponent’s username, both players’ leaderboard scores at the time, and how many puzzles were solved (solved/total).
@@ -62,7 +64,11 @@ const MatchHistory = ({ onNavigate }) => {
           src={CancelBtn}
           alt="Close"
           className="custom-close-btn"
-          onClick={() => onNavigate("dashboard")}
+          onClick={() => {
+            const audio = new Audio(btnCloseSound);
+            audio.play();
+            onNavigate("dashboard");
+          }}
         />
 
         <Container fluid className="custom-matchhistory-data-container p-0">

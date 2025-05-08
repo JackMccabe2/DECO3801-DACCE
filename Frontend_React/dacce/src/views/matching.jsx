@@ -122,8 +122,7 @@ const Matching = ({ onNavigate }) => {
             onClick={() => {
               exitGame(user);
               onNavigate("playgame");
-              }
-            }
+            }}
           >
             Cancel
           </Button>
