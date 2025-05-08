@@ -18,7 +18,6 @@ const Button = ({
 }) => {
   // Can add different styles here, customisable for each button
   const btnStyle = {
-    // cursor: "pointer",
     cursor: disabled ? "not-allowed" : "pointer",
     pointerEvents: disabled ? "none" : "auto",
     color: textcolour,
@@ -47,8 +46,6 @@ const Button = ({
           disabled ? "disabled-button" : ""
         }`}
         style={btnStyle}
-        // onClick={onClick}
-        // onClick={!disabled ? onClick : undefined}
         onClick={handleClick}
       >
         {text}
