@@ -58,6 +58,6 @@
 }
 
 .disabled-button {
-  background-color: var(--grey) !important;
+  background-color: grey !important;
   color: var(--white) !important;
 }
