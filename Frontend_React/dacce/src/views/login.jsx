@@ -94,7 +94,7 @@ const Login = ({ onNavigate }) => {
         toastType === "success" ? "loading-cursor" : ""
       }`}
     >
-      <Row className="custom-content-wrap p-5 rounded">
+      <Row className="custom-content-wrap p-5 rounded h-100">
         <Col xs={12}>
           <h1 className="text-center mb-4 mt-4">LOG IN</h1>
         </Col>
@@ -119,6 +119,14 @@ const Login = ({ onNavigate }) => {
                   });
                 }
               }}
+            />
+            <Form.Label className="custom-label text-start w-100 mt-3">
+              Password
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter your password"
+              className="custom-input-field"
             />
           </Form.Group>
         </Col>

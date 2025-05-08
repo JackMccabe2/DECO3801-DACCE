@@ -58,8 +58,6 @@
 }
 
 .disabled-button {
-  background-color: grey !important;
-  color: white !important;
-  cursor: not-allowed !important;
-  pointer-events: none !important;
+  background-color: var(--grey) !important;
+  color: var(--white) !important;
 }

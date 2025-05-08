@@ -97,7 +97,7 @@ const Signup = ({ onNavigate }) => {
       fluid
       className="d-flex justify-content-center align-items-center"
     >
-      <Row className="custom-content-wrap p-5 rounded">
+      <Row className="custom-content-wrap p-5 rounded h-100">
         <Col xs={12}>
           <h1 className="text-center mb-4 mt-4">SIGN UP</h1>
         </Col>
@@ -121,6 +121,14 @@ const Signup = ({ onNavigate }) => {
                   }
                 }
               }}
+            />
+            <Form.Label className="custom-label text-start w-100 mt-3">
+              Create a password
+            </Form.Label>
+            <Form.Control
+              type="text"
+              className="custom-input-field"
+              value={tempUsername}
             />
           </Form.Group>
         </Col>
