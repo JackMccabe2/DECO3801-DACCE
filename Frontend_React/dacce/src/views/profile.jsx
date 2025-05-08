@@ -22,6 +22,8 @@ import "../css/profile.css";
 import CancelBtn from "../assets/cancel.png";
 import ProfilePic from "../assets/profile.png";
 
+import btnCloseSound from "../assets/music/button_close.mp3";
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Legend);
 
 export const options = {
@@ -66,7 +68,11 @@ const Profile = ({ onNavigate }) => {
           src={CancelBtn}
           alt="Close"
           className="custom-close-btn"
-          onClick={() => onNavigate("dashboard")}
+          onClick={() => {
+            const audio = new Audio(btnCloseSound);
+            audio.play();
+            onNavigate("dashboard");
+          }}
         />
         <Container fluid className="custom-profile-data-container m-0">
           <Row className="d-flex align-content-center h-100 py-3">

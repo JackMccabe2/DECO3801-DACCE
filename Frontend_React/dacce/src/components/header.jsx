@@ -26,6 +26,8 @@ import { TbLogout } from "react-icons/tb";
 import { useUser } from "../contexts/UserContext";
 import { MdSpaceDashboard } from "react-icons/md";
 
+import btnClickSound from "../assets/music/button_click_2_pop.mp3";
+
 const Navbar = ({ currentView, onNavigate }) => {
   const [show, setShow] = useState(false);
   const { user, setUser } = useUser();
@@ -85,6 +87,8 @@ const Navbar = ({ currentView, onNavigate }) => {
                   className="fs-5 mx-5 menu-item"
                   href="#dashboard"
                   onClick={() => {
+                    const audio = new Audio(btnClickSound);
+                    audio.play();
                     onNavigate("dashboard");
                     setShow(false);
                   }}
@@ -95,6 +99,8 @@ const Navbar = ({ currentView, onNavigate }) => {
                   className="fs-5 mx-5 menu-item"
                   href="#profile"
                   onClick={() => {
+                    const audio = new Audio(btnClickSound);
+                    audio.play();
                     onNavigate("profile");
                     setShow(false);
                   }}
@@ -105,6 +111,8 @@ const Navbar = ({ currentView, onNavigate }) => {
                   className="fs-5 mx-5 menu-item"
                   href="#leaderboard"
                   onClick={() => {
+                    const audio = new Audio(btnClickSound);
+                    audio.play();
                     onNavigate("leaderboard");
                     setShow(false);
                   }}
@@ -115,6 +123,8 @@ const Navbar = ({ currentView, onNavigate }) => {
                   className="fs-5 mx-5 menu-item"
                   href="#history"
                   onClick={() => {
+                    const audio = new Audio(btnClickSound);
+                    audio.play();
                     onNavigate("history");
                     setShow(false);
                   }}
@@ -134,6 +144,8 @@ const Navbar = ({ currentView, onNavigate }) => {
               className="fs-5 mx-5 menu-item"
               href="#logout"
               onClick={() => {
+                const audio = new Audio(btnClickSound);
+                audio.play();
                 if (window.confirm("Are you sure you want to log out?")) {
                   onNavigate("landing");
                   window.location.reload();

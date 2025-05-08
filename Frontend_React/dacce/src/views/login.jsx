@@ -17,6 +17,8 @@ import { PiSmileyFill } from "react-icons/pi";
 import { PiSmileySadFill } from "react-icons/pi";
 import { MdError } from "react-icons/md";
 
+import btnClickSound from "../assets/music/button_click_2_pop.mp3";
+
 const Login = ({ onNavigate }) => {
   const { setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
@@ -52,15 +54,15 @@ const Login = ({ onNavigate }) => {
         resolve(false);
         return;
       }
-  
+
       const loginPayload = { type: "GET USER", username: tempUsername };
-  
+
       sendMessage(loginPayload, (response) => {
         if (response.status === "OK USER LOGIN") {
           setToastMessage("Welcome back, " + tempUsername + "! Redirecting...");
           setToastType("success");
           setShowToast(true);
-  
+
           setTimeout(() => {
             setUser(response.user);
             onNavigate(page);
@@ -89,12 +91,12 @@ const Login = ({ onNavigate }) => {
   return (
     <Container
       fluid
-      // className="d-flex justify-content-center align-items-center" 
+      // className="d-flex justify-content-center align-items-center"
       className={`d-flex justify-content-center align-items-center ${
         toastType === "success" ? "loading-cursor" : ""
       }`}
     >
-      <Row className="custom-content-wrap p-5 rounded">
+      <Row className="custom-content-wrap p-5 rounded h-100">
         <Col xs={12}>
           <h1 className="text-center mb-4 mt-4">LOG IN</h1>
         </Col>
@@ -111,6 +113,8 @@ const Login = ({ onNavigate }) => {
               onChange={(e) => setTempUsername(e.target.value)}
               onKeyDown={async (e) => {
                 if (e.key === "Enter" && !pressed && toastType !== "success") {
+                  const audio = new Audio(btnClickSound);
+                  audio.play();
                   setPressed(true);
                   const success = await handleLogin("dashboard").finally(() => {
                     if (!success) {
@@ -119,6 +123,14 @@ const Login = ({ onNavigate }) => {
                   });
                 }
               }}
+            />
+            <Form.Label className="custom-label text-start w-100 mt-3">
+              Password
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter your password"
+              className="custom-input-field"
             />
           </Form.Group>
         </Col>
@@ -135,7 +147,7 @@ const Login = ({ onNavigate }) => {
                 handleLogin("dashboard");
               }
             }}
-            disabled={toastType === "success"} 
+            disabled={toastType === "success"}
             className={toastType === "success" ? "disabled-button" : ""}
           />
         </Col>
