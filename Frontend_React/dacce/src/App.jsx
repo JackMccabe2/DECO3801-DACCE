@@ -23,6 +23,7 @@ import Header from "./components/header";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
+// Landing page music still TBD
 import landingMusic from "./assets/music/landing page 2.mp3";
 import inGameMusic from "./assets/music/in game.mp3";
 import dashboardMusic from "./assets/music/dashboard and others 2.mp3";
