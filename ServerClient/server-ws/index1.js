@@ -15,7 +15,7 @@ const server = express().listen(8080, () => {
 // Initialize WebSocket Server
 const wss = new WebSocketServer({ server }); // Use WebSocketServer here
 
-/*
+
 // PostgreSQL Connection 
 
 const client = new Client({
@@ -25,8 +25,8 @@ const client = new Client({
   database: "postgres",
   port: 5432
 });
-*/
 
+/*
 const client = new Client({
   host: "localhost",
   database: "postgres",
@@ -34,7 +34,7 @@ const client = new Client({
   password: "D4t4b4se",
   port: 5432
 });
-
+*/
 /*
 const client = new Client({
   host: "localhost",

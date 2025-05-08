@@ -1,4 +1,3 @@
-
 import { okMessage } from './sendMessage.js';
 
 export async function initGame(ws, gameId, data) {
@@ -17,18 +16,15 @@ export async function initGame(ws, gameId, data) {
         // if the gamemode is multiplayer, attempt to find a match
         if (data.gamemode === 'M') {
             for (let i = 0; i < gameId.length; i++) {
-                
-                if (added == true) {
-                    break
-                }
-                
+                if (added) break;
+
                 const obj = gameId[i];
-                const key = Object.keys(obj)[0]; // Get the dynamic key like '859353ec9410f'
+                const key = Object.keys(obj)[0];
 
                 // change so that it matches most to user score IFFFFF multiple games present
-                if (obj[key].gamemode === 'M' && obj[key].users.length === 1) {
-                    obj[key].users.push(data.user.username);
-                    obj[key].userdata.push(data.user);
+                if (obj[key].gamemode === 'M' && Object.keys(obj[key].users).length === 1) {
+                    obj[key].users[data.user.username] = 0;  // Add user to users object
+                    obj[key].userdata.push(data.user);       // Push user data
                     userGame = obj;
                     added = true;
                 }
@@ -36,29 +32,34 @@ export async function initGame(ws, gameId, data) {
             }
         }
 
-        // if user was not added to existing game, create new game for them
-        if (added == false) {
-            const newGame = { [id]: { gamemode: data.gamemode, users: [data.user.username], userdata: [data.user] } };
+        // If user not added, create new game
+        if (!added) {
+            const newGame = {
+                [id]: {
+                    gamemode: data.gamemode,
+                    users: { [data.user.username]: 0 },
+                    userdata: [data.user]
+                }
+            };
             gameId.push(newGame);
             userGame = newGame;
         }
 
         //console.dir(gameId, {depth: null});
 
-        console.log("message user game: ", userGame);
-
         const response = {
             status: "OK GOT GAME",
             message: userGame
         };
 
-        console.log('[Server] Sending response:', response.status + " " + response.message);
+        console.log('[Server] Sending response:', response.status, response.message);
         ws.send(JSON.stringify(response));
 
     } catch (err) {
-        console.error('[Server] Invalid JSON or error:', message);
+        console.error('[Server] Error initializing game:', err);
         const errorResponse = { status: "ERROR", message: "Error initializing game" };
-        ws.send(JSON.stringify(errorResponse)); // Send error message back
+        ws.send(JSON.stringify(errorResponse));
     }
-
 }
+
+//         title={`Encrypted Message... ${user} score: ${gameState[Object.keys(gameState)[0]].users[username]}`}

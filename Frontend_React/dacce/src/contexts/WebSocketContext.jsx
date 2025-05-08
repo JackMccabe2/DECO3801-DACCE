@@ -36,7 +36,9 @@ export const WebSocketProvider = ({ children }) => {
 
       // Show alert if status/message format is present
       if (response?.status && response?.message !== undefined) {
-        //alert(`Status: ${response.status}\nMessage: ${JSON.stringify(response.message)}`);
+        if (response.status === "OK GOT GAME") {
+          setGameState(response.message);
+        } 
       }
 
       setMessage(response);
