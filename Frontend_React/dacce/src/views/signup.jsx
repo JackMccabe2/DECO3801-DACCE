@@ -41,6 +41,12 @@ const Signup = ({ onNavigate }) => {
     const loginPayload = { type: "POST DUP", username: tempUsername };
 
     sendMessage(loginPayload, (response) => {
+      if (tempUsername === null || tempUsername === ""){  // check if username is empty to avoid wrong error message
+        setToastMessage("Please enter your username and password.");
+        setToastType("error");
+        setShowToast(true);
+        return;
+      }
       if (response.status === "OK") {
         setShowPolicyModal(true);
       } else if (response.status === "ERR USER EXISTS") {
