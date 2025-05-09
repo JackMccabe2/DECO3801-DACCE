@@ -2,8 +2,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+
+// Import Context Variables
 import { useUser } from "../contexts/UserContext";
 
+// Import CSS
 import "../css/xterm.css";
 
 const TerminalComponent = ({ onCommand }) => {

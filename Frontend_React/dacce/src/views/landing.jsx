@@ -1,13 +1,20 @@
 // landing.jsx
 
+// Import React Hooks
 import { useState } from "react";
-import "../css/landing.css";
+
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import Button from "../components/button";
 import Image from "react-bootstrap/Image";
+
+// Import Custom Components & CSS
+import Button from "../components/button";
 import Logo from "../assets/chg_logo.png";
+import "../css/landing.css";
+
+// Import Websocket Context
 import { useWebSocket } from "../contexts/WebSocketContext";
 
 const Landing = ({ onNavigate }) => {

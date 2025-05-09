@@ -1,6 +1,10 @@
+// Import React Hooks
 import { useState, useEffect } from "react";
+
+// Import CSS
 import "../css/login.css";
-import Button from "../components/button";
+
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -8,17 +12,22 @@ import Form from "react-bootstrap/Form";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
 
+// Import Custom Components
+import Button from "../components/button";
+import PolicyModal from "../components/policymodal";
+
+// Import Context Variables
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 
+// Import Icons
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import { PiSmileyFill } from "react-icons/pi";
 import { PiSmileySadFill } from "react-icons/pi";
 import { MdError } from "react-icons/md";
 
+// Import Sound
 import btnClickSound from "../assets/music/button_click_2_pop.mp3";
-
-import PolicyModal from "../components/policymodal";
 
 const Signup = ({ onNavigate }) => {
   const { setUser } = useUser();

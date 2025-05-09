@@ -1,10 +1,13 @@
+// Import React Hooks
 import { useState, useEffect } from "react";
+
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
+// Import Custom Components & Assets & CSS
 import ProfilePhoto from "../assets/profile.png";
-
 import "../css/gameload.css";
 
 const GameLoad = ({ onNavigate }) => {
