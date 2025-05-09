@@ -34,12 +34,13 @@ export async function loginUser(ws, data, client, activeUsers) {
 
     let initResult;
 
-    const index = activeUsers.indexOf(data.username);
-    if (index !== -1) {
-        initResult = {status: "active"}
+    if (activeUsers.has(data.username)) {
+        initResult = { status: "active" };
     } else {
-        initResult = await getPlayer(data.username, client);  // Ensure you await the result if it's asynchronous
+        //console.log("Get result: ");    
+        initResult = await getPlayer(data.username, client);
     }
+    
     //console.log("Get result: " + initResult);
 
 
@@ -53,8 +54,13 @@ export async function loginUser(ws, data, client, activeUsers) {
                 message: "user sucessully retrieved", 
                 user: initResult.data
             };
-            activeUsers.push(data.username);
-            ws.userId = data.username;
+
+            activeUsers.set(data.username, ws);
+            ws.userId = data.username; // store on socket for cleanup later
+            console.log(`User ${data.username} connected`);
+
+            //activeUsers.push(data.username);
+            //ws.userId = data.username;
             break;
 
         case "empty":

@@ -1,15 +1,16 @@
 
 import { okMessage } from './sendMessage.js';
-import { createUser } from './initPlayer.js'; // Import functions
-import { loginUser } from './loginPlayer.js';
-import { initGame } from './initGame.js';
+import { createUser } from './userManip/initPlayer.js'; // Import functions
+import { loginUser } from './userManip/loginPlayer.js';
+import { initGame } from './gameStateManip/initGame.js';
 import { getPuzzle } from './getPuzzle.js';
 import { getLeaderboard } from './getLeaderboard.js';
-import { leaveMultiplayerGame } from './leaveMultiplayerGame.js';
-import { deleteUser } from './deleteUser.js';
-import { checkDuplicateUser } from './checkDuplicateUser.js';
+import { leaveGame } from './gameStateManip/leaveGame.js';
+import { deleteUser } from './userManip/deleteUser.js';
+import { checkDuplicateUser } from './userManip/checkDuplicateUser.js';
+import { correctScore } from './gameStateManip/correctScore.js';
 
-export async function handleMessage(ws, message, client, gameId, activeUsers) {
+export async function handleMessage(ws, message, client, gameId, users) {
     try {
         const data = JSON.parse(message.toString('utf-8'));
         console.log('[Server] Received message:', data.type);
@@ -21,13 +22,13 @@ export async function handleMessage(ws, message, client, gameId, activeUsers) {
         } else if (data.type === 'log') {
             console.log('[Client] log username: ' + data.username);
         } else if (data.type === 'POST') {
-            await createUser(ws, data, client, activeUsers);
+            await createUser(ws, data, client, users);
         } else if (data.type === 'POST DUP') {
             await checkDuplicateUser(ws, data.username,client);
         } else if (data.type === 'GET USER') {
-            await loginUser(ws, data, client, activeUsers);
+            await loginUser(ws, data, client, users);
         } else if (data.type === 'DELETE USER') {
-            await deleteUser(ws, data, client, activeUsers);
+            await deleteUser(ws, data, client, users);
         } else if (data.type === 'GET LEADERBOARD') {
             await getLeaderboard(ws, client);
         } else if (data.type === 'INIT GAME') {
@@ -35,7 +36,9 @@ export async function handleMessage(ws, message, client, gameId, activeUsers) {
         } else if (data.type === 'GET PUZZLE') {
             await getPuzzle(ws);
         } else if (data.type === 'EXIT GAME') {
-            await leaveMultiplayerGame(ws, gameId, data);
+            await leaveGame(ws, gameId, data);
+        } else if (data.type === 'CORRECT ANSWER') {
+            await correctScore(ws, gameId, data, client, users);
         } else {
             await okMessage(ws, data);
         }
