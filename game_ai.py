@@ -168,6 +168,7 @@ def generate_puzzle(model, difficulty_vector):
     return generated_puzzle.numpy()
 
 def fetch_puzzle_data():
+    
     conn = psycopg2.connect(
         host="localhost",
         database="postgres",
@@ -175,6 +176,15 @@ def fetch_puzzle_data():
         password="D4t4b4se",
         port=5432
     )
+    
+    """
+    conn = psycopg2.connect(
+        host="localhost",
+        database="postgres",
+        user="jackmccabe",
+        password="postgres",
+        port=5432
+    )"""
 
     cur = conn.cursor()
     # Need to select games info per session too.

@@ -128,7 +128,7 @@ const Login = ({ onNavigate }) => {
               Password
             </Form.Label>
             <Form.Control
-              type="text"
+              type="password"
               placeholder="Enter your password"
               className="custom-input-field"
             />

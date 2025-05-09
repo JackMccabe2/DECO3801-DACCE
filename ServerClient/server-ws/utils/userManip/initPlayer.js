@@ -44,8 +44,13 @@ export async function createUser(ws, data, client, activeUsers) {
                 message: "user successfully created", 
                 user: initResult.data
             };
-            activeUsers.push(data.username);
-            ws.userId = data.username;
+
+            activeUsers.set(data.username, ws);
+            ws.userId = data.username; // store on socket for cleanup later
+            console.log(`User ${data.username} connected`);
+
+            //activeUsers.push(data.username);
+            //ws.userId = data.username;
             break;
 
         case "duplicate":

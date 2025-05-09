@@ -1,4 +1,4 @@
-import { okMessage } from './sendMessage.js';
+import { okMessage } from '../sendMessage.js';
 
 export async function initGame(ws, gameId, data) {
 
