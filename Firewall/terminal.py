@@ -3,7 +3,7 @@ import random
 import time
 
 # Print commands
-from firewall import scan_network, exploit_vulnerability, retrieve_data, reset_firewall, nmap_scan, vuln_scan, run_nikto, run_whatweb
+from firewall import scan_network, exploit_vulnerability, retrieve_data, reset_firewall, nmap_scan, vuln_scan, run_nikto, run_whatweb, exploit_freak, exploit_logjam, exploit_poodle
 
 def handle_command(command):
     if command == "help":
@@ -19,12 +19,12 @@ def handle_command(command):
         print("   nmap --script vuln <ip>  → Scan for known vulnerabilities")
         print("   nikto -h <ip>            → Scan web server for common misconfigurations")
         print("   whatweb <ip>             → Fingerprint web technologies")
+    elif command == "scan":
+        scan_network()
     elif command.startswith("nmap --script vuln"):
         vuln_scan(command)
     elif command.startswith("nmap "):
         nmap_scan(command)
-    elif command == "scan":
-        scan_network()
     elif command.startswith("nikto"):
         run_nikto(command)
     elif command.startswith("whatweb"):
@@ -33,6 +33,15 @@ def handle_command(command):
         exploit_vulnerability()
     elif command == "retrieve":
         retrieve_data()
+    elif command.startswith("exploit poodle"):
+        ip = command.split()[-1]
+        exploit_poodle(ip)
+    elif command.startswith("exploit freak"):
+        ip = command.split()[-1]
+        exploit_freak(ip)
+    elif command.startswith("exploit logjam"):
+        ip = command.split()[-1]
+        exploit_logjam(ip)
     elif command == "reset":
         reset_firewall()
     elif command == "exit":
