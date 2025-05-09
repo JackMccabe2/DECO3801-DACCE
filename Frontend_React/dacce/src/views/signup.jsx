@@ -41,8 +41,9 @@ const Signup = ({ onNavigate }) => {
     const loginPayload = { type: "POST DUP", username: tempUsername };
 
     sendMessage(loginPayload, (response) => {
-      if (tempUsername === null || tempUsername === ""){  // check if username is empty to avoid wrong error message
-        setToastMessage("Please enter your username and password.");
+      if (tempUsername === null || tempUsername === "") {
+        // check if username is empty to avoid wrong error message
+        setToastMessage("Please enter a username and password.");
         setToastType("error");
         setShowToast(true);
         return;
@@ -84,14 +85,6 @@ const Signup = ({ onNavigate }) => {
   // Handle the signup create button
   const handleSignup = async (page) => {
     setShowPolicyModal(false);
-
-    if (tempUsername === "") {
-      setToastMessage("Please enter a username and password.");
-      setToastType("blank");
-      setShowToast(true);
-      resolve(false);
-      return;
-    }
 
     const loginPayload = { type: "POST", username: tempUsername };
 
