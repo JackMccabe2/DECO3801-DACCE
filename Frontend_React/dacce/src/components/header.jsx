@@ -1,22 +1,23 @@
-// Import Bootstrap components
+// Import Bootstrap Components
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-
-// Import React components
-import { useState } from "react";
 import Sidemenu from "react-bootstrap/Offcanvas";
 import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+
+// Import React Hooks
+import { useState } from "react";
 
 // Import CSS
 import "../css/header.css";
 
-// Import assets
+// Import Assets
 import levelBadge from "../assets/level-badge.png";
 import starMedal from "../assets/star-medal.png";
 import profilePic from "../assets/profile.png";
 
-// Import icons
+// Import Icons
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { PiRankingFill } from "react-icons/pi";
@@ -26,6 +27,7 @@ import { TbLogout } from "react-icons/tb";
 import { useUser } from "../contexts/UserContext";
 import { MdSpaceDashboard } from "react-icons/md";
 
+// Import Sound
 import btnClickSound from "../assets/music/button_click_2_pop.mp3";
 
 const Navbar = ({ currentView, onNavigate }) => {
