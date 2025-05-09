@@ -3,7 +3,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
-// Import Components
+// Import Custom Components
 import LeaderboardRecord from "../components/leaderboardRecord";
 
 // Import CSS
@@ -12,10 +12,11 @@ import "../css/leaderboard.css";
 // Import Assets
 import CancelBtn from "../assets/cancel.png";
 
-// Import contexts
+// Import React Hooks & WebSocket
 import { useState, useEffect } from "react";
 import { useWebSocket } from "../contexts/WebSocketContext";
 
+// Import Sound
 import btnCloseSound from "../assets/music/button_close.mp3";
 
 const Leaderboard = ({ onNavigate }) => {

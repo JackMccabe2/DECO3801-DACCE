@@ -1,5 +1,7 @@
+// Import CSS
 import "../css/login.css";
 
+// Import Custom Components
 import Button from "../components/button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -8,15 +10,18 @@ import Form from "react-bootstrap/Form";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
 
+// Import React Hooks & WebSocket
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 import { useState, useEffect } from "react";
 
+// Import Icons
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import { PiSmileyFill } from "react-icons/pi";
 import { PiSmileySadFill } from "react-icons/pi";
 import { MdError } from "react-icons/md";
 
+// Import Sound
 import btnClickSound from "../assets/music/button_click_2_pop.mp3";
 
 const Login = ({ onNavigate }) => {
@@ -32,6 +37,7 @@ const Login = ({ onNavigate }) => {
     setPressed(false);
   }, []);
 
+  // Handle the two redirection buttons below (return to landing & navigate to signup).
   const handleClick = (page) => {
     const loginPayload = { type: "NAV", message: page };
 
@@ -45,6 +51,7 @@ const Login = ({ onNavigate }) => {
     });
   };
 
+  // Handle the login enter button
   const handleLogin = async (page) => {
     return new Promise((resolve) => {
       if (tempUsername === "") {
@@ -107,6 +114,7 @@ const Login = ({ onNavigate }) => {
             </Form.Label>
             <Form.Control
               type="text"
+              required
               placeholder="Enter your username"
               className="custom-input-field"
               value={tempUsername}
@@ -129,6 +137,7 @@ const Login = ({ onNavigate }) => {
             </Form.Label>
             <Form.Control
               type="password"
+              required
               placeholder="Enter your password"
               className="custom-input-field"
             />

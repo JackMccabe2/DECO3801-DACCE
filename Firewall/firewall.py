@@ -17,24 +17,36 @@ firewall_config = {
         "CVE-2023-67890": "MySQL Remote Code Execution"
     },
     "intrusion_detection": True,
-    "admin_console": "10.0.0.1"
+    "admin_console": "10.0.0.1",
+
+    "protocols": {
+        "SSLv3": True,
+        "TLS1.0": True,
+        "TLS1.1": True,
+        "TLS1.2": True,
+    },
+    "ciphers": {
+        "RSA_EXPORT": True,   # used by FREAK
+        "DHE_EXPORT": True,   # used by Logjam
+    }
 }
 
 firewall_breached = False
 info_retrieved = False
 
-def slow_print(text, delay=0.03):
+def slow_print(text, delay=0.02):
     for c in text:
         print(c, end='', flush=True)
         time.sleep(delay)
     print()
 
 def scan_network():
+    target_ip = firewall_config["admin_console"]
     slow_print("-- Initiating network scan...")
     time.sleep(1)
     slow_print("-- Probing local subnets...")
     time.sleep(1)
-    slow_print("-- Host 10.0.0.1 responds. Running firewall fingerprint...")
+    slow_print(f"-- Host {target_ip} responds. Running firewall fingerprint...")
     time.sleep(1)
     slow_print("-- Firewall Detected: QuantumNet v3.7")
 
@@ -45,7 +57,6 @@ def nmap_scan(command):
     show_versions = "-sV" in parts
     target_ip = parts[-1] if parts[-1].count('.') == 3 else firewall_config["admin_console"]
 
-    #checks for correct IP
     if target_ip != firewall_config["admin_console"]:
         slow_print(f"-- ERROR: Host {target_ip} is not reachable.")
         return
@@ -62,19 +73,6 @@ def nmap_scan(command):
 
     if firewall_config["intrusion_detection"]:
         slow_print("-- IDS LOG: Suspicious scanning behavior detected. Admin may have been notified.")
-
-"""
-def perform_recon():
-    slow_print("-- Running vulnerability assessment on 10.0.0.1...")
-    time.sleep(1.5)
-    slow_print("-- Enumerating services on open ports...")
-    time.sleep(1)
-    slow_print("-- Analyzing packet signatures...")
-    slow_print("-- Possible vulnerabilities identified:")
-    for vuln, desc in firewall_config["vulnerabilities"].items():
-        slow_print(f"   {vuln} → {desc}")
-    slow_print("-- Note: Exploits may trigger IDS logging.")
-"""
 
 def vuln_scan(command):
     slow_print("-- Running Nmap vulnerability scan...")
@@ -100,7 +98,7 @@ def vuln_scan(command):
     # Check if the service is available in the firewall_config
     services_to_check = []
     for ports, services in firewall_config["services"].items():
-        if service_info == services["version"].lower():
+        if service_info.lower() in services["version"].lower():
             #if service_version is None or service_version in service["version"]:  # Match version if provided
             services_to_check.append(services)
 
@@ -215,3 +213,38 @@ def reset_firewall():
     slow_print("-- Resetting environment...")
     time.sleep(0.5)
     slow_print("-- Firewall and session state reset.")
+
+
+
+
+#idea exploits TLS
+def exploit_poodle(target_ip):
+    slow_print(f"[POODLE] Attempting SSLv3 downgrade on {target_ip}…")
+    time.sleep(1)
+    if not firewall_config["protocols"]["SSLv3"]:
+        slow_print("   ❌ SSLv3 is already disabled—attack fails.")
+    else:
+        slow_print("   ✅ SSLv3 negotiated. 256 requests to crack a byte…")
+        time.sleep(1)
+        slow_print("   [+] SUCCESS: decrypted one byte of traffic.")
+        # you could set a flag: firewall_breached = True
+
+def exploit_freak(target_ip):
+    slow_print(f"[FREAK] Forcing export-grade RSA on {target_ip}…")
+    time.sleep(1)
+    if not firewall_config["ciphers"]["RSA_EXPORT"]:
+        slow_print("   ❌ Export-grade ciphers disabled—attack fails.")
+    else:
+        slow_print("   ✅ Server downgraded to 512-bit RSA.")
+        time.sleep(1)
+        slow_print("   [+] SUCCESS: factored the key, decrypted session.")
+
+def exploit_logjam(target_ip):
+    slow_print(f"[Logjam] Forcing DHE_EXPORT key exchange on {target_ip}…")
+    time.sleep(1)
+    if not firewall_config["ciphers"]["DHE_EXPORT"]:
+        slow_print("   ❌ DHE_EXPORT disabled—attack fails.")
+    else:
+        slow_print("   ✅ Downgraded to 512-bit Diffie-Hellman.")
+        time.sleep(1)
+        slow_print("   [+] SUCCESS: cracked DH parameters, MITM possible.")

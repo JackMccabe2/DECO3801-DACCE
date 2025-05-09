@@ -1,7 +1,12 @@
+// Import React Hooks
 import { useState } from "react";
+
+// Import Bootstrap Components
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+
+// Import CSS
 import "../css/policymodal.css";
 
 function PolicyModal({ show, onClose, onConfirm }) {
@@ -34,11 +39,11 @@ function PolicyModal({ show, onClose, onConfirm }) {
           1. Age Recommendation
           <br />
           <li>
-            If you are under 18 the age of 18, we recommend that you seek 
-            permission from a parent or guardian before starting the game.
-            By using the game, you confirm that you either: 
-            (1) &nbsp; Are 18 years of age or older, or
-            (2)&nbsp;Have obtained permission from a parent or guardian.
+            If you are under 18 the age of 18, we recommend that you seek
+            permission from a parent or guardian before starting the game. By
+            using the game, you confirm that you either: (1) &nbsp; Are 18 years
+            of age or older, or (2)&nbsp;Have obtained permission from a parent
+            or guardian.
           </li>
         </ul>
         <ul>

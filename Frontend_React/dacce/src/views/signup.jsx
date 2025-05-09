@@ -1,6 +1,10 @@
+// Import React Hooks
 import { useState, useEffect } from "react";
+
+// Import CSS
 import "../css/login.css";
-import Button from "../components/button";
+
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -8,17 +12,22 @@ import Form from "react-bootstrap/Form";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
 
+// Import Custom Components
+import Button from "../components/button";
+import PolicyModal from "../components/policymodal";
+
+// Import Context Variables
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
 
+// Import Icons
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import { PiSmileyFill } from "react-icons/pi";
 import { PiSmileySadFill } from "react-icons/pi";
 import { MdError } from "react-icons/md";
 
+// Import Sound
 import btnClickSound from "../assets/music/button_click_2_pop.mp3";
-
-import PolicyModal from "../components/policymodal";
 
 const Signup = ({ onNavigate }) => {
   const { setUser } = useUser();
@@ -41,6 +50,13 @@ const Signup = ({ onNavigate }) => {
     const loginPayload = { type: "POST DUP", username: tempUsername };
 
     sendMessage(loginPayload, (response) => {
+      if (tempUsername === null || tempUsername === "") {
+        // check if username is empty to avoid wrong error message
+        setToastMessage("Please enter a username and password.");
+        setToastType("error");
+        setShowToast(true);
+        return;
+      }
       if (response.status === "OK") {
         setShowPolicyModal(true);
       } else if (response.status === "ERR USER EXISTS") {
@@ -62,6 +78,20 @@ const Signup = ({ onNavigate }) => {
     );
   };
 
+  // Handle the two redirection buttons below (return to landing & navigate to login).
+  const handleClick = (page) => {
+    const navPayload = { type: "NAV", message: page };
+
+    sendMessage(navPayload, (response) => {
+      if (response.status === "OK") {
+        onNavigate(page);
+      } else {
+        alert("Navigation failed.");
+      }
+    });
+  };
+
+  // Handle the signup create button
   const handleSignup = async (page) => {
     setShowPolicyModal(false);
 
@@ -109,6 +139,7 @@ const Signup = ({ onNavigate }) => {
             </Form.Label>
             <Form.Control
               type="text"
+              required
               placeholder="e.g. Alex #3312"
               className="custom-input-field"
               value={tempUsername}
@@ -130,6 +161,7 @@ const Signup = ({ onNavigate }) => {
             </Form.Label>
             <Form.Control
               type="password"
+              required
               className="custom-input-field"
             />
           </Form.Group>
@@ -160,7 +192,7 @@ const Signup = ({ onNavigate }) => {
             <span
               className="return-btn"
               style={{ color: "black", cursor: "pointer" }}
-              onClick={() => handleSignup("login")}
+              onClick={() => handleClick("login")}
             >
               Already have an account? LOGIN
             </span>
@@ -173,7 +205,7 @@ const Signup = ({ onNavigate }) => {
                 cursor: "pointer",
               }}
               onClick={() => {
-                handleSignup("landing");
+                handleClick("landing");
               }}
             >
               <FaLongArrowAltLeft /> {""}

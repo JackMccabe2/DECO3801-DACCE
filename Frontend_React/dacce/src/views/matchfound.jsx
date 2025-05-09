@@ -1,12 +1,15 @@
+// Import React Hooks
 import { useState, useEffect } from "react";
+
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
+// Import Custom Components & Assets & CSS
 import Button from "../components/button";
 import ProfilePhoto from "../assets/profile.png";
 import GameLoad from "./gameload";
-
 import "../css/matchfound.css";
 
 const Matched = ({ onNavigate }) => {
