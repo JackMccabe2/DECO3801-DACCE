@@ -9,6 +9,7 @@ import psycopg2
 import Database
 import json
 import sys
+import uuid
 
 def aes():
     from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -38,6 +39,7 @@ def aes():
 )
 
     return {
+        "id": str(uuid.uuid4()),        
         "type": "AES",
         "question": question,
         "answer": plaintext.decode()  # "ACCESSGRANTED!"
@@ -55,6 +57,7 @@ def caesar_cipher_puzzle():
     )
 
     return {
+        "id": str(uuid.uuid4()),
         "type": "ceasar_cipher",
         "question": question,
         "answer": answer
@@ -80,6 +83,7 @@ def subbytes_aes():
     f"Return the substituted output as 8 hex characters (no spaces)."
 )
     return {
+        "id": str(uuid.uuid4()),
         "type": "AES_sub_bytes",
         "question": question,
         "answer": expected.hex()
@@ -107,6 +111,7 @@ def shiftrows_aes():
     )
 
     return {
+        "id": str(uuid.uuid4()),
         "type": "AES_shift_rows",
         "question": question,
         "answer": expected
@@ -129,6 +134,7 @@ def mixcolumns_aes():
     )
 
     return {
+        "id": str(uuid.uuid4()),
         "type": "AES_mix_columns",
         "question": question,
         "answer": expected
@@ -144,6 +150,7 @@ def xor_aes():
     question = "instruction: Enter the hex result of XOR-ing each byte \nplaintext: ", plaintext.hex(), "\nkey: ", key.hex()
     
     return {
+        "id": str(uuid.uuid4()),
         "type": "xor",
         "question": question,
         "answer": expected.hex()
