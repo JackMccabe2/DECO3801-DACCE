@@ -90,26 +90,33 @@ def subbytes_aes():
     }
 
 def shiftrows_aes():
-    # Generate a 16-byte block as a 4x4 matrix (0 to 15)
+    # Generate a 16-byte block as a 4x4 matrix (values 0x00–0x0f)
     block = [i for i in range(16)]
 
-    # Convert columns into rows
-    state = [block[i::4] for i in range(4)]
+    # Convert to 4x4 matrix (row view for user)
+    state_matrix = [[block[i + j * 4] for i in range(4)] for j in range(4)]
 
-    # Apply AES ShiftRows (row 0 unchanged, row 1 shifted 1 left, etc.)
+    # Format
+    formatted_matrix = "\n".join(
+        f"Row {j}: " + " | ".join(f"{byte:02x}" for byte in row)
+        for j, row in enumerate(state_matrix)
+    )
+    # Convert columns to rows 
+    state = [block[i::4] for i in range(4)]
     for r in range(4):
-        state[r] = state[r][r:] + state[r][:r]
+        state[r] = state[r][r:] + state[r][:r]  # row shift
 
     # Flatten back to column-major order
     shifted = [state[i % 4][i // 4] for i in range(16)]
-    expected = ''.join([format(b, '02x') for b in shifted])
+    expected = ''.join(f"{b:02x}" for b in shifted)
 
     question = (
-        f"ShiftRows Puzzle: Perform AES ShiftRows on the 4x4 state.\n"
-        f"Original block (column-major order): {block}\n"
-        f"\nSubmit the result as a hex string."
+        f"ShiftRows Puzzle\n"
+        f"Perform AES ShiftRows on the following 4x4 byte matrix.\n\n"
+        f"{formatted_matrix}\n"
+        f"Submit your answer as a hex string (no spaces).\n"
     )
-
+    
     return {
         "id": str(uuid.uuid4()),
         "type": "AES_shift_rows",
@@ -171,11 +178,10 @@ def play_puzzle(puzzle_vector):
     type, question, answer = xor_aes()
     return type, question, answer
 
-# Generating a new puzzle
 def generate_puzzle(model, difficulty_vector):
     with torch.no_grad():
-        generated_puzzle = model.decoder(difficulty_vector)
-    return generated_puzzle.numpy()
+        generated_tensor = model.decoder(difficulty_vector)
+    return generated_tensor.numpy()[0]  # assume single puzzle vector
 
 def fetch_puzzle_data():
     conn = psycopg2.connect(
@@ -223,9 +229,11 @@ puzzle_data = np.array([
 
 # initialize model
 vae_model.load_state_dict(torch.load("vae_model.pth"))
+#model = "" # don't wanna run VAE every time
+#model.load_state_dict(torch.load("vae_model.pth"))
 vae_model.eval()
 # play
-difficulty_vector = torch.tensor([100, 0.6, 0.5]) 
+difficulty_vector = torch.tensor([100, 0.6, 0.5]) # hardcoded rn
 generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
 
 if __name__ == "__main__":

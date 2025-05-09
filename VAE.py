@@ -101,6 +101,12 @@ def fetch_puzzle_data():
             result_id
         FROM game_results 
     """
+    query = """
+        SELECT
+            answers_right
+            answers_wrong
+            wrong_answer_question_type
+            """
     cur.execute(query) 
     rows = cur.fetchall() # store
 
@@ -111,7 +117,7 @@ def fetch_puzzle_data():
     conn.close()
 
     # will adjust puzzle rows to be model-parseable here.
-    print(rows)
+    #print(rows)
     return rows
 
 fetch_puzzle_data()
@@ -130,7 +136,7 @@ puzzle_data = np.array([
 
 # convert to PyTorch TensorDataset
 puzzle_tensor = torch.tensor(puzzle_data)
-dataset = TensorDataset(puzzle_tensor)
+dataset = TensorDataset(puzzle_tensor) # will change to fetch_puzzle_data()
 data_loader = DataLoader(dataset, batch_size=BATCH_SIZE)
 
 # initialize model
