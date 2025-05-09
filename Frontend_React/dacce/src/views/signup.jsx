@@ -131,7 +131,6 @@ const Signup = ({ onNavigate }) => {
             <Form.Control
               type="password"
               className="custom-input-field"
-              value={tempUsername}
             />
           </Form.Group>
         </Col>
