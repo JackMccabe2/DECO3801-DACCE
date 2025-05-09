@@ -62,8 +62,30 @@ const Signup = ({ onNavigate }) => {
     );
   };
 
+  // Handle the two redirection buttons below (return to landing & navigate to login).
+  const handleClick = (page) => {
+    const navPayload = { type: "NAV", message: page };
+
+    sendMessage(navPayload, (response) => {
+      if (response.status === "OK") {
+        onNavigate(page);
+      } else {
+        alert("Navigation failed.");
+      }
+    });
+  };
+
+  // Handle the signup create button
   const handleSignup = async (page) => {
     setShowPolicyModal(false);
+
+    if (tempUsername === "") {
+      setToastMessage("Please enter a username and password.");
+      setToastType("blank");
+      setShowToast(true);
+      resolve(false);
+      return;
+    }
 
     const loginPayload = { type: "POST", username: tempUsername };
 
@@ -109,6 +131,7 @@ const Signup = ({ onNavigate }) => {
             </Form.Label>
             <Form.Control
               type="text"
+              required
               placeholder="e.g. Alex #3312"
               className="custom-input-field"
               value={tempUsername}
@@ -130,6 +153,7 @@ const Signup = ({ onNavigate }) => {
             </Form.Label>
             <Form.Control
               type="password"
+              required
               className="custom-input-field"
             />
           </Form.Group>
@@ -160,7 +184,7 @@ const Signup = ({ onNavigate }) => {
             <span
               className="return-btn"
               style={{ color: "black", cursor: "pointer" }}
-              onClick={() => handleSignup("login")}
+              onClick={() => handleClick("login")}
             >
               Already have an account? LOGIN
             </span>
@@ -173,7 +197,7 @@ const Signup = ({ onNavigate }) => {
                 cursor: "pointer",
               }}
               onClick={() => {
-                handleSignup("landing");
+                handleClick("landing");
               }}
             >
               <FaLongArrowAltLeft /> {""}

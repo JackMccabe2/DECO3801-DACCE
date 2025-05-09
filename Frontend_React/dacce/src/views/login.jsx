@@ -32,6 +32,7 @@ const Login = ({ onNavigate }) => {
     setPressed(false);
   }, []);
 
+  // Handle the two redirection buttons below (return to landing & navigate to signup).
   const handleClick = (page) => {
     const loginPayload = { type: "NAV", message: page };
 
@@ -45,6 +46,7 @@ const Login = ({ onNavigate }) => {
     });
   };
 
+  // Handle the login enter button
   const handleLogin = async (page) => {
     return new Promise((resolve) => {
       if (tempUsername === "") {
@@ -107,6 +109,7 @@ const Login = ({ onNavigate }) => {
             </Form.Label>
             <Form.Control
               type="text"
+              required
               placeholder="Enter your username"
               className="custom-input-field"
               value={tempUsername}
@@ -129,6 +132,7 @@ const Login = ({ onNavigate }) => {
             </Form.Label>
             <Form.Control
               type="password"
+              required
               placeholder="Enter your password"
               className="custom-input-field"
             />
