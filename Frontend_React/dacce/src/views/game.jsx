@@ -20,26 +20,58 @@ import Terminal from "../components/terminal";
 // Import contexts
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
+import { getPuzzle } from "../../../../ServerClient/server-ws/utils/getPuzzle";
 
 const Game = ({ onNavigate }) => {
-  const [puzzle, setPuzzle] = useState({ question: null, answer: null });
-  const [opponent, setOpponent] = useState("");
+  const [puzzle, setPuzzle] = useState({
+    question: null,
+    answer: null
+  });  
   const { gameState, sendMessage } = useWebSocket();
   const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
-  const [loading, setLoading] = useState(true);
-
   // Timer
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(60); // second
 
+  const exitGame = async (user) => {
+    const loginPayload = { type: "EXIT GAME", message: user };
+
+    sendMessage(loginPayload, (response) => {
+      if (response.status === "OK") {
+        return;
+      } else {
+        alert("Leaving game failed.");
+        return;
+      }
+    });
+  };
 
   useEffect(() => {
-    setOpponentFunction(gameState);
+    if (hasFetchedPuzzle.current) return; // prevent repeat
+    hasFetchedPuzzle.current = true;
 
-    // function to get puzzle
+    const loginPayload = {
+      type: "GET PUZZLE",
+      message: "payload to get puzzle",
+    };
 
-    fetchPuzzle();
+  sendMessage(loginPayload, (response) => {
+      if (response.status === "PUZZLE") {
+        setPuzzle({
+          question: response.data.question,
+          answer: response.data.answer
+        });
+        puzzle.answer = response.data.answer
+        console.log("set answer to: " + response.data.answer);
+        
+      } else {
+        alert("Get puzzle failed.");
+        return;
+      }
+    });
+  }, []);
 
+  useEffect(() => {
     const interval = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
@@ -53,57 +85,20 @@ const Game = ({ onNavigate }) => {
     return () => clearInterval(interval);
   }, []);
 
-
-  const exitGame = async (user) => {
-    const payload = { type: "EXIT GAME", message: user };
-    sendMessage(payload, (response) => {
-      if (response.status !== "OK") {
-        alert("Leaving game failed.");
-      }
-    });
-  };
-
-  const fetchPuzzle = async () => {
-    if (hasFetchedPuzzle.current) return;
-    hasFetchedPuzzle.current = true;
-
-    const loginPayload = {
-      type: "GET PUZZLE",
-      message: "payload to get puzzle",
-    };
-
-    // get puzzle
-    await sendMessage(loginPayload, (response) => {
-      if (response.status === "PUZZLE") {
-        setPuzzle({
-          question: response.data.question,
-          answer: response.data.answer,
-        });
-        puzzle.answer = response.data.answer;
-        console.log("set answer to: " + response.data.answer);
-        setLoading(false);
-      } else {
-        alert("Get puzzle failed.");
-      }
-    });
-  };
-
-  const handleTerminalCommand = async (input) => {
+  const handleTerminalCommand = (input) => {
     console.log("User entered:", input);
-    
-    /*
+
     if (!puzzle || !puzzle.answer) {
       alert("Puzzle not loaded yet.");
       return;
     }
-      */
 
     if (input == puzzle.answer) {
-      await incrementScore();
-      alert("Correct answer!");
+      alert("Correct answer!")
       // Do something like advance stage or send to server
+      
     } else {
-      alert("Incorrect! Try again.",puzzle.answer);
+      alert("Incorrect! Try again.");
     }
   };
 
@@ -113,77 +108,17 @@ const Game = ({ onNavigate }) => {
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  function setOpponentFunction(gameData) {
-    // Extract the first (and assumed only) game ID key
-    const gameId = Object.keys(gameData)[0];
-    const users = gameData[gameId].users;
-  
-    // Return the first username that is not the current user's
-    for (const username in users) {
-      if (username !== user.username) {
-        setOpponent(username);
-        return;
-      }
-    }
-  
-    return;
-  }  
-
-  async function incrementScore() {
-
-    const payload = { 
-      type: "CORRECT ANSWER", 
-      message: 
-        {
-          gameId: Object.keys(gameState)[0], 
-          username: user.username
-        } 
-    };
-
-    await sendMessage(payload, async (response) => {
-      await fetchPuzzle();
-    });
-
-    
-
-  }
-
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const leaveGame = () => {
     setShowLeaveModal(true);
   };
 
+  const errortest = () => {
+    return redirect
+  }
+
   return (
     <>
-      {loading && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            height: "100vh",
-            width: "100vw",
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
-            color: "#fff",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-            fontSize: "2rem",
-          }}
-        >
-          Loading...
-        </div>
-      )}
-
-      {/* Page Header */}
-      <Container fluid className="bg-dark text-white py-3 mb-3">
-        <Row className="justify-content-center">
-          <Col xs="auto">
-            <h1 className="text-center">{`${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: ${gameState[Object.keys(gameState)[0]].users[opponent]}`}</h1>
-          </Col>
-        </Row>
-      </Container>
       <Container fluid className="game-wrapper">
         <Row
           xs="auto"
@@ -240,7 +175,9 @@ const Game = ({ onNavigate }) => {
                 <OverlayTrigger
                   key="bottom"
                   placement="bottom"
-                  overlay={<Tooltip id="tooltip-bottom">Game Tips</Tooltip>}
+                  overlay={
+                    <Tooltip id="tooltip-bottom">Game Tips</Tooltip>
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -258,7 +195,9 @@ const Game = ({ onNavigate }) => {
                 <OverlayTrigger
                   key="bottom"
                   placement="bottom"
-                  overlay={<Tooltip id="tooltip-bottom">Leave the game</Tooltip>}
+                  overlay={
+                    <Tooltip id="tooltip-bottom">Leave the game</Tooltip>
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -267,7 +206,9 @@ const Game = ({ onNavigate }) => {
                     fill="currentColor"
                     className="bi bi-door-closed-fill custom-icon"
                     viewBox="0 0 16 16"
-                    onClick={() => leaveGame()}
+                    onClick={() => {
+                      leaveGame();
+                    }}
                   >
                     <path d="M12 1a1 1 0 0 1 1 1v13h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2a1 1 0 0 1 1-1zm-2 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
                   </svg>
@@ -300,10 +241,10 @@ const Game = ({ onNavigate }) => {
                 </Button>
                 <Button
                   variant="primary"
-                  onClick={async () => {
+                  onClick={ async () => {
                     await exitGame(user);
-                    onNavigate("dashboard");
-                  }}
+                    onNavigate("dashboard")}
+                  }
                 >
                   Confirm
                 </Button>
@@ -332,8 +273,9 @@ const Game = ({ onNavigate }) => {
             <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
           </svg>
         }
-        title={`Encrypted Message...`}
+        title="Encrypted Message..."
         content={puzzle.question}
+        //content="One of the criminals, known as “The Archivist”, always hides messages in old formats so that only those who know the history of encoding can understand them..."
       />
 
       {/* Terminal */}

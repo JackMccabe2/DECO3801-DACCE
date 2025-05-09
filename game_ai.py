@@ -161,8 +161,8 @@ def play_puzzle(puzzle_vector):
     #print(f"Steps Required: {steps}")
     #print(f"Entropy Level: {entropy}")
     #print(f"Solution Length: {solution_length} bytes")
-    question, answer = xor_aes()
-    return question, answer
+    type, question, answer = xor_aes()
+    return type, question, answer
 
 # Generating a new puzzle
 def generate_puzzle(model, difficulty_vector):
@@ -221,9 +221,6 @@ vae_model.eval()
 difficulty_vector = torch.tensor([100, 0.6, 0.5]) 
 generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
 
-#print("\nGenerated Puzzle:", generated_puzzle)
-#print(play_puzzle(generated_puzzle) )
-
 if __name__ == "__main__":
     import json
     import random
@@ -243,23 +240,7 @@ if __name__ == "__main__":
 
     # Generate the puzzle
     puzzle = selected_puzzle_func()
-
+    #print(generate_puzzle(vae_model, difficulty_vector)) prints a list of numbers
     # Output as JSON
     print(json.dumps(puzzle))
         
-
-"""
-puzzle_id	UUID	Unique ID for each puzzle
-puzzle_type	TEXT	“AES”, “Firewall”, etc.
-key_length	INTEGER	Raw key size (e.g., 2048)
-steps	INTEGER	Number of encryption/decryption steps
-entropy	FLOAT	Complexity rating
-solution_length	INTEGER	Length of expected answer
-randomness_factor	FLOAT	Randomness factor in generation
-time_taken	FLOAT	How long the user took (seconds)
-num_incorrect	INTEGER	Number of failed attempts
-solved	BOOLEAN	Did the user succeed
-"""
-
-# send to server
-# from server, print to frontend terminal
