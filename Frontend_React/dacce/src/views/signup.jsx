@@ -129,7 +129,7 @@ const Signup = ({ onNavigate }) => {
               Create a password
             </Form.Label>
             <Form.Control
-              type="text"
+              type="password"
               className="custom-input-field"
               value={tempUsername}
             />
