@@ -1,25 +1,23 @@
-export async function leaveMultiplayerGame(ws, gameIdList, data) {
+export async function leaveGame(ws, gameIdList, data) {
     const username = data.message.username;
     let userRemoved = false;
 
     for (let i = 0; i < gameIdList.length; i++) {
         const game = gameIdList[i];
 
-        for (const [id, user] of Object.entries(game)) {
-            // Check if the username exists in the 'users' array
-            const userIndex = user.users.indexOf(username);
-            if (userIndex !== -1) {
-                // Remove the user from the 'users' array
-                user.users.splice(userIndex, 1);
+        for (const [id, gameData] of Object.entries(game)) {
+            if (gameData.users.hasOwnProperty(username)) {
+                // Remove the user from the 'users' object
+                delete gameData.users[username];
 
                 // Remove the corresponding userdata entry
-                user.userdata = user.userdata.filter(u => u.username !== username);
+                gameData.userdata = gameData.userdata.filter(u => u.username !== username);
 
                 userRemoved = true;
                 console.log(`[Server] User '${username}' removed from game '${id}'.`);
 
                 // If no users left in the game, remove the entire game object from the list
-                if (user.users.length === 0) {
+                if (Object.keys(gameData.users).length === 0) {
                     gameIdList.splice(i, 1);
                     console.log(`[Server] Game '${id}' deleted because no players left.`);
                 }
@@ -47,7 +45,7 @@ export async function leaveMultiplayerGame(ws, gameIdList, data) {
     // Log remaining games and users
     gameIdList.forEach(entry => {
         const gameId = Object.keys(entry)[0];
-        const users = entry[gameId].users;
+        const users = Object.keys(entry[gameId].users);
         console.log(`[Server] gameIds: '${gameId}': ${users}`);
     });
 }
