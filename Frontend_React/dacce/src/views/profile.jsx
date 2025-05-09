@@ -1,4 +1,4 @@
-// Import Bootstrap components
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -22,6 +22,7 @@ import "../css/profile.css";
 import CancelBtn from "../assets/cancel.png";
 import ProfilePic from "../assets/profile.png";
 
+// Import Sound
 import btnCloseSound from "../assets/music/button_close.mp3";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Legend);

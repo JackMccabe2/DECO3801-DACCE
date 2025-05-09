@@ -1,17 +1,19 @@
+// Import React Hooks
 import { useState, useEffect } from "react";
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 
+// Import Custom Components & Assets & CSS
 import Matched from "./matchfound";
-
 import ProfilePhoto from "../assets/profile.png";
+import "../css/matching.css";
 
+// Import WebSocket
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
-
-import "../css/matching.css";
 
 const Matching = ({ onNavigate }) => {
   const [timer, setTimer] = useState(0);

@@ -1,9 +1,9 @@
-// Import Bootstrap components
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
-// Import Components
+// Import Custom Components
 import MatchHistoryRecord from "../components/matchHistoryRecord";
 
 // Import CSS
@@ -12,6 +12,7 @@ import "../css/history.css";
 // Import Assets
 import CancelBtn from "../assets/cancel.png";
 
+// Import Sound
 import btnCloseSound from "../assets/music/button_close.mp3";
 
 const MatchHistory = ({ onNavigate }) => {

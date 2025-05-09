@@ -1,22 +1,25 @@
-// Import Bootstrap components
+// Import Bootstrap Components
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-
-// Import React components
-import { useState } from "react";
 import Sidemenu from "react-bootstrap/Offcanvas";
 import Button from "react-bootstrap/Button";
+
+// Import React Hooks
+import { useState } from "react";
 
 // Import CSS
 import "../css/header.css";
 
-// Import assets
+// Import Custom Components
+import SettingsModal from "./settingsmodal";
+
+// Import Assets
 import levelBadge from "../assets/level-badge.png";
 import starMedal from "../assets/star-medal.png";
 import profilePic from "../assets/profile.png";
 
-// Import icons
+// Import Icons
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { PiRankingFill } from "react-icons/pi";
@@ -26,11 +29,13 @@ import { TbLogout } from "react-icons/tb";
 import { useUser } from "../contexts/UserContext";
 import { MdSpaceDashboard } from "react-icons/md";
 
+// Import Sound
 import btnClickSound from "../assets/music/button_click_2_pop.mp3";
 
 const Navbar = ({ currentView, onNavigate }) => {
   const [show, setShow] = useState(false);
   const { user, setUser } = useUser();
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   // Toggle the sidemenu
   const menuToggle = () => setShow((prevShow) => !prevShow);
@@ -137,7 +142,16 @@ const Navbar = ({ currentView, onNavigate }) => {
 
           {/* Bottom Section */}
           <div className="menu-bottom">
-            <a className="fs-5 mx-5 menu-item" href="#settings">
+            <a
+              className="fs-5 mx-5 menu-item"
+              href="#settings"
+              onClick={(e) => {
+                e.preventDefault();
+                const audio = new Audio(btnClickSound);
+                audio.play();
+                setShowSettingsModal(true);
+              }}
+            >
               <IoMdSettings className="menu-icon" /> &nbsp; Settings
             </a>
             <a
@@ -157,6 +171,15 @@ const Navbar = ({ currentView, onNavigate }) => {
           </div>
         </Sidemenu.Body>
       </Sidemenu>
+
+      {/* Settings Modal */}
+      {showSettingsModal && (
+        <SettingsModal
+          show={true}
+          onConfirm={() => setShowSettingsModal(false)}
+          onClose={() => setShowSettingsModal(false)}
+        />
+      )}
     </Container>
   );
 };
