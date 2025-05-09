@@ -18,7 +18,7 @@ firewall_config = {
     },
     "intrusion_detection": True,
     "admin_console": "10.0.0.1",
-    
+
     "protocols": {
         "SSLv3": True,
         "TLS1.0": True,
@@ -34,7 +34,7 @@ firewall_config = {
 firewall_breached = False
 info_retrieved = False
 
-def slow_print(text, delay=0.03):
+def slow_print(text, delay=0.02):
     for c in text:
         print(c, end='', flush=True)
         time.sleep(delay)
