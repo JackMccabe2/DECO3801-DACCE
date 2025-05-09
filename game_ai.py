@@ -15,12 +15,13 @@ def aes():
     import os
 
     key_word = "cipher"
-    key_bytes = key_word.encode('utf-8').ljust(16, b'_')  # 16 bytes
+    key_bytes = key_word.encode('utf-8').ljust(16, b'_')  # pad to 16 bytes
     key_hex_hint = key_word.encode('utf-8').hex()
 
     plaintext = b'ACCESSGRANTED!' 
     iv = os.urandom(16)
 
+    # Pad plaintext to 16-byte block
     pad_len = 16 - (len(plaintext) % 16)
     padded = plaintext + bytes([pad_len] * pad_len)
 
@@ -28,40 +29,39 @@ def aes():
     encryptor = cipher.encryptor()
     ciphertext = encryptor.update(padded) + encryptor.finalize()
 
-    print("\n--- AES Challenge ---")
-    print("Ciphertext:", ciphertext.hex())
-    print("IV:", iv.hex())
-    print(f"Hint: The key is hex-encoded in this string: {key_hex_hint}")
-    print("Decode the key!")
+    question = (
+    f"Decrypt the AES-CBC ciphertext. "
+    f"Ciphertext: {ciphertext.hex()} | "
+    f"IV: {iv.hex()} | "
+    f"Hint: The key is hex-encoded in this string: {key_hex_hint} | "
+    f"Provide the ASCII plaintext."
+)
 
-    guess = input("Enter the decrypted plaintext: ").strip()
-    if guess.encode() == plaintext:
-        print("Success! You've decrypted the message.")
-        return True
-    else:
-        print(f"Incorrect! The correct plaintext was: {plaintext.decode()}")
-        return False
+    return {
+        "question": question,
+        "answer": plaintext.decode()  # "ACCESSGRANTED!"
+    }
     
 def caesar_cipher_puzzle():
-    print("\n Caesar Cipher Puzzle\n")
-
     shift = random.randint(1, 25)
     answer = "SECURE"
     ciphertext = ''.join(chr(((ord(c) - 65 + shift) % 26) + 65) for c in answer)
 
-    print(f"Encrypted Message: {ciphertext}")
-    guess = input("Enter the original word: ").strip().upper()
+    question = (
+        f"Caesar Cipher Puzzle: Decrypt the following 6-letter ciphertext.\n"
+        f"Ciphertext: {ciphertext} | Hint: The shift used is {shift} | "
+        f"Original word is uppercase A–Z only."
+    )
 
-    if guess == answer:
-        print("Nice job! You cracked the Caesar cipher.")
-    else:
-        print(f"Nope! The correct answer was: {answer}")
+    return {
+        "question": question,
+        "answer": answer
+    }
 
 # the following puzzles of AES aim to break up the steps used in AES decryption
 # and teach them seperately
 
 def subbytes_aes():
-    print("\nSubBytes Puzzle - Learn AES Byte Substitution\n")
     # the scale for this question is too large right now!! (too difficult)
     s_box = [
         0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
@@ -71,62 +71,63 @@ def subbytes_aes():
     # Generate a short 4-byte input for simplicity
     input_block = bytes([random.randint(0, 15) for _ in range(4)])
     expected = bytes([s_box[b] for b in input_block])
-    question = {
-        "instruction": "Apply the SubBytes step using the AES S-box. Enter the substituted output (in hex, 8 characters).",
-        "input_bytes": input_block.hex(),
-        "s_box": s_box
-    }
+    question = (
+    f"SubBytes Puzzle: Use the AES S-box to substitute the following 4 bytes.\n"
+    f"Input: {input_block.hex()} | "
+    f"S-box: {s_box} | "
+    f"Return the substituted output as 8 hex characters (no spaces)."
+)
     return {
         "question": question,
         "answer": expected.hex()
     }
 
 def shiftrows_aes():
-    print("\n🌀 ShiftRows Puzzle - Learn AES Row Shifting!\n")
-    # the scale for this question is too large right now!! (too difficult)
-    block = [i for i in range(16)] 
-    # 16-byte block as a 4x4 matrix
-    print("Original 4x4 state matrix (row-major order):")
-    for i in range(4):
-        print(block[i::4])  # print as matrix
+    # Generate a 16-byte block as a 4x4 matrix (0 to 15)
+    block = [i for i in range(16)]
 
-    # e.g. rows shifted left by 0, 1, 2, 3
-    state = [block[i::4] for i in range(4)]  # columns -> rows
+    # Convert columns into rows
+    state = [block[i::4] for i in range(4)]
+
+    # Apply AES ShiftRows (row 0 unchanged, row 1 shifted 1 left, etc.)
     for r in range(4):
-        state[r] = state[r][r:] + state[r][:r]  # shifting row
+        state[r] = state[r][r:] + state[r][:r]
 
-    # back into state
+    # Flatten back to column-major order
     shifted = [state[i % 4][i // 4] for i in range(16)]
-
-    print("\nAfter ShiftRows, enter the new block as hex characters (no spaces):")
-    answer = input("Your answer: ").strip().lower()
     expected = ''.join([format(b, '02x') for b in shifted])
 
-    if answer == expected:
-        print("Correct!")
-    else:
-        print("Incorrect. Expected:", expected)
+    question = (
+        f"ShiftRows Puzzle: Perform AES ShiftRows on the 4x4 state.\n"
+        f"Original block (column-major order): {block}\n"
+        f"Submit the result as a hex string."
+    )
+
+    return {
+        "question": question,
+        "answer": expected
+    }
 
 def mixcolumns_aes():
-    print("\nMix Columns Puzzle\n")
-    # note: simplify to addition modulo 256 instead of full AES field math, will fix more for
-    # appropriate difficulty
-    # 1 column = 4 bytes
+    # Generate a simplified AES-style column and mix vector
     column = [random.randint(0, 255) for _ in range(4)]
-    mix_vector = [2, 1, 1, 3]  # a matrix
+    mix_vector = [2, 1, 1, 3]  # simplified coefficients
 
-    print("Input column: ", column)
-    print("Mix vector:   ", mix_vector)
+    # Simulate MixColumns using simplified (mod 256) arithmetic
     mixed = [(column[i] + mix_vector[i]) % 256 for i in range(4)]
-
-    print("Enter the resulting column as 8 hex digits (e.g. 'asdfghjk'):")
-    answer = input("Your answer: ").strip().lower()
     expected = ''.join([format(b, '02x') for b in mixed])
+    
+    #(add each byte mod 256)
+    question = (
+        f"MixColumns Puzzle: Apply simplified MixColumns .\n"
+        f"Input column: {column} | Mix vector: {mix_vector} | "
+        f"Return the result as an 8-character hex string."
+    )
 
-    if answer == expected:
-        print("Correct!")
-    else:
-        print("Incorrect. Expected:", expected)
+    return {
+        "question": question,
+        "answer": expected
+    }
 
 def xor_aes():
     import random
@@ -179,12 +180,13 @@ def fetch_puzzle_data():
     # Need to select games info per session too.
     query = """ 
         SELECT
+            played_at,
+            difficulty_rating,
+            opponent_score,
             result_id
         FROM game_results
     """
-#opponent_score
-#played_at
-#difficulty_rating
+
     # ADD GAME INSTANCE STUFFS -> num_incorrect, time_to_complete etc to form difficulty vector 
     cur.execute(query) 
     rows = cur.fetchall() # store
@@ -220,13 +222,27 @@ generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
 #print(play_puzzle(generated_puzzle) )
 
 if __name__ == "__main__":
-    #if len(sys.argv) > 1 and sys.argv[1] == "xor_aes":
-        #difficulty_vector = torch.tensor([0.7, 0.6, 0.5])
-        #generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
-    puzzle = xor_aes()
-    output = json.dumps(puzzle)
+    import json
+    import random
+
+    # List of puzzle functions
+    puzzle_generators = [
+        xor_aes,
+        caesar_cipher_puzzle,
+        subbytes_aes,
+        shiftrows_aes,
+        mixcolumns_aes,
+        aes
+    ]
+
+    # Pick one at random
+    selected_puzzle_func = random.choice(puzzle_generators)
+
+    # Generate the puzzle
+    puzzle = selected_puzzle_func()
+
+    # Output as JSON
     print(json.dumps(puzzle))
-    #print(json.dumps(puzzle))
         
 
 """
