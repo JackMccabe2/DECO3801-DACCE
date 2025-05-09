@@ -18,9 +18,9 @@ export async function getPuzzle(ws) {
     python.stdout.on('end', () => {
       
       const puzzle = JSON.parse(dataString);
-      console.log("getting puzzle... ");
-      console.log(puzzle.question)
-      console.log(puzzle.answer, " <-- answer")
+      //console.log("getting puzzle... ");
+      //console.log(puzzle.question)
+      //console.log(puzzle.answer, " <-- answer")
 
       
       
@@ -32,6 +32,7 @@ export async function getPuzzle(ws) {
         }
       };
   
+      console.log('[Server] Sending response:', response.status, response.data);
       ws.send(JSON.stringify(response));
     });
 

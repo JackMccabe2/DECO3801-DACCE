@@ -2,7 +2,7 @@ export async function correctScore(ws, gameId, data, client, users) {
     const user = data.message.username;
     const uniqueGameId = data.message.gameId;
 
-    let otherUser = null;
+    let opponent = null;
     let currentGame = null;
 
     // Find the correct game and update the score
@@ -18,7 +18,7 @@ export async function correctScore(ws, gameId, data, client, users) {
 
             // Identify the opponent
             const userKeys = Object.keys(gameData.users);
-            otherUser = userKeys.find(u => u !== user);
+            opponent = userKeys.find(u => u !== user);
             break;
         }
     }
@@ -37,8 +37,11 @@ export async function correctScore(ws, gameId, data, client, users) {
     ws.send(JSON.stringify(response));
 
     // Notify the other user if conditions are met
-    const targetWs = users.get(otherUser);
+    const targetWs = users.get(opponent);
     if (targetWs && targetWs.readyState === WebSocket.OPEN && currentGame[uniqueGameId].gamemode === 'M') {
+        console.log('[Server] Sending response to opponent:', response.status, response.message);
         targetWs.send(JSON.stringify(response));
     }
+
+    // upload to game_results db
 }

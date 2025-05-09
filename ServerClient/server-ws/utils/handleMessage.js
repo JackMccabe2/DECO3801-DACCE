@@ -32,7 +32,7 @@ export async function handleMessage(ws, message, client, gameId, users) {
         } else if (data.type === 'GET LEADERBOARD') {
             await getLeaderboard(ws, client);
         } else if (data.type === 'INIT GAME') {
-            await initGame(ws, gameId, data);
+            await initGame(ws, gameId, data, users);
         } else if (data.type === 'GET PUZZLE') {
             await getPuzzle(ws);
         } else if (data.type === 'EXIT GAME') {

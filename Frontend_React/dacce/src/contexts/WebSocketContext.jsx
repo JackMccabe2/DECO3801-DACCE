@@ -7,6 +7,7 @@ const WebSocketContext = createContext(null);
 export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [gameState, setGameState] = useState(null);
+  const [gameStatus, setGameStatus] = useState(null);
   const [message, setMessage] = useState(null); // single message or last message
   const ws = useRef(null);
 
@@ -33,11 +34,16 @@ export const WebSocketProvider = ({ children }) => {
     ws.current.onmessage = (event) => {
       const response = JSON.parse(event.data);
       console.log('[Client] Received message:', response);
+      alert(response.status);
 
       // Show alert if status/message format is present
       if (response?.status && response?.message !== undefined) {
+        //alert(response.status);
         if (response.status === "OK GOT GAME") {
+
+          //alert(Object.keys(response.message)[0])
           setGameState(response.message);
+          setGameStatus(true);
         } 
       }
 
@@ -98,6 +104,8 @@ export const WebSocketProvider = ({ children }) => {
     isConnected,
     gameState, 
     setGameState,
+    gameStatus, 
+    setGameStatus,
     //message,
     sendMessage,
     ws: ws.current

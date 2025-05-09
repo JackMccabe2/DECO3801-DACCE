@@ -24,7 +24,7 @@ import { useUser } from "../contexts/UserContext";
 const Game = ({ onNavigate }) => {
   const [puzzle, setPuzzle] = useState({ question: null, answer: null });
   const [opponent, setOpponent] = useState("");
-  const { gameState, sendMessage } = useWebSocket();
+  const { gameState, setGameState, sendMessage, gameStatus, setGameStatus } = useWebSocket();
   const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
   const [loading, setLoading] = useState(true);
@@ -34,6 +34,7 @@ const Game = ({ onNavigate }) => {
 
 
   useEffect(() => {
+    //alert(gameState);
     setOpponentFunction(gameState);
 
     // function to get puzzle
@@ -53,7 +54,6 @@ const Game = ({ onNavigate }) => {
     return () => clearInterval(interval);
   }, []);
 
-
   const exitGame = async (user) => {
     const payload = { type: "EXIT GAME", message: user };
     sendMessage(payload, (response) => {
@@ -65,15 +65,18 @@ const Game = ({ onNavigate }) => {
 
   const fetchPuzzle = async () => {
     if (hasFetchedPuzzle.current) return;
+    //alert
     hasFetchedPuzzle.current = true;
+    setLoading(true);
 
-    const loginPayload = {
+    const payload = {
       type: "GET PUZZLE",
       message: "payload to get puzzle",
     };
 
     // get puzzle
-    await sendMessage(loginPayload, (response) => {
+    await sendMessage(payload, (response) => {
+      alert(response.status);
       if (response.status === "PUZZLE") {
         setPuzzle({
           question: response.data.question,
@@ -81,6 +84,7 @@ const Game = ({ onNavigate }) => {
         });
         puzzle.answer = response.data.answer;
         console.log("set answer to: " + response.data.answer);
+        alert("updated puzzle")
         setLoading(false);
       } else {
         alert("Get puzzle failed.");
@@ -90,6 +94,7 @@ const Game = ({ onNavigate }) => {
 
   const handleTerminalCommand = async (input) => {
     console.log("User entered:", input);
+    //alert(input);
     
     /*
     if (!puzzle || !puzzle.answer) {
@@ -100,7 +105,9 @@ const Game = ({ onNavigate }) => {
 
     if (input == puzzle.answer) {
       await incrementScore();
-      alert("Correct answer!");
+      alert("incremented score");
+      hasFetchedPuzzle.current = false;
+      await fetchPuzzle();
       // Do something like advance stage or send to server
     } else {
       alert("Incorrect! Try again.",puzzle.answer);
@@ -131,6 +138,8 @@ const Game = ({ onNavigate }) => {
 
   async function incrementScore() {
 
+    setGameStatus(false);
+
     const payload = { 
       type: "CORRECT ANSWER", 
       message: 
@@ -141,10 +150,16 @@ const Game = ({ onNavigate }) => {
     };
 
     await sendMessage(payload, async (response) => {
-      await fetchPuzzle();
+      alert(response.status);
+      if (response.status === "OK GOT GAME"){
+        await setGameState(response.message);
+        //return;
+      } else {
+        alert("Get puzzle failed.");
+        //return;
+      }
+      
     });
-
-    
 
   }
 
