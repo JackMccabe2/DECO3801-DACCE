@@ -22,7 +22,9 @@ function SettingsModal({ show, onClose, onConfirm }) {
         <Button variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={() => onConfirm(isChecked)}>
+
+        {/* onConfirm to change to save settings, placeholding with onClose atm */}
+        <Button variant="primary" onClick={() => onConfirm(onClose)}>
           Save Changes
         </Button>
       </Modal.Footer>
