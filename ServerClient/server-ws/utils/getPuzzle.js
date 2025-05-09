@@ -27,6 +27,7 @@ export async function getPuzzle(ws) {
       const response = {
         status: "PUZZLE",
         data: {
+          type: puzzle.type,
           question: puzzle.question,
           answer: puzzle.answer
         }

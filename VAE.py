@@ -82,7 +82,6 @@ BATCH_SIZE = 16
 LEARNING_RATE = 0.001
 
 def fetch_puzzle_data():
-    
     conn = psycopg2.connect(
         host="localhost",
         database="postgres",
@@ -91,27 +90,16 @@ def fetch_puzzle_data():
         port=5432
     )
 
-    """
-    conn = psycopg2.connect(
-        host="localhost",
-        database="postgres",
-        user="jackmccabe",
-        password="postgres",
-        port=5432
-    )"""
-
     cur = conn.cursor()
     # Need to select games info per session too.
     query = """ 
         SELECT
+            opponent_score,
+            played_at,
+            difficulty_rating,
             result_id
-        FROM game_results
+        FROM game_results 
     """
-    #opponent_score
-    #played_at
-    #difficulty_rating
-    
-
     cur.execute(query) 
     rows = cur.fetchall() # store
 
@@ -122,7 +110,7 @@ def fetch_puzzle_data():
     conn.close()
 
     # will adjust puzzle rows to be model-parseable here.
-    
+    print(rows)
     return rows
 
 fetch_puzzle_data()

@@ -32,12 +32,13 @@ def aes():
     question = (
     f"Decrypt the AES-CBC ciphertext. "
     f"Ciphertext: {ciphertext.hex()} | "
-    f"IV: {iv.hex()} | "
+    f"IV: {iv.hex()} \n "
     f"Hint: The key is hex-encoded in this string: {key_hex_hint} | "
     f"Provide the ASCII plaintext."
 )
 
     return {
+        "type": "AES",
         "question": question,
         "answer": plaintext.decode()  # "ACCESSGRANTED!"
     }
@@ -49,11 +50,12 @@ def caesar_cipher_puzzle():
 
     question = (
         f"Caesar Cipher Puzzle: Decrypt the following 6-letter ciphertext.\n"
-        f"Ciphertext: {ciphertext} | Hint: The shift used is {shift} | "
+        f"Ciphertext: {ciphertext} | Hint: The shift used is {shift} \n"
         f"Original word is uppercase A–Z only."
     )
 
     return {
+        "type": "ceasar_cipher",
         "question": question,
         "answer": answer
     }
@@ -78,6 +80,7 @@ def subbytes_aes():
     f"Return the substituted output as 8 hex characters (no spaces)."
 )
     return {
+        "type": "AES_sub_bytes",
         "question": question,
         "answer": expected.hex()
     }
@@ -100,10 +103,11 @@ def shiftrows_aes():
     question = (
         f"ShiftRows Puzzle: Perform AES ShiftRows on the 4x4 state.\n"
         f"Original block (column-major order): {block}\n"
-        f"Submit the result as a hex string."
+        f"\nSubmit the result as a hex string."
     )
 
     return {
+        "type": "AES_shift_rows",
         "question": question,
         "answer": expected
     }
@@ -116,7 +120,7 @@ def mixcolumns_aes():
     # Simulate MixColumns using simplified (mod 256) arithmetic
     mixed = [(column[i] + mix_vector[i]) % 256 for i in range(4)]
     expected = ''.join([format(b, '02x') for b in mixed])
-    
+
     #(add each byte mod 256)
     question = (
         f"MixColumns Puzzle: Apply simplified MixColumns .\n"
@@ -125,6 +129,7 @@ def mixcolumns_aes():
     )
 
     return {
+        "type": "AES_mix_columns",
         "question": question,
         "answer": expected
     }
@@ -138,10 +143,8 @@ def xor_aes():
     
     question = "instruction: Enter the hex result of XOR-ing each byte \nplaintext: ", plaintext.hex(), "\nkey: ", key.hex()
     
-
-    #answer = input("Your answer: ").strip().lower()
-    #return question, answer
     return {
+        "type": "xor",
         "question": question,
         "answer": expected.hex()
     }
@@ -153,7 +156,7 @@ def play_puzzle(puzzle_vector):
     entropy = round(puzzle_vector[3], 2)
     solution_length = 4
 
-    #print("\n=== Hacking Challenge ===")
+    # difficulty parameters
     #print(f"Key Length: {key_length}-bit")
     #print(f"Steps Required: {steps}")
     #print(f"Entropy Level: {entropy}")
@@ -168,7 +171,6 @@ def generate_puzzle(model, difficulty_vector):
     return generated_puzzle.numpy()
 
 def fetch_puzzle_data():
-    
     conn = psycopg2.connect(
         host="localhost",
         database="postgres",
@@ -176,15 +178,6 @@ def fetch_puzzle_data():
         password="D4t4b4se",
         port=5432
     )
-    
-    """
-    conn = psycopg2.connect(
-        host="localhost",
-        database="postgres",
-        user="jackmccabe",
-        password="postgres",
-        port=5432
-    )"""
 
     cur = conn.cursor()
     # Need to select games info per session too.
