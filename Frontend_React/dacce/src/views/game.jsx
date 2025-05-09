@@ -32,43 +32,14 @@ const Game = ({ onNavigate }) => {
   // Timer
   const [timeLeft, setTimeLeft] = useState(60);
 
-  const exitGame = async (user) => {
-    const loginPayload = { type: "EXIT GAME", message: user };
-    sendMessage(loginPayload, (response) => {
-      if (response.status !== "OK") {
-        alert("Leaving game failed.");
-      }
-    });
-  };
 
   useEffect(() => {
-    const fetchPuzzle = async () => {
-      if (hasFetchedPuzzle.current) return;
-      hasFetchedPuzzle.current = true;
+    setOpponentFunction(gameState);
 
-      const loginPayload = {
-        type: "GET PUZZLE",
-        message: "payload to get puzzle",
-      };
-
-      await sendMessage(loginPayload, (response) => {
-        if (response.status === "PUZZLE") {
-          setPuzzle({
-            question: response.data.question,
-            answer: response.data.answer,
-          });
-          console.log("set answer to: " + response.data.answer);
-          setLoading(false);
-        } else {
-          alert("Get puzzle failed.");
-        }
-      });
-    };
+    // function to get puzzle
 
     fetchPuzzle();
-  }, []);
 
-  useEffect(() => {
     const interval = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
@@ -82,18 +53,57 @@ const Game = ({ onNavigate }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleTerminalCommand = (input) => {
+
+  const exitGame = async (user) => {
+    const payload = { type: "EXIT GAME", message: user };
+    sendMessage(payload, (response) => {
+      if (response.status !== "OK") {
+        alert("Leaving game failed.");
+      }
+    });
+  };
+
+  const fetchPuzzle = async () => {
+    if (hasFetchedPuzzle.current) return;
+    hasFetchedPuzzle.current = true;
+
+    const loginPayload = {
+      type: "GET PUZZLE",
+      message: "payload to get puzzle",
+    };
+
+    // get puzzle
+    await sendMessage(loginPayload, (response) => {
+      if (response.status === "PUZZLE") {
+        setPuzzle({
+          question: response.data.question,
+          answer: response.data.answer,
+        });
+        puzzle.answer = response.data.answer;
+        console.log("set answer to: " + response.data.answer);
+        setLoading(false);
+      } else {
+        alert("Get puzzle failed.");
+      }
+    });
+  };
+
+  const handleTerminalCommand = async (input) => {
     console.log("User entered:", input);
+    
+    /*
     if (!puzzle || !puzzle.answer) {
       alert("Puzzle not loaded yet.");
       return;
     }
+      */
 
     if (input == puzzle.answer) {
+      await incrementScore();
       alert("Correct answer!");
       // Do something like advance stage or send to server
     } else {
-      alert("Incorrect! Try again.");
+      alert("Incorrect! Try again.",puzzle.answer);
     }
   };
 
@@ -102,6 +112,41 @@ const Game = ({ onNavigate }) => {
     const s = seconds % 60;
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
+
+  function setOpponentFunction(gameData) {
+    // Extract the first (and assumed only) game ID key
+    const gameId = Object.keys(gameData)[0];
+    const users = gameData[gameId].users;
+  
+    // Return the first username that is not the current user's
+    for (const username in users) {
+      if (username !== user.username) {
+        setOpponent(username);
+        return;
+      }
+    }
+  
+    return;
+  }  
+
+  async function incrementScore() {
+
+    const payload = { 
+      type: "CORRECT ANSWER", 
+      message: 
+        {
+          gameId: Object.keys(gameState)[0], 
+          username: user.username
+        } 
+    };
+
+    await sendMessage(payload, async (response) => {
+      await fetchPuzzle();
+    });
+
+    
+
+  }
 
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const leaveGame = () => {
@@ -131,6 +176,14 @@ const Game = ({ onNavigate }) => {
         </div>
       )}
 
+      {/* Page Header */}
+      <Container fluid className="bg-dark text-white py-3 mb-3">
+        <Row className="justify-content-center">
+          <Col xs="auto">
+            <h1 className="text-center">{`${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: ${gameState[Object.keys(gameState)[0]].users[opponent]}`}</h1>
+          </Col>
+        </Row>
+      </Container>
       <Container fluid className="game-wrapper">
         <Row
           xs="auto"
@@ -279,7 +332,7 @@ const Game = ({ onNavigate }) => {
             <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
           </svg>
         }
-        title={`Encrypted Message... ${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: `}
+        title={`Encrypted Message...`}
         content={puzzle.question}
       />
 

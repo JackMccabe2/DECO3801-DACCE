@@ -59,7 +59,7 @@ client.connect()
   .catch(err => console.error("Error connecting to PostgreSQL:", err));
 
 let gameId = []
-let activeUsers = []
+const users = new Map();
 
 wss.on('connection', (ws) => {
     console.log('[Server] A client was connected.');
@@ -67,15 +67,21 @@ wss.on('connection', (ws) => {
 
     ws.on('message', async (message) => {
         
-        await handleMessage(ws, message, client, gameId, activeUsers);
+        await handleMessage(ws, message, client, gameId, users);
 
     });
 
     ws.on('close', () => {
-      const index = activeUsers.indexOf(ws.userId);
-      if (index !== -1) {
-        activeUsers.splice(index, 1);
+      //const index = activeUsers.indexOf(ws.userId);
+      //if (index !== -1) {
+      //  activeUsers.splice(index, 1);
+      //}
+
+      if (ws.userId) {
+        users.delete(ws.userId);
+        console.log(`User ${ws.userId} disconnected`);
       }
-      console.log('[Server] Client disconnected. Updated active users: ' + activeUsers);
+
+      //console.log('[Server] Client disconnected. Updated active users: ' + users);
     });
 });

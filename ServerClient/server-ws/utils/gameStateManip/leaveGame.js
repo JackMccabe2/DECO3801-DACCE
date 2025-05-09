@@ -1,4 +1,4 @@
-export async function leaveMultiplayerGame(ws, gameIdList, data) {
+export async function leaveGame(ws, gameIdList, data) {
     const username = data.message.username;
     let userRemoved = false;
 
