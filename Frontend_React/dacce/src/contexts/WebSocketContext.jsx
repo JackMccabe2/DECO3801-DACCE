@@ -34,14 +34,10 @@ export const WebSocketProvider = ({ children }) => {
     ws.current.onmessage = (event) => {
       const response = JSON.parse(event.data);
       console.log('[Client] Received message:', response);
-      alert(response.status);
 
       // Show alert if status/message format is present
       if (response?.status && response?.message !== undefined) {
-        //alert(response.status);
         if (response.status === "OK GOT GAME") {
-
-          //alert(Object.keys(response.message)[0])
           setGameState(response.message);
           setGameStatus(true);
         } 
@@ -81,22 +77,35 @@ export const WebSocketProvider = ({ children }) => {
    * Send a message and optionally provide a callback
    * that handles the server's response to this message.
    */
-  const sendMessage = (msg, onResponse = null) => {
+  const sendMessage = async (msg, onResponse = null) => {
     const payload = typeof msg === 'string' ? msg : JSON.stringify(msg);
-
-    if (msg.type === 'log') {
-      ws.current.send(msg);
-    }
-
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+  
+    try {
+      //await waitForWebSocketOpen(ws.current);
+  
+      // Send log message if needed
+      if (msg.type === 'log') {
+        ws.current.send(JSON.stringify(msg)); // ensure it's stringified
+      }
+  
       ws.current.send(payload);
       console.log("✅ Sent message:", payload);
-
+  
       if (onResponse) {
-        pendingResponses.current.push({ callback: onResponse });
+        return new Promise((resolve) => {
+          pendingResponses.current.push({
+            callback: (response) => {
+              onResponse(response); // user-defined callback
+              resolve(response);    // resolves sendMessage
+            }
+          });
+        });
       }
-    } else {
-      console.warn("❌ WebSocket not open:", ws.current?.readyState);
+  
+      return Promise.resolve(); // resolve immediately if no response expected
+    } catch (err) {
+      console.warn("❌ WebSocket error:", err.message);
+      return Promise.reject(err);
     }
   };
 

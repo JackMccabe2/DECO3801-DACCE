@@ -65,7 +65,6 @@ const Game = ({ onNavigate }) => {
 
   const fetchPuzzle = async () => {
     if (hasFetchedPuzzle.current) return;
-    //alert
     hasFetchedPuzzle.current = true;
     setLoading(true);
 
@@ -76,7 +75,6 @@ const Game = ({ onNavigate }) => {
 
     // get puzzle
     await sendMessage(payload, (response) => {
-      alert(response.status);
       if (response.status === "PUZZLE") {
         setPuzzle({
           question: response.data.question,
@@ -84,7 +82,6 @@ const Game = ({ onNavigate }) => {
         });
         puzzle.answer = response.data.answer;
         console.log("set answer to: " + response.data.answer);
-        alert("updated puzzle")
         setLoading(false);
       } else {
         alert("Get puzzle failed.");
@@ -105,7 +102,6 @@ const Game = ({ onNavigate }) => {
 
     if (input == puzzle.answer) {
       await incrementScore();
-      alert("incremented score");
       hasFetchedPuzzle.current = false;
       await fetchPuzzle();
       // Do something like advance stage or send to server
@@ -150,7 +146,6 @@ const Game = ({ onNavigate }) => {
     };
 
     await sendMessage(payload, async (response) => {
-      alert(response.status);
       if (response.status === "OK GOT GAME"){
         await setGameState(response.message);
         //return;
