@@ -17,7 +17,7 @@ const Error = ({ onNavigate }) => {
     setToastType("error");
     setShowToast(true);
     const timer = setTimeout(() => {
-      onNavigate("landing");
+      //onNavigate("landing");
       window.location.reload();
     }, 4000);
 

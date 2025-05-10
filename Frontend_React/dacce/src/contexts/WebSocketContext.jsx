@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 const WebSocketContext = createContext(null);
 
-export const WebSocketProvider = ({ children }) => {
+export const WebSocketProvider = ({ children, onNavigate }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [gameState, setGameState] = useState(null);
   const [gameStatus, setGameStatus] = useState(null);
@@ -55,15 +55,13 @@ export const WebSocketProvider = ({ children }) => {
     ws.current.onerror = (error) => {
       console.error("WebSocket error:", error);
       setIsConnected(false);
-      alert("connection error");
-      // ADD "ON NAVIGATE" TO SERVER CONNECTION ERROR PAGE
+      onNavigate("error");
     };
 
     ws.current.onclose = () => {
       console.log("WebSocket connection closed");
       setIsConnected(false);
-      alert("connection closed");
-       // ADD "ON NAVIGATE" TO SERVER CONNECTION ERROR PAGE
+      onNavigate("error");
     };
 
     return () => {
