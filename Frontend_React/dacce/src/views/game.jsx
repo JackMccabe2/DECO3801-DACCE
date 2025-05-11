@@ -32,6 +32,13 @@ const Game = ({ onNavigate }) => {
   // Timer
   const [timeLeft, setTimeLeft] = useState(60);
 
+  useEffect(() => {
+    
+    if (gameStatus === "over") {
+      //alert("GAME STATYDASTES CAHNEGS");
+      endGame();
+    }
+  }, [gameStatus]);  
 
   useEffect(() => {
     //alert(gameState);
@@ -91,14 +98,6 @@ const Game = ({ onNavigate }) => {
 
   const handleTerminalCommand = async (input) => {
     console.log("User entered:", input);
-    //alert(input);
-    
-    /*
-    if (!puzzle || !puzzle.answer) {
-      alert("Puzzle not loaded yet.");
-      return;
-    }
-      */
 
     if (input == puzzle.answer) {
       await incrementScore();
@@ -136,6 +135,8 @@ const Game = ({ onNavigate }) => {
 
     setGameStatus(false);
 
+    //alert(`${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: ${opponent}`);
+
     const payload = { 
       type: "CORRECT ANSWER", 
       message: 
@@ -148,13 +149,39 @@ const Game = ({ onNavigate }) => {
     await sendMessage(payload, async (response) => {
       if (response.status === "OK GOT GAME"){
         await setGameState(response.message);
-        //return;
+
+        setTimeout(() => {
+          const updatedScore = response.message[Object.keys(response.message)[0]].users[user.username];
+          alert(`${user.username} score: ${updatedScore} opponent score: ${opponent}`);
+        }, 0);
+
+        // if user score is 5, 
+      } else if (response.status === "GAME OVER") {
+        //await endGame();
       } else {
         alert("Get puzzle failed.");
-        //return;
       }
+
+      
       
     });
+
+  }
+
+  async function endGame() {
+
+    // gameState
+
+    if (gameState[Object.keys(gameState)[0]].users[opponent] === 5) {
+      
+      //setOpponent("GRAHHHHH"); 
+      alert("opponent has won...");
+      onNavigate("dashboard");
+    } else {
+      //setOpponent("HIIIII");
+      alert("user has won");
+      onNavigate("dashboard");
+    }
 
   }
 
@@ -190,7 +217,7 @@ const Game = ({ onNavigate }) => {
       <Container fluid className="bg-dark text-white py-3 mb-3">
         <Row className="justify-content-center">
           <Col xs="auto">
-            <h1 className="text-center">{`${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: ${gameState[Object.keys(gameState)[0]].users[opponent]}`}</h1>
+            <h1 className="text-center">{`${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: ${opponent}`}</h1>
           </Col>
         </Row>
       </Container>

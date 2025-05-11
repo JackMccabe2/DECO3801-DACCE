@@ -37,10 +37,14 @@ export const WebSocketProvider = ({ children, onNavigate }) => {
 
       // Show alert if status/message format is present
       if (response?.status && response?.message !== undefined) {
+        //alert(response.status);
         if (response.status === "OK GOT GAME") {
           setGameState(response.message);
           setGameStatus(true);
-        } 
+        } else if (response.status === "GAME OVER") {
+          setGameState(response.message);
+          setGameStatus("over");
+        }
       }
 
       setMessage(response);

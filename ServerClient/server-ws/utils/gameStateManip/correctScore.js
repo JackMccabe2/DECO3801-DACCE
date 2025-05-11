@@ -4,6 +4,7 @@ export async function correctScore(ws, gameId, data, client, users) {
 
     let opponent = null;
     let currentGame = null;
+    let status = "OK GOT GAME";
 
     // Find the correct game and update the score
     for (const entry of gameId) {
@@ -14,6 +15,7 @@ export async function correctScore(ws, gameId, data, client, users) {
             // Ensure the user exists and increment their score
             if (gameData.users.hasOwnProperty(user)) {
                 gameData.users[user] += 1;
+                if (gameData.users[user] >= 5) {status = "GAME OVER"}
             }
 
             // Identify the opponent
@@ -28,8 +30,10 @@ export async function correctScore(ws, gameId, data, client, users) {
         return;
     }
 
+
+
     const response = {
-        status: "OK GOT GAME",
+        status: status,
         message: currentGame
     };
 
