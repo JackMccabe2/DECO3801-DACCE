@@ -7,28 +7,95 @@ import Button from "../components/button";
 import ProfilePhoto from "../assets/profile.png";
 import GameLoad from "./gameload";
 
+import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
+
 import "../css/matchfound.css";
 
 const Matched = ({ onNavigate }) => {
   const [timer, setTimer] = useState(30);
+  const [opponent, setOpponent] = useState("");
+  const [opponentScore, setOpponentScore] = useState("");
+  const [userScore, setUserScore] = useState("");
+  const { sendMessage, gameState } = useWebSocket();
+  const { user } = useUser();
   const maxTime = 30;
 
   // Countdown timer, resets the page to "playgame/matching" when the timer reaches 0
   useEffect(() => {
+    const gameId = Object.keys(gameState)[0];
+    const users = gameState[gameId].users;
+  
+    let opponentUsername = "";
+    for (const username in users) {
+      if (username !== user.username) {
+        opponentUsername = username;
+        break;
+      }
+    }
+  
+    setOpponent(opponentUsername);
+  
+    const userData = gameState[gameId].userdata;
+    setUserScore(userData.find(u => u.username === user.username)?.leaderboard_score);
+    setOpponentScore(userData.find(u => u.username === opponentUsername)?.leaderboard_score);
+  
     const interval = setInterval(() => {
       setTimer((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-
-          // TBD: Can either reset to playgame or matching page?
           onNavigate("playgame");
         }
         return prev - 1;
       });
     }, 1500);
-
+  
     return () => clearInterval(interval);
   }, [onNavigate]);
+
+  async function handleAccept() {
+    const payload = { 
+      type: "USER READY", 
+      message: 
+        {
+          gameId: Object.keys(gameState)[0], 
+          username: user.username
+        } 
+    };
+
+    await sendMessage(payload, (response) => {
+      if (response.status === "OK GOT GAME") {
+        //alert("got game");
+        onNavigate("gameload");
+      } else if (response.status === "ERROR"){
+        alert("error occurred in initializing game");
+        onNavigate("dashboard");
+      } 
+      
+    });
+  }
+
+  async function handleDeny() {
+    const payload = { 
+      type: "USER LEFT", 
+      message: 
+        {
+          gameId: Object.keys(gameState)[0], 
+          username: user.username
+        } 
+    };
+
+    await sendMessage(payload, (response) => {
+      if (response.status === "OK") {
+        //alert("got game");
+        onNavigate("playGame");
+      } else if (response.status === "ERROR"){
+        alert("error occurred in initializing game");
+        onNavigate("dashboard");
+      } 
+      
+    });
+  }
 
   // Progress bar width (yellow bar) changes according to the timer
   const progressWidth = (timer / maxTime) * 100;
@@ -75,8 +142,8 @@ const Matched = ({ onNavigate }) => {
                 alt="User 1"
                 className="rounded-circle profile-photo"
               />
-              <h3 className="player-name">Player 1</h3>
-              <h5 className="player-lvl">Level 23</h5>
+              <h3 className="player-name">{user.username}</h3>
+              <h5 className="player-lvl">{userScore}</h5>
             </div>
           </Col>
           <Col xs={3} className="d-flex justify-content-center">
@@ -89,8 +156,8 @@ const Matched = ({ onNavigate }) => {
                 alt="User 2"
                 className="rounded-circle profile-photo"
               />
-              <h3 className="player-name">Player 2</h3>
-              <h5 className="player-lvl">Level 20</h5>
+              <h3 className="player-name">{opponent}</h3>
+              <h5 className="player-lvl">{opponentScore}</h5>
             </div>
           </Col>
         </Row>
@@ -108,7 +175,10 @@ const Matched = ({ onNavigate }) => {
             <Button
               text="Accept"
               colour="yellow"
-              onClick={() => onNavigate("gameload")}
+              onClick={ async () => {
+                  await handleAccept();
+                }
+              }
             ></Button>
           </Col>
         </Row>
