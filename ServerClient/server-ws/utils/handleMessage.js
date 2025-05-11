@@ -37,7 +37,7 @@ export async function handleMessage(ws, message, client, gameId, users) {
         } else if (data.type === 'GET PUZZLE') {
             await getPuzzle(ws);
         } else if (data.type === 'EXIT GAME') {
-            await leaveGame(ws, gameId, data);
+            await leaveGame(ws, gameId, data, users);
         } else if (data.type === 'CORRECT ANSWER') {
             await correctScore(ws, gameId, data, client, users);
         } else if (data.type === 'USER READY') {

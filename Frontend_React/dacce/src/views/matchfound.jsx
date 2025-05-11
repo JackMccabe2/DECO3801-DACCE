@@ -80,24 +80,16 @@ const Matched = ({ onNavigate }) => {
   }
 
   async function handleDeny() {
-    const payload = { 
-      type: "USER LEFT", 
-      message: 
-        {
-          gameId: Object.keys(gameState)[0], 
-          username: user.username
-        } 
-    };
+    const loginPayload = { type: "EXIT GAME", message: user };
 
-    await sendMessage(payload, (response) => {
+    sendMessage(loginPayload, (response) => {
       if (response.status === "OK") {
-        //alert("got game");
-        onNavigate("playGame");
-      } else if (response.status === "ERROR"){
-        alert("error occurred in initializing game");
-        onNavigate("dashboard");
-      } 
-      
+        onNavigate("playgame");
+        return;
+      } else {
+        alert("Leaving game failed.");
+        return;
+      }
     });
   }
 
@@ -172,17 +164,14 @@ const Matched = ({ onNavigate }) => {
               text="Deny"
               background="var(--red)"
               btnHover="deny-btn-hover"
-              onClick={() => onNavigate("playgame")}
+              onClick={ async () => await handleDeny() }
             ></Button>
           </Col>
           <Col xs={4} className="text-center">
             <Button
               text="Accept"
               colour="yellow"
-              onClick={ async () => {
-                  await handleAccept();
-                }
-              }
+              onClick={ async () => await handleAccept() }
             ></Button>
           </Col>
         </Row>

@@ -30,6 +30,11 @@ const GameLoad = ({ onNavigate }) => {
   
     const users = gameState[key].users;
     if (!users) return;
+
+    if (Object.keys(gameState[key].users).length == 1)  {
+      alert("opponent left");
+      onNavigate("playgame");
+    }
   
     if (Object.values(users).every(score => score === 0)) {
       onNavigate("game");
