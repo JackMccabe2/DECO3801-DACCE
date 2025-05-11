@@ -1,6 +1,7 @@
 // WebSocketContext.jsx
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useUser } from "./UserContext";
 
 const WebSocketContext = createContext(null);
 
@@ -9,6 +10,7 @@ export const WebSocketProvider = ({ children, onNavigate }) => {
   const [gameState, setGameState] = useState(null);
   const [gameStatus, setGameStatus] = useState(null);
   const [message, setMessage] = useState(null); // single message or last message
+  const { setUser } = useUser();
   const ws = useRef(null);
 
   // Holds callbacks waiting for certain responses
@@ -44,6 +46,8 @@ export const WebSocketProvider = ({ children, onNavigate }) => {
         } else if (response.status === "GAME OVER") {
           setGameState(response.message);
           setGameStatus("over");
+        } else if (response.status === "UPDATE USER") {
+          setUser(response.user);
         }
       }
 
