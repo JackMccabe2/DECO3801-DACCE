@@ -2,11 +2,17 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+
+// Import CSS
 import "../css/xterm.css";
+
+// Import Context Variables
+import { useUser } from "../contexts/UserContext";
 
 const TerminalComponent = ({ onCommand }) => {
   const terminalRef = useRef(null);
   const fitAddonRef = useRef(null); // store fitAddon in a ref
+  const { user } = useUser();
 
   useEffect(() => {
     const term = new Terminal();
@@ -22,7 +28,7 @@ const TerminalComponent = ({ onCommand }) => {
 
     const handleInput = (term, input) => {
       if (onCommand) onCommand(input); // Call parent handler with user input
-  
+
       if (input === "help") {
         term.writeln("Available commands: help, start");
       } else if (input === "start") {
@@ -30,8 +36,8 @@ const TerminalComponent = ({ onCommand }) => {
       } else {
         term.writeln(`Unknown command: ${input}`);
       }
-  
-      term.write("alex@cool-hack-game % ");
+
+      term.write(`${user.username}` + "@cool-hack-game % ");
     };
 
     term.writeln("Welcome to QuantumHeist Terminal 💻");
@@ -76,7 +82,7 @@ const TerminalComponent = ({ onCommand }) => {
     } else {
       term.writeln(`Unknown command: ${input}`);
     }
-    term.write("alex@cool-hack-game % ");
+    term.write(`${user.username}` + "@cool-hack-game % ");
   };
 
   return <div ref={terminalRef} className="custom-terminal" />;

@@ -1,10 +1,13 @@
+// Import CSS
 import "../css/dashboard.css";
-import Button from "../components/button";
+
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
-import { IoPersonCircleOutline } from "react-icons/io5";
+// Import Custom Components
+import Button from "../components/button";
 
 function Dashboard({ onNavigate }) {
   return (

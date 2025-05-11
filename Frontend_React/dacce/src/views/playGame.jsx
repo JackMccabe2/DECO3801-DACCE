@@ -1,9 +1,11 @@
-// Import components
-import Button from "../components/button";
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+
+// Import Custom Components
 import Header from "../components/header";
+import Button from "../components/button";
 
 // Import CSS
 import "../css/playGame.css";
@@ -21,7 +23,6 @@ const playGame = ({ onNavigate }) => {
 
     sendMessage(payload, (response) => {
       if (response.status === "OK GOT GAME") {
-
         setGameState(response.message);
         //alert("set message to "+response.message);
         onNavigate(page);
@@ -47,10 +48,7 @@ const playGame = ({ onNavigate }) => {
                 onClick={() => initGame("M", "matching")}
               ></Button>
               <Col sm={12} md={2} lg={2}></Col>
-              <Button
-                text="Invite"
-                colour="orange"
-              ></Button>
+              <Button text="Invite" colour="orange"></Button>
             </Col>
             <Col sm={12} md={5} lg={5} className="custom-playmode-container">
               <h4 className="custom-title">PvC</h4>
