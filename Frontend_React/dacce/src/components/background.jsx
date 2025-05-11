@@ -1,5 +1,4 @@
-// Import CSS
-// Do we still need this jsx file?
+// Backgorund Image
 const Navbar = () => {
   return <div className="custom-bg"></div>;
 };
