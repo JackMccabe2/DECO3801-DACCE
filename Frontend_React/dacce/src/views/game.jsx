@@ -57,7 +57,7 @@ const Game = ({ onNavigate }) => {
       currentScore != null &&
       currentScore > previousScore
     ) {
-      alert(`Opponent's score increased: ${previousScore} → ${currentScore}`);
+      //alert(`Opponent's score increased: ${previousScore} → ${currentScore}`);
       // Optional: handle event (e.g., refetch puzzle, notify player)
       hasFetchedPuzzle.current = false;
       fetchPuzzle();
@@ -179,7 +179,7 @@ const Game = ({ onNavigate }) => {
 
         setTimeout(() => {
           const updatedScore = response.message[Object.keys(response.message)[0]].users[user.username];
-          alert(`${user.username} score: ${updatedScore} opponent score: ${opponent}`);
+          //alert(`${user.username} score: ${updatedScore} opponent score: ${opponent}`);
         }, 0);
 
         // if user score is 5, 
