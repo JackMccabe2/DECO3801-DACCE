@@ -24,7 +24,6 @@ import { useUser } from "../contexts/UserContext";
 const Game = ({ onNavigate }) => {
   const [puzzle, setPuzzle] = useState({ question: null, answer: null });
   const [opponent, setOpponent] = useState("");
-  const [opponentScore, setOpponentScore] = useState("");
   const { gameState, setGameState, sendMessage, gameStatus, setGameStatus } = useWebSocket();
   const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
