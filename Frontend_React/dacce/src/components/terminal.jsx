@@ -41,7 +41,7 @@ const TerminalComponent = ({ onCommand }) => {
     };
 
     term.writeln("Welcome to QuantumHeist Terminal 💻");
-    term.write("alex@cool-hack-game % ");
+    term.write(`${user.username}` + "@cool-hack-game % ");
 
     let userInputData = "";
     term.onData((data) => {
