@@ -24,10 +24,13 @@ import { useUser } from "../contexts/UserContext";
 const Game = ({ onNavigate }) => {
   const [puzzle, setPuzzle] = useState({ question: null, answer: null });
   const [opponent, setOpponent] = useState("");
+  const [opponentScore, setOpponentScore] = useState("");
   const { gameState, setGameState, sendMessage, gameStatus, setGameStatus } = useWebSocket();
   const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
   const [loading, setLoading] = useState(true);
+  const prevOpponentScoreRef = useRef(null);
+
 
   // Timer
   const [timeLeft, setTimeLeft] = useState(60);
@@ -38,7 +41,32 @@ const Game = ({ onNavigate }) => {
       //alert("GAME STATYDASTES CAHNEGS");
       endGame();
     }
+
   }, [gameStatus]);  
+
+  useEffect(() => {
+    const gameId = Object.keys(gameState)[0];
+    if (!gameId || !gameState[gameId] || !opponent) return;
+  
+    const currentScore = gameState[gameId].users[opponent];
+    const previousScore = prevOpponentScoreRef.current;
+  
+    if (currentScore === 5) {
+      return;
+    } else if (
+      previousScore != null &&
+      currentScore != null &&
+      currentScore > previousScore
+    ) {
+      alert(`Opponent's score increased: ${previousScore} → ${currentScore}`);
+      // Optional: handle event (e.g., refetch puzzle, notify player)
+      hasFetchedPuzzle.current = false;
+      fetchPuzzle();
+    }
+  
+    prevOpponentScoreRef.current = currentScore;
+  }, [gameState, opponent]);
+  
 
   useEffect(() => {
     //alert(gameState);
