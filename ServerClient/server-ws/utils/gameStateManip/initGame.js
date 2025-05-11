@@ -25,7 +25,7 @@ export async function initGame(ws, gameId, data, users) {
                 if (obj[key].gamemode === 'M' && Object.keys(obj[key].users).length === 1) {
                     opponent = Object.keys(obj[key].users)[0];
                     
-                    obj[key].users[data.user.username] = 0;  // Add user to users object
+                    obj[key].users[data.user.username] = -1;  // Add user to users object
                     obj[key].userdata.push(data.user);       // Push user data
                     userGame = obj;
                     added = true;
@@ -39,7 +39,7 @@ export async function initGame(ws, gameId, data, users) {
             const newGame = {
                 [id]: {
                     gamemode: data.gamemode,
-                    users: { [data.user.username]: 0 },
+                    users: { [data.user.username]: -1 },
                     userdata: [data.user]
                 }
             };

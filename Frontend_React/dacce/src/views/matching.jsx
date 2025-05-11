@@ -16,6 +16,7 @@ import "../css/matching.css";
 const Matching = ({ onNavigate }) => {
   const [timer, setTimer] = useState(0);
   const [dots, setDots] = useState("");
+  const [matched, setMatched] = useState(false);
   const { sendMessage, gameState } = useWebSocket();
   const { user } = useUser();
 
@@ -38,12 +39,11 @@ const Matching = ({ onNavigate }) => {
     for (const [gameId, game] of Object.entries(gameState)) {
       const usernames = Object.keys(game.users);
       if (usernames.includes(user.username) && usernames.length === 2) {
-        return <Matched onNavigate={onNavigate} />;
-        //onNavigate("matched"); // or set a state that shows <Matched />
-        //break;
+        setMatched(true);
+        break;
       }
     }
-  }, [gameState, user, onNavigate]);
+  }, [gameState, user]);
   
 
   // Timer
@@ -75,9 +75,14 @@ const Matching = ({ onNavigate }) => {
 
   // Hard coded a timer here to simulate the matching process.
   // To-do: Replace this with our server response (& player data)?
-  if (timer >= 5) {
+  //if (timer >= 5) {
     //return <Matched onNavigate={onNavigate} />;
+  //}
+
+  if (matched) {
+    return <Matched onNavigate={onNavigate} />;
   }
+  
 
   return (
     <Container

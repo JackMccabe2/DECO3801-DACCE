@@ -8,16 +8,55 @@ import Row from "react-bootstrap/Row";
 
 // Import Custom Components & Assets & CSS
 import ProfilePhoto from "../assets/profile.png";
+
+import { useWebSocket } from "../contexts/WebSocketContext";
+import { useUser } from "../contexts/UserContext";
+
 import "../css/gameload.css";
 
 const GameLoad = ({ onNavigate }) => {
   const [timer, setTimer] = useState(0);
   const [dots, setDots] = useState("");
-  const maxTime = 10;
+  const [opponent, setOpponent] = useState("");
+  const [opponentScore, setOpponentScore] = useState("");
+  const [userScore, setUserScore] = useState("");
+  const { gameState } = useWebSocket();
+  const { user } = useUser();
+  const maxTime = 30;
+
+  useEffect(() => {
+    const key = Object.keys(gameState)[0];
+    if (!key || !gameState[key]) return;
+  
+    const users = gameState[key].users;
+    if (!users) return;
+  
+    if (Object.values(users).every(score => score === 0)) {
+      onNavigate("game");
+    }
+  }, [gameState]);  
 
   // Timer for the game loading bar (currently kinda hardcoded to 10 seconds to simulate loading.)
   // But am guessing this part should reflect how our game actually loads?
   useEffect(() => {
+
+    const gameId = Object.keys(gameState)[0];
+    const users = gameState[gameId].users;
+  
+    let opponentUsername = "";
+    for (const username in users) {
+      if (username !== user.username) {
+        opponentUsername = username;
+        break;
+      }
+    }
+  
+    setOpponent(opponentUsername);
+  
+    const userData = gameState[gameId].userdata;
+    setUserScore(userData.find(u => u.username === user.username)?.leaderboard_score);
+    setOpponentScore(userData.find(u => u.username === opponentUsername)?.leaderboard_score);
+
     const interval = setInterval(() => {
       setTimer((prev) => {
         if (prev >= maxTime - 1) {
@@ -51,7 +90,7 @@ const GameLoad = ({ onNavigate }) => {
       >
         <Row className="justify-content-center">
           <Col xs={12} className="game-load-title text-center mb-3">
-            <h1 style={{ fontSize: "3rem" }}>Loading Game {dots}</h1>
+            <h1 style={{ fontSize: "3rem" }}>Waiting for opponent {dots}</h1>
           </Col>
         </Row>
 
@@ -65,8 +104,8 @@ const GameLoad = ({ onNavigate }) => {
                 alt="User 1"
                 className="rounded-circle profile-photo"
               />
-              <h3 className="player-name">Player 1</h3>
-              <h5 className="player-lvl">Level 23</h5>
+              <h3 className="player-name">{user.username}</h3>
+              <h5 className="player-lvl">{userScore}</h5>
             </div>
           </Col>
           <Col xs={3} className="d-flex justify-content-center">
@@ -79,8 +118,8 @@ const GameLoad = ({ onNavigate }) => {
                 alt="User 2"
                 className="rounded-circle profile-photo"
               />
-              <h3 className="player-name">Player 2</h3>
-              <h5 className="player-lvl">Level 20</h5>
+              <h3 className="player-name">{opponent}</h3>
+              <h5 className="player-lvl">{opponentScore}</h5>
             </div>
           </Col>
         </Row>

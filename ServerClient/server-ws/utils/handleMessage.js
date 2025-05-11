@@ -9,6 +9,7 @@ import { leaveGame } from './gameStateManip/leaveGame.js';
 import { deleteUser } from './userManip/deleteUser.js';
 import { checkDuplicateUser } from './userManip/checkDuplicateUser.js';
 import { correctScore } from './gameStateManip/correctScore.js';
+import { userReady } from './gameStateManip/userReady.js';
 
 export async function handleMessage(ws, message, client, gameId, users) {
     try {
@@ -39,6 +40,8 @@ export async function handleMessage(ws, message, client, gameId, users) {
             await leaveGame(ws, gameId, data);
         } else if (data.type === 'CORRECT ANSWER') {
             await correctScore(ws, gameId, data, client, users);
+        } else if (data.type === 'USER READY') {
+            await userReady(ws, gameId, data, users);
         } else {
             await okMessage(ws, data);
         }
