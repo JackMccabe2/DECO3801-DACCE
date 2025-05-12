@@ -3,6 +3,7 @@
 
 # Not cool
 *:Zone.Identifier
+.env
 
 ## PYTHON
 # Byte-compiled / optimized / DLL files
