@@ -23,6 +23,7 @@ const Matching = ({ onNavigate }) => {
   const { user } = useUser();
 
   const exitGame = (user) => {
+    console.log("Game State: " + gameState);
     const loginPayload = { type: "EXIT GAME", message: user };
 
     sendMessage(loginPayload, (response) => {
@@ -36,7 +37,7 @@ const Matching = ({ onNavigate }) => {
   };
 
   useEffect(() => {
-    if (!gameState) return;
+    if (!gameState) {onNavigate("playgame")};
   
     for (const [gameId, game] of Object.entries(gameState)) {
       const usernames = Object.keys(game.users);

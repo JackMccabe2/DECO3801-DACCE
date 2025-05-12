@@ -36,7 +36,21 @@ const Game = ({ onNavigate }) => {
   const [timeLeft, setTimeLeft] = useState(60); // second
 
   useEffect(() => {
-    
+    const key = Object.keys(gameState)[0];
+    if (!key || !gameState[key]) return;
+  
+    const users = gameState[key].users;
+    if (!users) return;
+
+    if (Object.keys(gameState[key].users).length == 1)  {
+      console.dir("Game State: " + gameState, {depth: null});
+      alert("opponent left");
+      onNavigate("dashboard");
+    }
+
+  }, [gameState]); 
+
+  useEffect(() => {
     if (gameStatus === "over") {
       //alert("GAME STATYDASTES CAHNEGS");
       endGame();
@@ -108,6 +122,7 @@ const Game = ({ onNavigate }) => {
   }, []);
 
   const exitGame = async (user) => {
+    console.dir("Game State: " + gameState, {depth: null});
     const payload = { type: "EXIT GAME", message: user };
     sendMessage(payload, (response) => {
       if (response.status !== "OK") {
@@ -134,7 +149,6 @@ const Game = ({ onNavigate }) => {
           answer: response.data.answer,
         });
         puzzle.answer = response.data.answer;
-        console.log("set answer to: " + response.data.answer);
         setLoading(false);
       } else {
         alert("Get puzzle failed.");
@@ -143,7 +157,6 @@ const Game = ({ onNavigate }) => {
   };
 
   const handleTerminalCommand = async (input) => {
-    console.log("User entered:", input);
 
     if (input == puzzle.answer) {
       await incrementScore();
@@ -223,11 +236,11 @@ const Game = ({ onNavigate }) => {
       
       //setOpponent("GRAHHHHH"); 
       alert("opponent has won...");
-      onNavigate("dashboard");
+      onNavigate("playgame");
     } else {
       //setOpponent("HIIIII");
       alert("user has won");
-      onNavigate("dashboard");
+      onNavigate("playgame");
     }
 
   }
