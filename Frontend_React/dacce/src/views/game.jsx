@@ -20,7 +20,7 @@ import Terminal from "../components/terminal";
 // Import contexts
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
-import { getPuzzle } from "../../../../ServerClient/server-ws/utils/getPuzzle";
+// import { getPuzzle } from "../../../../ServerClient/server-ws/utils/getPuzzle";
 
 const Game = ({ onNavigate }) => {
   const [puzzle, setPuzzle] = useState({ question: null, answer: null });

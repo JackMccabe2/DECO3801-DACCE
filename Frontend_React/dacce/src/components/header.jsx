@@ -9,9 +9,6 @@ import Modal from "react-bootstrap/Modal";
 // Import React Hooks
 import { useState } from "react";
 
-// Import React Hooks
-import { useState } from "react";
-
 // Import CSS
 import "../css/header.css";
 
