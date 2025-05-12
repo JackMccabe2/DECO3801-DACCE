@@ -1,6 +1,9 @@
 # Macs aren't cool
 **/.DS_Store
 
+# Not cool
+*:Zone.Identifier
+
 ## PYTHON
 # Byte-compiled / optimized / DLL files
 __pycache__/
