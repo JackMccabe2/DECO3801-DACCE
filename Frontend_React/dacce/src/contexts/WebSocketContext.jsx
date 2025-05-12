@@ -35,7 +35,7 @@ export const WebSocketProvider = ({ children, onNavigate }) => {
     
     ws.current.onmessage = (event) => {
       const response = JSON.parse(event.data);
-      console.log('[Client] Received message:', response);
+      //console.log('[Client] Received message:', response);
 
       // Show alert if status/message format is present
       if (response?.status && response?.message !== undefined) {
@@ -95,7 +95,7 @@ export const WebSocketProvider = ({ children, onNavigate }) => {
       }
   
       ws.current.send(payload);
-      console.log("✅ Sent message:", payload);
+      //console.log("✅ Sent message:", payload);
   
       if (onResponse) {
         return new Promise((resolve) => {
