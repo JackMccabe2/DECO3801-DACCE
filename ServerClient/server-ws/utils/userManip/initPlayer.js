@@ -12,6 +12,8 @@ async function initializePlayer(username, client) {
             VALUES ('${username}', '2025-03-28 13:10:11', '2025-03-28 13:10:11', 1, 1)
             RETURNING *;
         `;
+
+        //update the date
         
         const result = await client.query(query);
         console.log("1 record inserted");

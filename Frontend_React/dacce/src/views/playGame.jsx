@@ -19,9 +19,9 @@ const playGame = ({ onNavigate }) => {
   const { sendMessage, gameState, setGameState } = useWebSocket();
 
   const initGame = (gamemode, page) => {
-    const loginPayload = { type: "INIT GAME", gamemode: gamemode, user: user };
+    const payload = { type: "INIT GAME", gamemode: gamemode, user: user };
 
-    sendMessage(loginPayload, (response) => {
+    sendMessage(payload, (response) => {
       if (response.status === "OK GOT GAME") {
         setGameState(response.message);
         //alert("set message to "+response.message);

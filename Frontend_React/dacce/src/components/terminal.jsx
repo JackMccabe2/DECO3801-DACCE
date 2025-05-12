@@ -9,6 +9,9 @@ import { useUser } from "../contexts/UserContext";
 // Import CSS
 import "../css/xterm.css";
 
+// Import Context Variables
+import { useUser } from "../contexts/UserContext";
+
 const TerminalComponent = ({ onCommand }) => {
   const terminalRef = useRef(null);
   const fitAddonRef = useRef(null); // store fitAddon in a ref

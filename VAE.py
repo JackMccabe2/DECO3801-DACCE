@@ -82,11 +82,20 @@ BATCH_SIZE = 16
 LEARNING_RATE = 0.001
 
 def fetch_puzzle_data():
+    """
     conn = psycopg2.connect(
         host="localhost",
         database="postgres",
         user="georgiadocherty",
         password="D4t4b4se",
+        port=5432
+    )"""
+    
+    conn = psycopg2.connect(
+        host="localhost",
+        database="postgres",
+        user="jackmccabe",
+        password="postgres",
         port=5432
     )
 

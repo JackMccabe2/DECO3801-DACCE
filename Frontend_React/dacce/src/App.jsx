@@ -112,7 +112,7 @@ function App() {
 
   return (
     <UserProvider>
-      <WebSocketProvider>
+      <WebSocketProvider onNavigate={renderView}>
         {currentView !== "landing" &&
           currentView !== "signup" &&
           currentView !== "login" &&

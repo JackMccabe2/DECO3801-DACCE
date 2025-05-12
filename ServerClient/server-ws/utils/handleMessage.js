@@ -9,6 +9,7 @@ import { leaveGame } from './gameStateManip/leaveGame.js';
 import { deleteUser } from './userManip/deleteUser.js';
 import { checkDuplicateUser } from './userManip/checkDuplicateUser.js';
 import { correctScore } from './gameStateManip/correctScore.js';
+import { userReady } from './gameStateManip/userReady.js';
 
 export async function handleMessage(ws, message, client, gameId, users) {
     try {
@@ -32,13 +33,15 @@ export async function handleMessage(ws, message, client, gameId, users) {
         } else if (data.type === 'GET LEADERBOARD') {
             await getLeaderboard(ws, client);
         } else if (data.type === 'INIT GAME') {
-            await initGame(ws, gameId, data);
+            await initGame(ws, gameId, data, users);
         } else if (data.type === 'GET PUZZLE') {
             await getPuzzle(ws);
         } else if (data.type === 'EXIT GAME') {
-            await leaveGame(ws, gameId, data);
+            await leaveGame(ws, gameId, data, users);
         } else if (data.type === 'CORRECT ANSWER') {
             await correctScore(ws, gameId, data, client, users);
+        } else if (data.type === 'USER READY') {
+            await userReady(ws, gameId, data, users);
         } else {
             await okMessage(ws, data);
         }

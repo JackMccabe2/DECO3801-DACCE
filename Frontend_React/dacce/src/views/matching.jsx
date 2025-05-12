@@ -18,7 +18,8 @@ import { useUser } from "../contexts/UserContext";
 const Matching = ({ onNavigate }) => {
   const [timer, setTimer] = useState(0);
   const [dots, setDots] = useState("");
-  const { sendMessage } = useWebSocket();
+  const [matched, setMatched] = useState(false);
+  const { sendMessage, gameState } = useWebSocket();
   const { user } = useUser();
 
   const exitGame = (user) => {
@@ -33,6 +34,19 @@ const Matching = ({ onNavigate }) => {
       }
     });
   };
+
+  useEffect(() => {
+    if (!gameState) return;
+  
+    for (const [gameId, game] of Object.entries(gameState)) {
+      const usernames = Object.keys(game.users);
+      if (usernames.includes(user.username) && usernames.length === 2) {
+        setMatched(true);
+        break;
+      }
+    }
+  }, [gameState, user]);
+  
 
   // Timer
   useEffect(() => {
@@ -63,9 +77,14 @@ const Matching = ({ onNavigate }) => {
 
   // Hard coded a timer here to simulate the matching process.
   // To-do: Replace this with our server response (& player data)?
-  if (timer >= 5) {
+  //if (timer >= 5) {
+    //return <Matched onNavigate={onNavigate} />;
+  //}
+
+  if (matched) {
     return <Matched onNavigate={onNavigate} />;
   }
+  
 
   return (
     <Container
