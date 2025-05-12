@@ -5,6 +5,7 @@ import { useUser } from "./UserContext";
 
 const WebSocketContext = createContext(null);
 
+
 export const WebSocketProvider = ({ children, onNavigate }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [gameState, setGameState] = useState(null);
@@ -17,7 +18,7 @@ export const WebSocketProvider = ({ children, onNavigate }) => {
   const pendingResponses = useRef([]);
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8080");
+    ws.current = new WebSocket("ws://database:8080");
 
     ws.current.onopen = () => {
       console.log("WebSocket connected");

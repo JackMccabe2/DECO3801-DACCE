@@ -1,3 +1,13 @@
+-- GAMES
+-- each game creates new entry, right now just covers game types
+CREATE TABLE public.game_types (
+    game_id SERIAL PRIMARY KEY,
+    game_type VARCHAR(50) CHECK (game_type IN ('firewall', 'encryption')),
+    cipher_method VARCHAR(50),
+    difficulty_rating INTEGER CHECK (difficulty_rating BETWEEN 1 AND 10), -- might not need this
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- dont really need this i think
+);
+
 -- PLAYER
 -- each user is a new entry to table
 CREATE TABLE public.players (
@@ -15,12 +25,12 @@ CREATE TABLE public.current_match (
     players_username VARCHAR(50),
     answers_right INTEGER,
     answers_wrong INTEGER,
-    wrong_answer_question_type REFERENCES game_types.cipher_method,
+    -- wrong_answer_question_type VARCHAR(50) REFERENCES game_types(cipher_method),
     player_score INTEGER,
     opponent_score INTEGER,
 
-    FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
-)
+    FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE
+);
 
 
 
@@ -29,7 +39,7 @@ CREATE TABLE public.current_match (
 
 CREATE TABLE public.each_puzzle (
     players_username VARCHAR(50),
-    game_id VARCHAR(50),
+    game_id INTEGER,
     duration INTEGER,
     type_of_puzzle VARCHAR(50),
     cipher_method VARCHAR(50),
@@ -37,16 +47,6 @@ CREATE TABLE public.each_puzzle (
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
     FOREIGN KEY (game_id) REFERENCES game_types(game_id) ON DELETE CASCADE,
     FOREIGN KEY (cipher_method) REFERENCES game_types(cipher_method) ON DELETE CASCADE
-)
-
--- GAMES
--- each game creates new entry, right now just covers game types
-CREATE TABLE public.game_types (
-    game_id SERIAL PRIMARY KEY,
-    game_type VARCHAR(50) CHECK (game_type IN ('firewall', 'encryption')),
-    cipher_method VARCHAR(50),
-    difficulty_rating INTEGER CHECK (difficulty_rating BETWEEN 1 AND 10), -- might not need this
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- dont really need this i think
 );
 
 INSERT INTO game_types (cipher_method, difficulty)
@@ -98,9 +98,9 @@ CREATE TABLE public.player_history (
     players_username VARCHAR(50),
     wins INTEGER,
     losses INTEGER,
-    leaderboard_points INTEGER REFERENCES leaderboard(username)
+    leaderboard_points INTEGER REFERENCES leaderboard(username),
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE
-)
+);
 
 
 
