@@ -5,26 +5,40 @@
  * 
  * 
  */
-async function getPlayer(username, client) {
+/*
+ * function to get player from database by username and password
+ * returns distinct status for: success, wrong password, user not found
+ */
+async function getPlayer(username, password, client) {
     try {
-        const query = `
-            SELECT * FROM players WHERE username = '` + username + `'
+        const userQuery = `
+            SELECT * FROM players 
+            WHERE username = $1
         `;
-        
-        const result = await client.query(query);
-        
-        if (result.rows.length === 1) {
-            console.log("Player found:", result.rows[0].username);
-            return {status: "success", data: result.rows[0]}; // Return the player data since there's only one result
-        } else {
-            console.log("Player not found");
-            return {status: "empty"}; // Return null if no player is found
+
+        const userResult = await client.query(userQuery, [username]);
+
+        if (userResult.rows.length === 0) {
+            console.log("User does not exist:", username);
+            return { status: "no_user" };
         }
+
+        const user = userResult.rows[0];
+
+        if (user.password !== password) {
+            console.log("Incorrect password for user:", username);
+            return { status: "wrong_password" };
+        }
+
+        console.log("User authenticated:", username);
+        return { status: "success", data: user };
+
     } catch (err) {
         console.log("Error executing query:", err);
-        return {status: "error"}; // Return "error" if there's an issue with the query
+        return { status: "error" };
     }
 }
+
 
 /*
  *  function to attempt to create specified user
@@ -38,7 +52,7 @@ export async function loginUser(ws, data, client, activeUsers) {
         initResult = { status: "active" };
     } else {
         //console.log("Get result: ");    
-        initResult = await getPlayer(data.username, client);
+        initResult = await getPlayer(data.username, data.password, client);
     }
     
     //console.log("Get result: " + initResult);
@@ -63,7 +77,7 @@ export async function loginUser(ws, data, client, activeUsers) {
             //ws.userId = data.username;
             break;
 
-        case "empty":
+        case "no_user":
             response = { 
                 status: "ERR USER NOT EXIST", 
                 message: "user does not exists in the database", 
@@ -75,6 +89,14 @@ export async function loginUser(ws, data, client, activeUsers) {
             response = {
                 status: "USER ACTIVE",
                 message: "user already login into the game",
+                user: data.username
+            };
+            break;
+
+        case "wrong_password":
+            response = {
+                status: "WRONG PASSWORD",
+                message: "incorrect password for the user",
                 user: data.username
             };
             break;

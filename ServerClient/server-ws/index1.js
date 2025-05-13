@@ -20,7 +20,7 @@ const wss = new WebSocketServer({ server }); // Use WebSocketServer here
 
 const client = new Client({
   host: "localhost",
-  user: "jackmccabe",
+  user: "jack",
   password: "password",
   database: "postgres",
   port: 5432
