@@ -36,8 +36,9 @@ const Game = ({ onNavigate }) => {
 
   useEffect(() => {
     
+    // if client recives gameover message, means either user or 
+    // opponent got to 5 points
     if (gameStatus === "over") {
-      //alert("GAME STATYDASTES CAHNEGS");
       endGame();
     }
 
@@ -45,12 +46,14 @@ const Game = ({ onNavigate }) => {
 
   useEffect(() => {
     const gameId = Object.keys(gameState)[0];
+    // if game not set up, ignore
     if (!gameId || !gameState[gameId] || !opponent) return;
   
     const currentScore = gameState[gameId].users[opponent];
     const previousScore = prevOpponentScoreRef.current;
   
-    if (currentScore === 5) {
+    // if 
+    if (currentScore === 5 || gameStatus === "over") {
       return;
     } else if (
       previousScore != null &&
@@ -72,8 +75,9 @@ const Game = ({ onNavigate }) => {
     setOpponentFunction(gameState);
 
     // function to get puzzle
-
-    fetchPuzzle();
+    if (gameStatus != "over"){
+      fetchPuzzle();
+    }
 
     const interval = setInterval(() => {
       setTimeLeft((prevTime) => {
@@ -98,6 +102,7 @@ const Game = ({ onNavigate }) => {
   };
 
   const fetchPuzzle = async () => {
+
     if (hasFetchedPuzzle.current) return;
     hasFetchedPuzzle.current = true;
     setLoading(true);
@@ -109,6 +114,7 @@ const Game = ({ onNavigate }) => {
 
     // get puzzle
     await sendMessage(payload, (response) => {
+      //console.log("fetch puyzzle status: ",response.status);
       if (response.status === "PUZZLE") {
         setPuzzle({
           question: response.data.question,
@@ -117,6 +123,8 @@ const Game = ({ onNavigate }) => {
         puzzle.answer = response.data.answer;
         console.log("set answer to: " + response.data.answer);
         setLoading(false);
+      } else if (response.status === "GAME OVER") {
+        return;
       } else {
         alert("Get puzzle failed.");
       }
@@ -128,8 +136,10 @@ const Game = ({ onNavigate }) => {
 
     if (input == puzzle.answer) {
       await incrementScore();
-      hasFetchedPuzzle.current = false;
-      await fetchPuzzle();
+      if (gameStatus != "over"){
+        hasFetchedPuzzle.current = false;
+        await fetchPuzzle();
+      }
       // Do something like advance stage or send to server
     } else {
       alert("Incorrect! Try again.",puzzle.answer);
@@ -160,7 +170,7 @@ const Game = ({ onNavigate }) => {
 
   async function incrementScore() {
 
-    setGameStatus(false);
+    //setGameStatus(false);
 
     //alert(`${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: ${opponent}`);
 
@@ -174,6 +184,7 @@ const Game = ({ onNavigate }) => {
     };
 
     await sendMessage(payload, async (response) => {
+      console.log(response.status)
       if (response.status === "OK GOT GAME"){
         await setGameState(response.message);
 
@@ -183,10 +194,12 @@ const Game = ({ onNavigate }) => {
         }, 0);
 
         // if user score is 5, 
-      } else if (response.status === "GAME OVER") {
-        //await endGame();
+      } else if (response.status === "UPDATE USER") {
+        //console.log("setting game status to over")
+        //setGameStatus("over")
+        //endGame();
       } else {
-        alert("Get puzzle failed.");
+        //alert("Get puzzle failed.");
       }
 
       
@@ -195,19 +208,19 @@ const Game = ({ onNavigate }) => {
 
   }
 
-  async function endGame() {
+  function endGame() {
 
     // gameState
-
-    if (gameState[Object.keys(gameState)[0]].users[opponent] === 5) {
-      
-      //setOpponent("GRAHHHHH"); 
-      alert("opponent has won...");
-      onNavigate("dashboard");
-    } else {
+    if (gameState[Object.keys(gameState)[0]].users[user.username] === 1) {
       //setOpponent("HIIIII");
       alert("user has won");
       onNavigate("dashboard");
+      //return;
+    } else {
+      //setOpponent("GRAHHHHH"); 
+      alert("opponent has won...");
+      onNavigate("dashboard");
+      //return;
     }
 
   }

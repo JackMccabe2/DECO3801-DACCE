@@ -21,7 +21,7 @@ const Matched = ({ onNavigate }) => {
   const [opponent, setOpponent] = useState("");
   const [opponentScore, setOpponentScore] = useState("");
   const [userScore, setUserScore] = useState("");
-  const { sendMessage, gameState } = useWebSocket();
+  const { sendMessage, setGameState, gameState } = useWebSocket();
   const { user } = useUser();
   const maxTime = 30;
 

@@ -26,8 +26,11 @@ import { PiRankingFill } from "react-icons/pi";
 import { LuHistory } from "react-icons/lu";
 import { IoMdSettings } from "react-icons/io";
 import { TbLogout } from "react-icons/tb";
-import { useUser } from "../contexts/UserContext";
 import { MdSpaceDashboard } from "react-icons/md";
+
+// Import contexts
+import { useUser } from "../contexts/UserContext";
+import { useWebSocket } from "../contexts/WebSocketContext";
 
 // Import Sound
 import btnClickSound from "../assets/music/button_click_2_pop.mp3";
@@ -35,10 +38,25 @@ import btnClickSound from "../assets/music/button_click_2_pop.mp3";
 const Navbar = ({ currentView, onNavigate }) => {
   const [show, setShow] = useState(false);
   const { user, setUser } = useUser();
+  const { sendMessage } = useWebSocket();
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   // Toggle the sidemenu
   const menuToggle = () => setShow((prevShow) => !prevShow);
+
+  async function handleLogout() {
+    
+    const payload = { type: "REMOVE USER", message: user };
+    sendMessage(payload, (response) => {
+      if (response.status === "OK") {
+        setUser(null);
+        onNavigate("landing");
+        //window.location.reload();
+      }
+    });
+    
+    
+  }
 
   return (
     <Container>
@@ -157,12 +175,11 @@ const Navbar = ({ currentView, onNavigate }) => {
             <a
               className="fs-5 mx-5 menu-item"
               href="#logout"
-              onClick={() => {
+              onClick={ async () => {
                 const audio = new Audio(btnClickSound);
                 audio.play();
                 if (window.confirm("Are you sure you want to log out?")) {
-                  onNavigate("landing");
-                  window.location.reload();
+                  await handleLogout();
                 }
               }}
             >

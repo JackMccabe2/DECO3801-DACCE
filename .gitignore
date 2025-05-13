@@ -5,6 +5,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 ServerClient/server-ws/vae_model.pth
+Frontend_React/dacce/vae_model.pth
 
 # Unit test / coverage reports
 htmlcov/

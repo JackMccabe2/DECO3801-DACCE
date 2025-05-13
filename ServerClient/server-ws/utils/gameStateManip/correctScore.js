@@ -33,7 +33,7 @@ export async function correctScore(ws, gameId, data, client, users) {
             // Ensure the user exists and increment their score
             if (gameData.users.hasOwnProperty(user)) {
                 gameData.users[user] += 1;
-                if (gameData.users[user] >= 5) {
+                if (gameData.users[user] >= 1) {
                     status = "GAME OVER";
                     const userUpdate = await addScore(user, client);
 
