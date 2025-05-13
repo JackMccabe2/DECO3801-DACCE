@@ -22,7 +22,7 @@ export async function leaveGame(ws, gameIdList, data, users) {
                     gameData.users[opponent] = -1; // Optional: mark opponent as waiting or game ended
 
                     const response = {
-                        status: "OK GOT GAME",
+                        status: "OK LEFT GAME",
                         message: game
                     };
 

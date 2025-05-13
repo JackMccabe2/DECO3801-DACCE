@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+vae_model.pth
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

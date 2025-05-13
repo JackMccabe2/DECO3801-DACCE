@@ -16,6 +16,12 @@ export const WebSocketProvider = ({ children, onNavigate }) => {
   // Holds callbacks waiting for certain responses
   const pendingResponses = useRef([]);
 
+  const gameStatusRef = useRef(gameStatus);
+  useEffect(() => {
+    gameStatusRef.current = gameStatus;
+  }, [gameStatus]);
+
+
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8080");
 
@@ -36,16 +42,21 @@ export const WebSocketProvider = ({ children, onNavigate }) => {
     ws.current.onmessage = (event) => {
       const response = JSON.parse(event.data);
       console.log('[Client] Received message:', response);
-
+      //console.log(gameStatusRef.current);
       // Show alert if status/message format is present
       if (response?.status && response?.message !== undefined) {
         //alert(response.status);
         if (response.status === "OK GOT GAME") {
-          setGameState(response.message);
           setGameStatus(true);
-        } else if (response.status === "GAME OVER") {
           setGameState(response.message);
+        } else if (response.status === "OK LEFT GAME") {
+          setGameState(null);
+          setGameStatus(false);
+          alert("opponent left");
+          onNavigate("playgame");
+        } else if (response.status === "GAME OVER") {
           setGameStatus("over");
+          setGameState(response.message);
         } else if (response.status === "UPDATE USER") {
           setUser(response.user);
         }
@@ -95,7 +106,7 @@ export const WebSocketProvider = ({ children, onNavigate }) => {
       }
   
       ws.current.send(payload);
-      console.log("✅ Sent message:", payload);
+      //console.log("✅ Sent message:", payload);
   
       if (onResponse) {
         return new Promise((resolve) => {
