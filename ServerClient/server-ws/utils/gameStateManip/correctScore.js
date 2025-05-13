@@ -1,9 +1,28 @@
+async function addScore(username, client) {
+    try {
+        const query = `
+            UPDATE players
+            SET leaderboard_score = leaderboard_score + 1
+            WHERE username = $1
+            RETURNING *;
+        `;
+
+        const result = await client.query(query, [username]);
+        console.log("1 record updated");
+        return { status: "UPDATE USER", data: result.rows[0] };
+    } catch (err) {
+        console.log("Error executing query:", err);
+        return { status: "ERROR UPDATING USER" };
+    }
+}
+
 export async function correctScore(ws, gameId, data, client, users) {
     const user = data.message.username;
     const uniqueGameId = data.message.gameId;
 
     let opponent = null;
     let currentGame = null;
+    let status = "OK GOT GAME";
 
     // Find the correct game and update the score
     for (const entry of gameId) {
@@ -14,6 +33,20 @@ export async function correctScore(ws, gameId, data, client, users) {
             // Ensure the user exists and increment their score
             if (gameData.users.hasOwnProperty(user)) {
                 gameData.users[user] += 1;
+                if (gameData.users[user] >= 5) {
+                    status = "GAME OVER";
+                    const userUpdate = await addScore(user, client);
+
+
+                    
+                    const payload = { 
+                        status: userUpdate.status,
+                        user: userUpdate.data 
+                    };
+
+                    console.log('[Server] Sending response:', payload.status, payload.user);
+                    ws.send(JSON.stringify(payload));
+                }
             }
 
             // Identify the opponent
@@ -28,8 +61,12 @@ export async function correctScore(ws, gameId, data, client, users) {
         return;
     }
 
+    if (status === "GAME OVER") {
+        gameId = gameId.filter(game => game !== currentGame);
+    }
+
     const response = {
-        status: "OK GOT GAME",
+        status: status,
         message: currentGame
     };
 

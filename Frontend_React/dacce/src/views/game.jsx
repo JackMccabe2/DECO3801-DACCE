@@ -20,35 +20,71 @@ import Terminal from "../components/terminal";
 // Import contexts
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
-import { getPuzzle } from "../../../../ServerClient/server-ws/utils/getPuzzle";
+// import { getPuzzle } from "../../../../ServerClient/server-ws/utils/getPuzzle";
 
 const Game = ({ onNavigate }) => {
-  const [puzzle, setPuzzle] = useState({
-    question: null,
-    answer: null
-  });  
-  const { gameState, sendMessage } = useWebSocket();
+  const [puzzle, setPuzzle] = useState({ question: null, answer: null });
+  const [opponent, setOpponent] = useState("");
+  const { gameState, setGameState, sendMessage, gameStatus, setGameStatus } = useWebSocket();
   const { user } = useUser();
   const hasFetchedPuzzle = useRef(false);
+  const [loading, setLoading] = useState(true);
+  const prevOpponentScoreRef = useRef(null);
+
+
   // Timer
   const [timeLeft, setTimeLeft] = useState(60); // second
 
-  const exitGame = async (user) => {
-    const loginPayload = { type: "EXIT GAME", message: user };
+  useEffect(() => {
+    const key = Object.keys(gameState)[0];
+    if (!key || !gameState[key]) return;
+  
+    const users = gameState[key].users;
+    if (!users) return;
 
-    sendMessage(loginPayload, (response) => {
-      if (response.status === "OK") {
-        return;
-      } else {
-        alert("Leaving game failed.");
-        return;
-      }
-    });
-  };
+    if (Object.keys(gameState[key].users).length == 1)  {
+      console.dir("Game State: " + gameState, {depth: null});
+      alert("opponent left");
+      onNavigate("dashboard");
+    }
+
+  }, [gameState]); 
 
   useEffect(() => {
-    if (hasFetchedPuzzle.current) return; // prevent repeat
-    hasFetchedPuzzle.current = true;
+    if (gameStatus === "over") {
+      //alert("GAME STATYDASTES CAHNEGS");
+      endGame();
+    }
+
+  }, [gameStatus]);  
+
+  useEffect(() => {
+    const gameId = Object.keys(gameState)[0];
+    if (!gameId || !gameState[gameId] || !opponent) return;
+  
+    const currentScore = gameState[gameId].users[opponent];
+    const previousScore = prevOpponentScoreRef.current;
+  
+    if (currentScore === 5) {
+      return;
+    } else if (
+      previousScore != null &&
+      currentScore != null &&
+      currentScore > previousScore
+    ) {
+      //alert(`Opponent's score increased: ${previousScore} → ${currentScore}`);
+      // Optional: handle event (e.g., refetch puzzle, notify player)
+      hasFetchedPuzzle.current = false;
+      fetchPuzzle();
+    }
+  
+    prevOpponentScoreRef.current = currentScore;
+  }, [gameState, opponent]);
+  
+
+  useEffect(() => {
+    //alert(gameState);
+    setOpponentFunction(gameState);
 
     const loginPayload = {
       type: "GET PUZZLE",
@@ -85,16 +121,47 @@ const Game = ({ onNavigate }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleTerminalCommand = (input) => {
-    console.log("User entered:", input);
+  const exitGame = async (user) => {
+    console.dir("Game State: " + gameState, {depth: null});
+    const payload = { type: "EXIT GAME", message: user };
+    sendMessage(payload, (response) => {
+      if (response.status !== "OK") {
+        alert("Leaving game failed.");
+      }
+    });
+  };
 
-    if (!puzzle || !puzzle.answer) {
-      alert("Puzzle not loaded yet.");
-      return;
-    }
+  const fetchPuzzle = async () => {
+    if (hasFetchedPuzzle.current) return;
+    hasFetchedPuzzle.current = true;
+    setLoading(true);
+
+    const payload = {
+      type: "GET PUZZLE",
+      message: "payload to get puzzle",
+    };
+
+    // get puzzle
+    await sendMessage(payload, (response) => {
+      if (response.status === "PUZZLE") {
+        setPuzzle({
+          question: response.data.question,
+          answer: response.data.answer,
+        });
+        puzzle.answer = response.data.answer;
+        setLoading(false);
+      } else {
+        alert("Get puzzle failed.");
+      }
+    });
+  };
+
+  const handleTerminalCommand = async (input) => {
 
     if (input == puzzle.answer) {
-      alert("Correct answer!")
+      await incrementScore();
+      hasFetchedPuzzle.current = false;
+      await fetchPuzzle();
       // Do something like advance stage or send to server
       
     } else {
@@ -108,6 +175,76 @@ const Game = ({ onNavigate }) => {
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
+  function setOpponentFunction(gameData) {
+    // Extract the first (and assumed only) game ID key
+    const gameId = Object.keys(gameData)[0];
+    const users = gameData[gameId].users;
+  
+    // Return the first username that is not the current user's
+    for (const username in users) {
+      if (username !== user.username) {
+        setOpponent(username);
+        return;
+      }
+    }
+  
+    return;
+  }  
+
+  async function incrementScore() {
+
+    setGameStatus(false);
+
+    //alert(`${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: ${opponent}`);
+
+    const payload = { 
+      type: "CORRECT ANSWER", 
+      message: 
+        {
+          gameId: Object.keys(gameState)[0], 
+          username: user.username
+        } 
+    };
+
+    await sendMessage(payload, async (response) => {
+      if (response.status === "OK GOT GAME"){
+        await setGameState(response.message);
+
+        setTimeout(() => {
+          const updatedScore = response.message[Object.keys(response.message)[0]].users[user.username];
+          //alert(`${user.username} score: ${updatedScore} opponent score: ${opponent}`);
+        }, 0);
+
+        // if user score is 5, 
+      } else if (response.status === "GAME OVER") {
+        //await endGame();
+      } else {
+        alert("Get puzzle failed.");
+      }
+
+      
+      
+    });
+
+  }
+
+  async function endGame() {
+
+    // gameState
+
+    if (gameState[Object.keys(gameState)[0]].users[opponent] === 5) {
+      
+      //setOpponent("GRAHHHHH"); 
+      alert("opponent has won...");
+      onNavigate("playgame");
+    } else {
+      //setOpponent("HIIIII");
+      alert("user has won");
+      onNavigate("playgame");
+    }
+
+  }
+
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const leaveGame = () => {
     setShowLeaveModal(true);
@@ -119,6 +256,35 @@ const Game = ({ onNavigate }) => {
 
   return (
     <>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            height: "100vh",
+            width: "100vw",
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            color: "#fff",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+            fontSize: "2rem",
+          }}
+        >
+          Loading...
+        </div>
+      )}
+
+      {/* Page Header */}
+      <Container fluid className="bg-dark text-white py-3 mb-3">
+        <Row className="justify-content-center">
+          <Col xs="auto">
+            <h1 className="text-center">{`${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: ${opponent}`}</h1>
+          </Col>
+        </Row>
+      </Container>
       <Container fluid className="game-wrapper">
         <Row
           xs="auto"
