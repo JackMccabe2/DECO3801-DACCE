@@ -49,7 +49,6 @@ firewall_config = {
         "DHE_EXPORT": True,   # used by Logjam
     }
 }
-
 FIREWALL_TYPES = [
     "Next-Gen Deep Packet Inspection",
     "Stateful Firewall",
@@ -245,9 +244,26 @@ def nmap_vuln(command):
     if len(parts) < 5:
         slow_print(f"-- ERROR: Expected 5 arguments, got {len(parts)}. Usage: <cmd> <arg1> <arg2> <arg3> <arg4>")
         return
+    
     slow_print("-- Running Nmap vulnerability scan...")
     show_versions = "-sV" in parts  # Optional version details
-    target_ip = parts[-1] if parts[-1].count('.') == 3 else firewall_config["admin_console"]
+    target_ip = parts[-3] #if parts[-1].count('.') == 3 else firewall_config["admin_console"]
+
+    web_keywords = ["http", "https", "apache", "nginx", "lighttpd", "iis"]
+    is_web_service = False
+
+    for port, service in firewall_config["services"].items():
+        version_string = f"{service['name']} {service['version']}".lower()
+        if any(kw in version_string for kw in web_keywords):
+            if parts[4] in version_string:
+                is_web_service = True
+                break
+
+    if is_web_service:
+        slow_print("-- Nmap script scan does not support detailed HTTP/HTTPS analysis.")
+        slow_print("-- Suggestion: Use nikto for web server vulnerability scanning.")
+        return
+
 
     if target_ip != firewall_config["admin_console"]:
         slow_print(f"-- ERROR: Host {target_ip} is not reachable.")
@@ -312,9 +328,8 @@ Doesnt exploit vulnerabilities; it only reports them
 """
 def run_nikto(command):
     parts = command.split()
-    # parse optional IP and port
     ip_match = next((p for p in parts if re.match(r"^\d{1,3}(\.\d{1,3}){3}$", p)), firewall_config["admin_console"])
-    port = 80  # default
+    port = 80  # Default port
     for p in parts:
         if p.isdigit():
             port = int(p)
@@ -328,22 +343,42 @@ def run_nikto(command):
         return
 
     findings = []
+    detected_cves = []
     version = svc["version"].lower()
 
-    # Example checks
+    # Heuristic scan (example vulnerabilities)
     if "apache" in version:
-        findings.append(f"Apache directory listing enabled")
+        findings.append("Apache directory listing enabled")
         findings.append(f"Server leaks version info: {svc['version']}")
     if "nginx" in version:
-        findings.append(f"Nginx default welcome page exposed")
-    # you can expand with more heuristics here...
+        findings.append("Nginx default welcome page exposed")
 
-    # Misconfiguration check
+    # Check for known vulns attached to this web service
+    for vuln in svc.get("vulns", []):
+        if vuln not in found_vulnerabilities:
+            found_vulnerabilities.add(vuln)
+            detected_cves.append(vuln)
+
+    # Always assume config issues for realism
     findings.append("Potential misconfiguration in admin console endpoint")
 
-    # Print all findings
-    for f in findings:
-        slow_print(f"   [+] {f}")
+    # Output findings
+    if findings:
+        slow_print("-- Web security issues identified:")
+        for f in findings:
+            slow_print(f"   [+] {f}")
+
+    # Output known vulnerabilities (like nmap_vuln does)
+    if detected_cves:
+        slow_print("-- CVE vulnerabilities identified:")
+        for vuln in detected_cves:
+            slow_print(f"   {vuln}: {firewall_config['vulnerabilities'][vuln]}")
+
+    else:
+        slow_print("-- No known CVE vulnerabilities detected.")
+
+    if firewall_config["intrusion_detection"]:
+        slow_print("-- IDS LOG: Nikto scan activity detected. Admin may have been alerted.")
 
 def run_whatweb(command):
     slow_print("-- Fingerprinting web technologies...")

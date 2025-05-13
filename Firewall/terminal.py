@@ -49,10 +49,10 @@ def handle_command(command):
         scan_network()
     elif command == "print vulns":
         print_vulns()   
-    elif command.startswith("nmap --script vuln"):
-        nmap_vuln(command)
     elif command.startswith("nmap "):
         nmap_scan(command)
+    elif command.startswith("nmap --script vuln"):
+        nmap_vuln(command)
     elif command.startswith("nikto"):
         run_nikto(command)
     elif command == "exploit":
@@ -61,7 +61,7 @@ def handle_command(command):
         retrieve_data()
     elif command.startswith("exploit_wp_rce"):
         exploit_wp_rce(command)
-    elif command == "exploit_django_ssti":
+    elif command.startswith("exploit_django_ssti"):
         exploit_django_ssti(command)
     elif command.startswith("exploit poodle"):
         ip = command.split()[-1]
@@ -96,4 +96,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
