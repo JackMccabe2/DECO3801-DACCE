@@ -180,7 +180,7 @@ def fetch_puzzle_data():
     conn = psycopg2.connect(
         host="localhost",
         database="postgres",
-        user="jackmccabe",
+        user="jack",
         password="postgres",
         port=5432
     )

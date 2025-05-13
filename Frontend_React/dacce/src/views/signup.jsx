@@ -32,6 +32,7 @@ import btnClickSound from "../assets/music/button_click_2_pop.mp3";
 const Signup = ({ onNavigate }) => {
   const { setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
+  const [tempPassword, setTempPassword] = useState("");
   const [pressed, setPressed] = useState("");
   const { sendMessage, handleRequest } = useWebSocket();
   const [showPolicyModal, setShowPolicyModal] = useState(false);
@@ -47,16 +48,22 @@ const Signup = ({ onNavigate }) => {
   const checkDup = async (page) => {
     setShowPolicyModal(false);
 
+    if (tempUsername === null || tempUsername === "") {
+      // check if username is empty to avoid wrong error message
+      setToastMessage("Please enter a username.");
+      setToastType("error");
+      setShowToast(true);
+      return;
+    } else if (tempPassword === "") {
+      setToastMessage("Please enter a password.");
+      setToastType("error");
+      setShowToast(true);
+      return;
+    }
+
     const loginPayload = { type: "POST DUP", username: tempUsername };
 
     sendMessage(loginPayload, (response) => {
-      if (tempUsername === null || tempUsername === "") {
-        // check if username is empty to avoid wrong error message
-        setToastMessage("Please enter a username and password.");
-        setToastType("error");
-        setShowToast(true);
-        return;
-      }
       if (response.status === "OK") {
         setShowPolicyModal(true);
       } else if (response.status === "ERR USER EXISTS") {
@@ -95,7 +102,7 @@ const Signup = ({ onNavigate }) => {
   const handleSignup = async (page) => {
     setShowPolicyModal(false);
 
-    const loginPayload = { type: "POST", username: tempUsername };
+    const loginPayload = { type: "POST", username: tempUsername, password: tempPassword };
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK USER CREATED") {
@@ -162,7 +169,10 @@ const Signup = ({ onNavigate }) => {
             <Form.Control
               type="password"
               required
+              placeholder="e.g. password123"
               className="custom-input-field"
+              value={tempPassword}
+              onChange={(e) => setTempPassword(e.target.value)}
             />
           </Form.Group>
         </Col>

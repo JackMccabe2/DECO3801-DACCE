@@ -27,6 +27,7 @@ import btnClickSound from "../assets/music/button_click_2_pop.mp3";
 const Login = ({ onNavigate }) => {
   const { setUser } = useUser();
   const [tempUsername, setTempUsername] = useState("");
+  const [tempPassword, setTempPassword] = useState("");
   const [pressed, setPressed] = useState("");
   const { sendMessage } = useWebSocket();
   const [showToast, setShowToast] = useState(false);
@@ -60,9 +61,15 @@ const Login = ({ onNavigate }) => {
         setShowToast(true);
         resolve(false);
         return;
+      } else if (tempPassword === "") {
+        setToastMessage("Please enter a password.");
+        setToastType("blank");
+        setShowToast(true);
+        resolve(false);
+        return;
       }
 
-      const loginPayload = { type: "GET USER", username: tempUsername };
+      const loginPayload = { type: "GET USER", username: tempUsername, password: tempPassword };
 
       sendMessage(loginPayload, (response) => {
         if (response.status === "OK USER LOGIN") {
@@ -83,6 +90,12 @@ const Login = ({ onNavigate }) => {
           resolve(false);
         } else if (response.status === "USER ACTIVE") {
           setToastMessage("User is already logged in.");
+          setToastType("error");
+          setShowToast(true);
+          setPressed(false);
+          resolve(false);
+        } else if (response.status === "WRONG PASSWORD") {
+          setToastMessage("Incorrect password.");
           setToastType("error");
           setShowToast(true);
           setPressed(false);
@@ -140,6 +153,8 @@ const Login = ({ onNavigate }) => {
               required
               placeholder="Enter your password"
               className="custom-input-field"
+              value={tempPassword}
+              onChange={(e) => setTempPassword(e.target.value)}
             />
           </Form.Group>
         </Col>

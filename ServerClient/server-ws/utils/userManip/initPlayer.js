@@ -1,32 +1,30 @@
 
 /*
  * function to initialize player to database
- *
- * 
- * 
  */
-async function initializePlayer(username, client) {
+async function initializePlayer(username, password, client) {
     try {
         const query = `
-            INSERT INTO players (username, created_at, last_active, firewall_skill, leaderboard_score)
-            VALUES ('${username}', '2025-03-28 13:10:11', '2025-03-28 13:10:11', 1, 1)
+            INSERT INTO players (username, password, created_at, last_active, firewall_skill, leaderboard_score)
+            VALUES ($1, $2, $3, $3, 1, 1)
             RETURNING *;
         `;
 
-        //update the date
-        
-        const result = await client.query(query);
+        const timestamp = '2025-03-28 13:10:11'; // Replace with dynamic timestamp if needed
+        const result = await client.query(query, [username, password, timestamp]);
+
         console.log("1 record inserted");
-        return {status: "success", data: result.rows[0]};
+        return { status: "success", data: result.rows[0] };
     } catch (err) {
         console.log("Error executing query:", err);
         if (err.constraint == "players_pkey") {
-            return {status: "duplicate"}
+            return { status: "duplicate" };
         } else {
-            return {status: "error"}
+            return { status: "error" };
         }
     }
 }
+
 
 /*
  *  function to attempt to create specified user
@@ -35,7 +33,7 @@ async function initializePlayer(username, client) {
 export async function createUser(ws, data, client, activeUsers) {
     console.log("USER CREATION INITIATED: " + data.username);
 
-    const initResult = await initializePlayer(data.username, client);  // Ensure you await the result if it's asynchronous
+    const initResult = await initializePlayer(data.username, data.password, client);  // Ensure you await the result if it's asynchronous
 
     let response;
 

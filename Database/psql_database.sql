@@ -22,11 +22,8 @@ CREATE TABLE public.current_match (
     FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
 )
 
-
-
 --need to add table for each individual puzzle within a game
 -- what type of puzzle, duration, username, whther they got it wrong, 
-
 CREATE TABLE public.each_puzzle (
     players_username VARCHAR(50),
     game_id VARCHAR(50),
