@@ -45,6 +45,13 @@ const Game = ({ onNavigate }) => {
 
   useEffect(() => {
     const gameId = Object.keys(gameState)[0];
+
+    if (gameState[gameId].gamemode == 'M' && gameState[gameId].users[user.username] == -1) {
+      setGameState(null);
+      alert("opponent left");
+      onNavigate("playgame")
+    }
+
     if (!gameId || !gameState[gameId] || !opponent) return;
   
     const currentScore = gameState[gameId].users[opponent];
