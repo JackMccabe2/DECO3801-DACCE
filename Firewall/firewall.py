@@ -1,14 +1,34 @@
 import random
 import time
+import ipaddress
+import re
+
+firewall_breached = False
+info_retrieved = False
+found_vulnerabilities = set()
 
 firewall_config = {
     "firewall_type": "Next-Gen Deep Packet Inspection",
     "open_ports": [22, 80, 443, 3306],
-    "services": {
-        22: {"name": "ssh", "version": "OpenSSH 8.2", "vulns": ["CVE-2023-44256"]},
-        80: {"name": "http", "version": "Apache 2.4.52", "vulns": ["CVE-2024-11823"]},
-        443: {"name": "https", "version": "nginx 1.21.6", "vulns": ["CVE-2022-99813"]},
-        3306: {"name": "mysql", "version": "MySQL 8.0", "vulns": ["CVE-2023-67890"]}
+        "services": {
+        80:  {
+            "name": "http",
+            "version": "Apache 2.4.52",
+            "vulns": ["CVE-2024-11823"],
+            "frameworks": {                      
+                "WordPress": "5.7.2",
+                "jQuery": "1.11.3"
+            }
+        },
+        443: {
+            "name": "https",
+            "version": "nginx 1.21.6",
+            "vulns": ["CVE-2022-99813"],
+            "frameworks": {
+                "Django": "3.2.5",
+                "Bootstrap": "4.6.0"
+            }
+        },
     },
     "vulnerabilities": {
         "CVE-2023-44256": "OpenSSH User Enumeration",
@@ -23,7 +43,6 @@ firewall_config = {
         "SSLv3": True,
         "TLS1.0": True,
         "TLS1.1": True,
-        "TLS1.2": True,
     },
     "ciphers": {
         "RSA_EXPORT": True,   # used by FREAK
@@ -31,8 +50,153 @@ firewall_config = {
     }
 }
 
-firewall_breached = False
-info_retrieved = False
+FIREWALL_TYPES = [
+    "Next-Gen Deep Packet Inspection",
+    "Stateful Firewall",
+    "Web Application Firewall",
+    "Unified Threat Management",
+    "Network Address Translation",
+    "Proxy Firewall"
+]
+SERVICE_CATALOG = {
+    22: [(
+        "ssh",
+        ["OpenSSH 7.4", "OpenSSH 8.2", "Dropbear 2019.78"],
+        ["CVE-2020-15778", "CVE-2021-41617"],
+        {}   # no web frameworks on SSH
+    )],
+    21: [(
+        "ftp",
+        ["vsftpd 3.0.3", "ProFTPD 1.3.6"],
+        ["CVE-2011-2523", "CVE-2019-12815"],
+        {}   # no web frameworks on FTP
+    )],
+    80: [(
+        "http",
+        ["Apache 2.2.34", "Apache 2.4.52", "nginx 1.18.0"],
+        ["CVE-2021-41773", "CVE-2022-23943"],
+        {    # possible HTTP frameworks
+            "WordPress": ["5.7.2", "5.8.1", "5.9.3"],
+            "jQuery":    ["1.11.3", "3.5.1", "3.6.0"],
+            "Drupal":    ["9.2.0", "9.3.5"]
+        }
+    )],
+    443: [(
+        "https",
+        ["nginx 1.19.6", "nginx 1.21.6", "Apache 2.4.46"],
+        ["CVE-2021-31166", "CVE-2022-20862"],
+        {    # possible HTTPS frameworks
+            "Django":    ["3.1.7", "3.2.5", "3.2.12"],
+            "Flask":     ["1.1.2", "2.0.1", "2.1.0"],
+            "Express":   ["4.17.1", "4.18.0"]
+        }
+    )],
+    3306: [(
+        "mysql",
+        ["MySQL 5.7", "MySQL 8.0", "MariaDB 10.5"],
+        ["CVE-2020-14750", "CVE-2021-35623"],
+        {}   # no web frameworks on DB port
+    )],
+    1433: [(
+        "mssql",
+        ["MSSQL 2017", "MSSQL 2019"],
+        ["CVE-2020-0618", "CVE-2021-1636"],
+        {}   # no web frameworks on DB port
+    )],
+}
+PROTOCOLS = [
+    "SSLv3",
+    "TLS1.0",
+    "TLS1.1",
+    "TLS1.2",
+    "TLS1.3",     # newest TLS
+    "DTLS1.2",    # UDP-based TLS
+    "SSH-1.0",    # legacy SSH
+    "SSH-2.0",    # modern SSH
+    "IPSec",      # VPN / tunneling
+    "OpenVPN",
+    "WireGuard",
+    "HTTP/1.1",   # classic web
+    "HTTP/2",
+    "HTTP/3",     # over QUIC
+    "QUIC",
+    "PPTP",       # legacy VPN
+    "L2TP",
+    "GRE",
+    "SNMPv1",     # network management
+    "SNMPv2c",
+    "SNMPv3"
+]
+CIPHERS   = ["RSA_EXPORT", "DHE_EXPORT", "ECDHE", "CHACHA20_POLY1305"]
+
+def random_private_ip():
+    return str(ipaddress.IPv4Network("10.0.0.0/8").network_address +
+               random.randint(1, 2**24 - 2))
+
+def generate_firewall_config():
+    # 1) Choose a random firewall type
+    fw_type = random.choice(FIREWALL_TYPES)
+    
+    # 2) Pick a random subset of ports
+    num_ports = random.randint(2, 5)
+    ports     = random.sample(list(SERVICE_CATALOG.keys()), k=num_ports)
+    
+    services       = {}
+    vulnerabilities = {}
+    
+    for p in ports:
+        # Unpack name, versions, CVEs, and framework pool
+        name, versions, cv_list, fw_pool = SERVICE_CATALOG[p][0]
+        
+        # Random version
+        version = random.choice(versions)
+        
+        # 1–2 random CVEs
+        vulns = random.sample(cv_list, k=random.randint(1, min(2, len(cv_list))))
+        
+        # Random frameworks (50% chance each)
+        frameworks = {}
+        for fw, vers in fw_pool.items():
+            if random.choice([True, False]):
+                frameworks[fw] = random.choice(vers)
+        
+        # Build the service entry
+        entry = {
+            "name":    name,
+            "version": version,
+            "vulns":   vulns
+        }
+        if frameworks:
+            entry["frameworks"] = frameworks
+        
+        services[p] = entry
+        
+        # Populate the global vulnerabilities map
+        for cve in vulns:
+            vulnerabilities[cve] = f"{name.upper()} Vulnerability {cve}"
+    
+    # 3) Random protocol & cipher flags
+    protocols = { proto: random.choice([True, True, False]) for proto in PROTOCOLS }
+    ciphers   = { cip:   random.choice([True, False])       for cip   in CIPHERS }
+    
+    # 4) Compose final config
+    config = {
+        "firewall_type":      fw_type,
+        "open_ports":         ports,
+        "services":           services,
+        "vulnerabilities":    vulnerabilities,
+        "intrusion_detection": random.choice([True, False]),
+        "admin_console":      random_private_ip(),
+        "protocols":          protocols,
+        "ciphers":            ciphers
+    }
+    
+    return config
+
+if __name__ == "__main__":
+    new_cfg = generate_firewall_config()
+    import pprint
+    pprint.pprint(new_cfg)
 
 def slow_print(text, delay=0.02):
     for c in text:
@@ -40,22 +204,24 @@ def slow_print(text, delay=0.02):
         time.sleep(delay)
     print()
 
+# GAME FUNCTIONALITY
 def scan_network():
     target_ip = firewall_config["admin_console"]
+    fw_type   = firewall_config["firewall_type"]
     slow_print("-- Initiating network scan...")
     time.sleep(1)
     slow_print("-- Probing local subnets...")
     time.sleep(1)
     slow_print(f"-- Host {target_ip} responds. Running firewall fingerprint...")
     time.sleep(1)
-    slow_print("-- Firewall Detected: QuantumNet v3.7")
+    slow_print(f"-- Firewall Detected: {fw_type}")
 
 def nmap_scan(command):
     slow_print("-- Initiating Nmap scan...")
 
     parts = command.split()
-    show_versions = "-sV" in parts
-    target_ip = parts[-1] if parts[-1].count('.') == 3 else firewall_config["admin_console"]
+    show_versions = (parts[1] == "-sv")
+    target_ip     = parts[-1]
 
     if target_ip != firewall_config["admin_console"]:
         slow_print(f"-- ERROR: Host {target_ip} is not reachable.")
@@ -66,18 +232,20 @@ def nmap_scan(command):
 
     for port in firewall_config["open_ports"]:
         if show_versions:
-            service = firewall_config["services"].get(port, "Unknown Service")
-            slow_print(f"   {target_ip}: {port}/tcp → OPEN → {service}")
+            service = firewall_config["services"].get(port, {"name":"Unknown","version":""})
+            slow_print(f"   {target_ip}: {port}/tcp → OPEN → {service['name']} {service['version']}")
         else:
             slow_print(f"   {target_ip}: {port}/tcp → OPEN")
 
     if firewall_config["intrusion_detection"]:
         slow_print("-- IDS LOG: Suspicious scanning behavior detected. Admin may have been notified.")
 
-def vuln_scan(command):
-    slow_print("-- Running Nmap vulnerability scan...")
-
+def nmap_vuln(command):
     parts = command.split()
+    if len(parts) < 5:
+        slow_print(f"-- ERROR: Expected 5 arguments, got {len(parts)}. Usage: <cmd> <arg1> <arg2> <arg3> <arg4>")
+        return
+    slow_print("-- Running Nmap vulnerability scan...")
     show_versions = "-sV" in parts  # Optional version details
     target_ip = parts[-1] if parts[-1].count('.') == 3 else firewall_config["admin_console"]
 
@@ -113,6 +281,7 @@ def vuln_scan(command):
         if service == services_to_check[0]:
             for vuln_key in service["vulns"]:
                 if vuln_key not in found_vulns:
+                    found_vulnerabilities.add(vuln_key)
                     found_vulns.append(vuln_key)
                     if show_versions:
                         slow_print(f"   {target_ip}:{port}/tcp → OPEN → {services['name']} {services['version']} → Vulnerable to {firewall_config['vulnerabilities'][vuln_key]} ({vuln_key})")
@@ -142,22 +311,70 @@ No stealth, so intrusion detection systems (IDS) usually catch it
 Doesnt exploit vulnerabilities; it only reports them
 """
 def run_nikto(command):
-    slow_print("-- Starting Nikto web scan on 10.0.0.1...")
+    parts = command.split()
+    # parse optional IP and port
+    ip_match = next((p for p in parts if re.match(r"^\d{1,3}(\.\d{1,3}){3}$", p)), firewall_config["admin_console"])
+    port = 80  # default
+    for p in parts:
+        if p.isdigit():
+            port = int(p)
+
+    slow_print(f"-- Starting Nikto web scan on {ip_match}:{port}...")
     time.sleep(1)
-    if 80 in firewall_config["services"]:
-        slow_print("   [+] Apache directory listing enabled")
-        slow_print("   [+] Server leaks version info: Apache 2.4.52")
-        slow_print("   [+] Potential misconfiguration in admin console endpoint")
-    else:
-        slow_print("   [!] No web server detected on default port 80.")
+
+    svc = firewall_config["services"].get(port)
+    if not svc or svc["name"] not in ("http", "https"):
+        slow_print(f"   [!] No web server detected on port {port}.")
+        return
+
+    findings = []
+    version = svc["version"].lower()
+
+    # Example checks
+    if "apache" in version:
+        findings.append(f"Apache directory listing enabled")
+        findings.append(f"Server leaks version info: {svc['version']}")
+    if "nginx" in version:
+        findings.append(f"Nginx default welcome page exposed")
+    # you can expand with more heuristics here...
+
+    # Misconfiguration check
+    findings.append("Potential misconfiguration in admin console endpoint")
+
+    # Print all findings
+    for f in findings:
+        slow_print(f"   [+] {f}")
 
 def run_whatweb(command):
     slow_print("-- Fingerprinting web technologies...")
     time.sleep(1)
-    for port, svc in firewall_config["services"].items():
-        if svc["name"] in ["http", "https"]:
-            slow_print(f"   [+] Detected {svc['name'].upper()} → {svc['version']}")
 
+    # find an HTTP(S) service:
+    svc = None
+    for port, s in firewall_config["services"].items():
+        if s["name"] in ("http","https"):
+            svc = s
+            break
+
+    if not svc:
+        slow_print("   [!] No web server detected to fingerprint.")
+        return
+
+    # banner info:
+    slow_print(f"   [+] Detected {svc['name'].upper()} → {svc['version']}")
+
+    # framework info:
+    frameworks = svc.get("frameworks", {})
+    if not frameworks:
+        slow_print("   [i] No higher-level frameworks detected.")
+    else:
+        for fw, ver in frameworks.items():
+            slow_print(f"   [+] Detected framework: {fw} → {ver}")
+        # suggest an exploit based on framework:
+        if "WordPress" in frameworks:
+            slow_print("   [!] Hint: try `exploit_wp_rce` next.")
+        if "Django" in frameworks:
+            slow_print("   [!] Hint: try `exploit_django_ssti` next.")
 
 def exploit_vulnerability():
     global firewall_breached
@@ -179,6 +396,96 @@ def exploit_vulnerability():
         else:
             slow_print("-- No alert raised. IDS is offline.")
 
+def exploit_wp_rce(command):
+    parts = command.split()
+    # Expect: exploit_wp_rce <target_ip>
+    if len(parts) != 2:
+        slow_print("-- ERROR: Usage: exploit_wp_rce <target_ip>")
+        return
+
+    target = parts[1]
+    if target != firewall_config["admin_console"]:
+        slow_print(f"-- ERROR: Host {target} is not reachable.")
+        return
+
+    # Optional: refuse if no WordPress
+    svc = firewall_config["services"].get(80)
+    frameworks = svc.get("frameworks", {}) if svc else {}
+    if "WordPress" not in frameworks:
+        slow_print("-- ERROR: No WordPress detected on target.")
+        return
+
+    global firewall_breached
+    if not firewall_breached:
+        slow_print("-- Attempting WordPress RCE via plugin…")
+        time.sleep(1)
+        slow_print("   [+] Exploit succeeded! Shell dropped at /wp-shell.php")
+        firewall_breached = True
+    else:
+        slow_print("-- Already have a shell. No need to re-exploit.")
+
+def exploit_django_ssti(command):
+    parts = command.split()
+    # Expect: exploit_django_ssti <target_ip>
+    if len(parts) != 2:
+        slow_print("-- ERROR: Usage: exploit_django_ssti <target_ip>")
+        return
+
+    target = parts[1]
+    if target != firewall_config["admin_console"]:
+        slow_print(f"-- ERROR: Host {target} is not reachable.")
+        return
+
+    svc = firewall_config["services"].get(443)
+    frameworks = svc.get("frameworks", {}) if svc else {}
+    if "Django" not in frameworks:
+        slow_print("-- ERROR: No Django application detected on target.")
+        return
+
+    global firewall_breached
+    if not firewall_breached:
+        slow_print("-- Triggering Django template injection…")
+        time.sleep(1)
+        slow_print("   [+] SSTI exploited, remote code execution achieved.")
+        firewall_breached = True
+    else:
+        slow_print("-- Session already exploited.")
+
+
+#idea exploits TLS
+def exploit_poodle(target_ip):
+    slow_print(f"[POODLE] Attempting SSLv3 downgrade on {target_ip}…")
+    time.sleep(1)
+    if not firewall_config["protocols"]["SSLv3"]:
+        slow_print("   ❌ SSLv3 is already disabled—attack fails.")
+    else:
+        slow_print("   ✅ SSLv3 negotiated. 256 requests to crack a byte…")
+        time.sleep(1)
+        slow_print("   [+] SUCCESS: decrypted one byte of traffic.")
+        firewall_breached = True
+
+def exploit_freak(target_ip):
+    slow_print(f"[FREAK] Forcing export-grade RSA on {target_ip}…")
+    time.sleep(1)
+    if not firewall_config["ciphers"]["RSA_EXPORT"]:
+        slow_print("   ❌ Export-grade ciphers disabled—attack fails.")
+    else:
+        slow_print("   ✅ Server downgraded to 512-bit RSA.")
+        time.sleep(1)
+        slow_print("   [+] SUCCESS: factored the key, decrypted session.")
+        firewall_breached = True
+
+def exploit_logjam(target_ip):
+    slow_print(f"[Logjam] Forcing DHE_EXPORT key exchange on {target_ip}…")
+    time.sleep(1)
+    if not firewall_config["ciphers"]["DHE_EXPORT"]:
+        slow_print("   ❌ DHE_EXPORT disabled—attack fails.")
+    else:
+        slow_print("   ✅ Downgraded to 512-bit Diffie-Hellman.")
+        time.sleep(1)
+        slow_print("   [+] SUCCESS: cracked DH parameters, MITM possible.")
+        firewall_breached = True
+
 def retrieve_data():
     global info_retrieved
     if not firewall_breached:
@@ -199,6 +506,8 @@ def retrieve_data():
     print()
     info_retrieved = True
 
+
+
 def reset_firewall():
     global firewall_breached, info_retrieved, firewall_config
     firewall_breached = False
@@ -214,37 +523,11 @@ def reset_firewall():
     time.sleep(0.5)
     slow_print("-- Firewall and session state reset.")
 
-
-
-
-#idea exploits TLS
-def exploit_poodle(target_ip):
-    slow_print(f"[POODLE] Attempting SSLv3 downgrade on {target_ip}…")
-    time.sleep(1)
-    if not firewall_config["protocols"]["SSLv3"]:
-        slow_print("   ❌ SSLv3 is already disabled—attack fails.")
+def print_vulns():
+    slow_print("== Discovered Vulnerabilities ==")
+    if not found_vulnerabilities:
+        slow_print("   None discovered yet.")
     else:
-        slow_print("   ✅ SSLv3 negotiated. 256 requests to crack a byte…")
-        time.sleep(1)
-        slow_print("   [+] SUCCESS: decrypted one byte of traffic.")
-        # you could set a flag: firewall_breached = True
-
-def exploit_freak(target_ip):
-    slow_print(f"[FREAK] Forcing export-grade RSA on {target_ip}…")
-    time.sleep(1)
-    if not firewall_config["ciphers"]["RSA_EXPORT"]:
-        slow_print("   ❌ Export-grade ciphers disabled—attack fails.")
-    else:
-        slow_print("   ✅ Server downgraded to 512-bit RSA.")
-        time.sleep(1)
-        slow_print("   [+] SUCCESS: factored the key, decrypted session.")
-
-def exploit_logjam(target_ip):
-    slow_print(f"[Logjam] Forcing DHE_EXPORT key exchange on {target_ip}…")
-    time.sleep(1)
-    if not firewall_config["ciphers"]["DHE_EXPORT"]:
-        slow_print("   ❌ DHE_EXPORT disabled—attack fails.")
-    else:
-        slow_print("   ✅ Downgraded to 512-bit Diffie-Hellman.")
-        time.sleep(1)
-        slow_print("   [+] SUCCESS: cracked DH parameters, MITM possible.")
+        for cve in sorted(found_vulnerabilities):
+            desc = firewall_config["vulnerabilities"].get(cve, "Unknown description")
+            slow_print(f"   {cve} → {desc}")
