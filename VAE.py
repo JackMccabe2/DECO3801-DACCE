@@ -124,7 +124,7 @@ def fetch_puzzle_data():
     
     return rows
 
-fetch_puzzle_data()
+#fetch_puzzle_data()
 #print(fetch_puzzle_data())
 # passes an array atm
 

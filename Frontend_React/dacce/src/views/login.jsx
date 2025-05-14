@@ -151,10 +151,23 @@ const Login = ({ onNavigate }) => {
             <Form.Control
               type="password"
               required
+              autoComplete="off"
               placeholder="Enter your password"
               className="custom-input-field"
               value={tempPassword}
               onChange={(e) => setTempPassword(e.target.value)}
+              onKeyDown={async (e) => {
+                if (e.key === "Enter" && !pressed) {
+                  const audio = new Audio(btnClickSound);
+                  audio.play();
+                  setPressed(true);
+                  const success = await handleLogin("dashboard").finally(() => {
+                    if (!success) {
+                      setPressed(false);
+                    }
+                  });
+                }
+              }}
             />
           </Form.Group>
         </Col>

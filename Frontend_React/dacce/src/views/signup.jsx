@@ -173,6 +173,17 @@ const Signup = ({ onNavigate }) => {
               className="custom-input-field"
               value={tempPassword}
               onChange={(e) => setTempPassword(e.target.value)}
+              onKeyDown={async (e) => {
+                if (e.key === "Enter" && !pressed) {
+                  const audio = new Audio(btnClickSound);
+                  audio.play();
+                  setPressed(true);
+                  const success = await checkDup("dashboard");
+                  if (!success) {
+                    setPressed(false);
+                  }
+                }
+              }}
             />
           </Form.Group>
         </Col>
