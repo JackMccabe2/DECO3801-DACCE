@@ -9,7 +9,7 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Python packages inside the virtual environment
-RUN pip install torch numpy psycopg2-binary
+RUN pip install torch numpy psycopg2-binary python-dotenv
 
 # Set working directory
 WORKDIR /app
