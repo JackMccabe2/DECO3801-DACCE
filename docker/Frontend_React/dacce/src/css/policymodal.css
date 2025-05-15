@@ -1,9 +1,0 @@
-.modal-body {
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 15px;
-}
-
-.modal-body .form-check-input {
-    cursor: pointer;
-}
