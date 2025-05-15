@@ -14,11 +14,13 @@ RUN pip install torch numpy psycopg2-binary python-dotenv
 # Set working directory
 WORKDIR /app
 
-# Copy app files
-COPY . .
+COPY package*.json .
 
 # Install Node dependencies
 RUN npm install
+
+# Copy app files
+COPY . .
 
 EXPOSE 8080
 
