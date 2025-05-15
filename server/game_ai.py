@@ -6,7 +6,6 @@ import numpy as np
 from VAE import vae_model
 from torch.utils.data import DataLoader, TensorDataset
 import psycopg2
-import Database
 import json
 import sys
 import uuid
@@ -216,8 +215,7 @@ if __name__ == "__main__":
         caesar_cipher_puzzle,
         subbytes_aes,
         shiftrows_aes,
-        mixcolumns_aes,
-        #aes
+        mixcolumns_aes
     ]
 
     # Pick one at random

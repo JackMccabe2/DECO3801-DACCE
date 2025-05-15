@@ -4,7 +4,6 @@ import torch.optim as optim
 import numpy as np
 from torch.utils.data import DataLoader, TensorDataset
 import psycopg2
-import Database
 
 class Encoder(nn.Module):
     def __init__(self, input_dim, latent_dim):
