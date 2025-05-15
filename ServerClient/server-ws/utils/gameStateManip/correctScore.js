@@ -37,8 +37,6 @@ export async function correctScore(ws, gameId, data, client, users) {
                     status = "GAME OVER";
                     const userUpdate = await addScore(user, client);
 
-
-                    
                     const payload = { 
                         status: userUpdate.status,
                         user: userUpdate.data 
