@@ -18,15 +18,12 @@ export async function getPuzzle(ws) {
     python.stdout.on('end', () => {
       
       const puzzle = JSON.parse(dataString);
-      //console.log("getting puzzle... ");
-      //console.log(puzzle.question)
-      //console.log(puzzle.answer, " <-- answer")
-
-      
       
       const response = {
         status: "PUZZLE",
         data: {
+          id: puzzle.id,
+          type: puzzle.type,
           question: puzzle.question,
           answer: puzzle.answer
         }

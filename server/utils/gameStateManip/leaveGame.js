@@ -4,40 +4,27 @@ export async function leaveGame(ws, gameIdList, data, users) {
 
     for (let i = 0; i < gameIdList.length; i++) {
         const game = gameIdList[i];
-        console.log("game: ",game);
 
         for (const [id, gameData] of Object.entries(game)) {
             if (gameData.users.hasOwnProperty(username)) {
-                // Remove the user from the 'users' object
+                // Remove user from users and userdata
                 delete gameData.users[username];
-
-                // Remove the corresponding userdata entry
                 gameData.userdata = gameData.userdata.filter(u => u.username !== username);
-
                 userRemoved = true;
+
                 console.log(`[Server] User '${username}' removed from game '${id}'.`);
 
-                // If no users left in the game, remove the entire game object from the list
-                console.log("gameLength: ",Object.keys(gameData.users).length);
-                
-                if (Object.keys(gameData.users).length === 0) {
-                    gameIdList.splice(i, 1);
-                    console.log(`[Server] Game '${id}' deleted because no players left.`);
-                } else {
-                    // game has a user left
-                    // send updated game status to opponent
-                    const opponent = gameData.userdata[0].username;
-                    console.log("opponent",opponent);
+                const opponentUsernames = Object.keys(gameData.users);
+                const opponent = opponentUsernames.length > 0 ? opponentUsernames[0] : null;
 
-                    gameData.users[opponent] = -1;
-
-                    console.log("opponent sscore: ", gameData.users[opponent]);
+                if (opponent) {
+                    // Send message to opponent if they're still in game
+                    gameData.users[opponent] = -1; // Optional: mark opponent as waiting or game ended
 
                     const response = {
-                        status: "OK GOT GAME",
+                        status: "OK LEFT GAME",
                         message: game
                     };
-                    console.log("game: ",game);
 
                     const targetWs = users.get(opponent);
                     if (targetWs && targetWs.readyState === WebSocket.OPEN && gameData.gamemode === 'M') {
@@ -46,30 +33,33 @@ export async function leaveGame(ws, gameIdList, data, users) {
                     }
                 }
 
-                break; // Exit inner for-loop
+                // Delete the game regardless
+                gameIdList.splice(i, 1);
+                console.log(`[Server] Game '${id}' deleted because a user left.`);
+
+                break; // Exit inner loop
             }
         }
 
-        if (userRemoved) break; // Exit outer for-loop
+        if (userRemoved) break; // Exit outer loop
     }
 
     if (!userRemoved) {
         console.log(`[Server] User '${username}' was not found in any game.`);
     }
 
-    // Send a response back to the client
+    // Send response to the user who left
     const response = {
         status: userRemoved ? "OK" : "NOT_FOUND",
         message: data
     };
-
     console.log('[Server] Sending response:', response.status + " " + data.type);
     ws.send(JSON.stringify(response));
 
-    // Log remaining games and users
+    // Log remaining games
     gameIdList.forEach(entry => {
         const gameId = Object.keys(entry)[0];
-        const users = Object.keys(entry[gameId].users);
-        console.log(`[Server] gameIds: '${gameId}': ${users}`);
+        const remainingUsers = Object.keys(entry[gameId].users);
+        console.log(`[Server] gameIds: '${gameId}': ${remainingUsers}`);
     });
 }
