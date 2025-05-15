@@ -1,17 +1,19 @@
+// Import React Hooks
 import { useState, useEffect } from "react";
+// Import Bootstrap Components
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 
+// Import Custom Components & Assets & CSS
 import Matched from "./matchfound";
-
 import ProfilePhoto from "../assets/profile.png";
+import "../css/matching.css";
 
+// Import WebSocket
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
-
-import "../css/matching.css";
 
 const Matching = ({ onNavigate }) => {
   const [timer, setTimer] = useState(0);
@@ -21,6 +23,7 @@ const Matching = ({ onNavigate }) => {
   const { user } = useUser();
 
   const exitGame = (user) => {
+    console.log("Game State: " + gameState);
     const loginPayload = { type: "EXIT GAME", message: user };
 
     sendMessage(loginPayload, (response) => {
@@ -34,7 +37,7 @@ const Matching = ({ onNavigate }) => {
   };
 
   useEffect(() => {
-    if (!gameState) return;
+    if (!gameState) {onNavigate("playgame")};
   
     for (const [gameId, game] of Object.entries(gameState)) {
       const usernames = Object.keys(game.users);

@@ -101,16 +101,21 @@ def fetch_puzzle_data():
 
     cur = conn.cursor()
     # Need to select games info per session too.
+    # update this, a few changes in the way database stuff is stored 
     query = """ 
         SELECT
+            opponent_score,
+            played_at,
+            difficulty_rating,
             result_id
-        FROM game_results
+        FROM game_results 
     """
-    #opponent_score
-    #played_at
-    #difficulty_rating
-    
-
+    query = """
+        SELECT
+            answers_right
+            answers_wrong
+            wrong_answer_question_type
+            """
     cur.execute(query) 
     rows = cur.fetchall() # store
 
@@ -121,12 +126,14 @@ def fetch_puzzle_data():
     conn.close()
 
     # will adjust puzzle rows to be model-parseable here.
-    
+    #print(rows)
     return rows
 
 #fetch_puzzle_data()
 #print(fetch_puzzle_data())
-# passes an array atm
+# passes an array atm 
+# [[],[],[]]
+# [("strings", int), (etc)] 
 
 # Sample dataset 
 puzzle_data = np.array([
@@ -136,34 +143,9 @@ puzzle_data = np.array([
     [0, 0.6, 0.4, 0.8, 0.3, 0.5]
 ], dtype=np.float32)
 
-"""
-puzzle_id	UUID	Unique ID for each puzzle
-puzzle_type	TEXT	“AES”, “Firewall”, etc.
-key_length	INTEGER	Raw key size (e.g., 2048)
-steps	INTEGER	Number of encryption/decryption steps
-entropy	FLOAT	Complexity rating
-solution_length	INTEGER	Length of expected answer
-randomness_factor	FLOAT	Randomness factor in generation
-time_taken	FLOAT	How long the user took (seconds)
-num_incorrect	INTEGER	Number of failed attempts
-solved	BOOLEAN	Did the user succeed
-
-result_id SERIAL PRIMARY KEY,
-    players_username VARCHAR(50),
-    player_score INTEGER CHECK (player_score BETWEEN 0 AND 5),
-    opponent_score INTEGER CHECK (opponent_score BETWEEN 0 AND 5),
-    game_id INTEGER,
-    difficulty_rating INTEGER,
-    played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    winner_leaderboard_points INTEGER NOT NULL,
-    loser_leaderboard_points INTEGER NOT NULL,
-    FOREIGN KEY (players_username) REFERENCES players(username) ON DELETE CASCADE,
-    FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
-"""
-
 # convert to PyTorch TensorDataset
 puzzle_tensor = torch.tensor(puzzle_data)
-dataset = TensorDataset(puzzle_tensor)
+dataset = TensorDataset(puzzle_tensor) # will change to fetch_puzzle_data()
 data_loader = DataLoader(dataset, batch_size=BATCH_SIZE)
 
 # initialize model
