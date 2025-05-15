@@ -7,7 +7,6 @@ from VAE import vae_model
 from torch.utils.data import DataLoader, TensorDataset
 import psycopg2
 import json
-import sys
 import uuid
 
 def aes():
@@ -38,7 +37,7 @@ def aes():
 )
 
     return {
-        "id": str(uuid.uuid4()),
+        "id": str(uuid.uuid4()),        
         "type": "AES",
         "question": question,
         "answer": plaintext.decode()  # "ACCESSGRANTED!"
@@ -50,10 +49,9 @@ def caesar_cipher_puzzle():
     ciphertext = ''.join(chr(((ord(c) - 65 + shift) % 26) + 65) for c in answer)
 
     question = (
-        f"Caesar Cipher Puzzle: \n"
-        f"Ciphertext: {ciphertext}" #| Hint: The shift used is {shift} \n"
-        #f"Original word is uppercase A–Z only."
-        f" Hint: The shift used is {shift} \n"
+        f"Caesar Cipher Puzzle: Decrypt the following 6-letter ciphertext.\n"
+        f"Ciphertext: {ciphertext} | Hint: The shift used is {shift} \n"
+        f"Original word is uppercase A–Z only."
     )
 
     return {
@@ -67,30 +65,21 @@ def caesar_cipher_puzzle():
 # and teach them seperately
 
 def subbytes_aes():
-    # Simplified AES S-box with only 16 entries for this puzzle
+    # the scale for this question is too large right now!! (too difficult)
     s_box = [
-        0x63, 0x7c, 0x77, 0x7b,
-        0xf2, 0x6b, 0x6f, 0xc5,
-        0x30, 0x01, 0x67, 0x2b,
-        0xfe, 0xd7, 0xab, 0x76
+        0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
+        0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76
     ]
 
-    # Generate a 4-byte input using values from 0 to 15 (indexable into the s_box)
+    # Generate a short 4-byte input for simplicity
     input_block = bytes([random.randint(0, 15) for _ in range(4)])
     expected = bytes([s_box[b] for b in input_block])
-
-    # Format S-box as a lookup table
-    s_box_table = '\n'.join([f"{i:02x}: {s_box[i]:02x}" for i in range(16)])
-
-    # Create question prompt with helper table
     question = (
-        f"SubBytes Puzzle:\n"
-        f"Input (hex): {input_block.hex()}\n"
-        f"Use the S-box below to substitute each byte of the input:\n"
-        f"{s_box_table}\n"
-       
-    )
-
+    f"SubBytes Puzzle: Use the AES S-box to substitute the following 4 bytes.\n"
+    f"Input: {input_block.hex()} | "
+    f"S-box: {s_box} | "
+    f"Return the substituted output as 8 hex characters (no spaces)."
+)
     return {
         "id": str(uuid.uuid4()),
         "type": "AES_sub_bytes",
@@ -99,30 +88,33 @@ def subbytes_aes():
     }
 
 def shiftrows_aes():
-    # easy -> do w/o hex, smaller matricies, maybe button for shifting rows
-    # Generate a 16-byte block as a 4x4 matrix 
+    # Generate a 16-byte block as a 4x4 matrix (values 0x00–0x0f)
     block = [i for i in range(16)]
 
-    # Convert columns into rows
-    state = [block[i::4] for i in range(4)]
+    # Convert to 4x4 matrix (row view for user)
+    state_matrix = [[block[i + j * 4] for i in range(4)] for j in range(4)]
 
-    # Apply AES ShiftRows
+    # Format
+    formatted_matrix = "\n".join(
+        f"Row {j}: " + " | ".join(f"{byte:02x}" for byte in row)
+        for j, row in enumerate(state_matrix)
+    )
+    # Convert columns to rows 
+    state = [block[i::4] for i in range(4)]
     for r in range(4):
-        state[r] = state[r][r:] + state[r][:r]
+        state[r] = state[r][r:] + state[r][:r]  # row shift
 
     # Flatten back to column-major order
     shifted = [state[i % 4][i // 4] for i in range(16)]
-    expected = ''.join([format(b, '02x') for b in shifted])
-
-    # Format the 4 rows for display
-    row_view = "\n".join([f"Row {i}: {state[i]}" for i in range(4)])
+    expected = ''.join(f"{b:02x}" for b in shifted)
 
     question = (
-        f"Row Shift Puzzle:\n"
-        f"{row_view}\n\n"
-        f"Submit the result as a 32-character hex string."
+        f"ShiftRows Puzzle\n"
+        f"Perform AES ShiftRows on the following 4x4 byte matrix.\n\n"
+        f"{formatted_matrix}\n"
+        f"Submit your answer as a hex string (no spaces).\n"
     )
-
+    
     return {
         "id": str(uuid.uuid4()),
         "type": "AES_shift_rows",
@@ -141,9 +133,9 @@ def mixcolumns_aes():
 
     #(add each byte mod 256)
     question = (
-        f"Column mixing puzzle:\n"
-        f"Input column: {column} | Mix vector: {mix_vector}   \n"
-        #f"Return the result as an 8-character hex string."
+        f"MixColumns Puzzle: Apply simplified MixColumns .\n"
+        f"Input column: {column} | Mix vector: {mix_vector} | "
+        f"Return the result as an 8-character hex string."
     )
 
     return {
@@ -160,7 +152,7 @@ def xor_aes():
     key = bytes([random.randint(0, 255) for _ in range(2)])
     expected = bytes([p ^ k for p, k in zip(plaintext, key)])
     
-    question = "XOR Puzzle: \nplaintext: ", plaintext.hex(), "\nkey: ", key.hex()
+    question = "instruction: Enter the hex result of XOR-ing each byte \nplaintext: ", plaintext.hex(), "\nkey: ", key.hex()
     
     return {
         "id": str(uuid.uuid4()),
@@ -184,11 +176,56 @@ def play_puzzle(puzzle_vector):
     type, question, answer = xor_aes()
     return type, question, answer
 
-# Generating a new puzzle
 def generate_puzzle(model, difficulty_vector):
     with torch.no_grad():
-        generated_puzzle = model.decoder(difficulty_vector)
-    return generated_puzzle.numpy()
+        generated_tensor = model.decoder(difficulty_vector)
+    return generated_tensor.numpy()[0]  # assume single puzzle vector
+
+def fetch_puzzle_data():
+    """
+    conn = psycopg2.connect(
+        host="localhost",
+        database="postgres",
+        user="georgiadocherty",
+        password="D4t4b4se",
+        port=5432
+    )"""
+    
+    
+    conn = psycopg2.connect(
+        host="localhost",
+        database="postgres",
+        user="jackmccabe",
+        password="postgres",
+        port=5432
+    )
+
+    cur = conn.cursor()
+    # Need to select games info per session too.
+    query = """ 
+        SELECT
+            played_at,
+            difficulty_rating,
+            opponent_score,
+            result_id
+        FROM game_results
+    """
+
+    # ADD GAME INSTANCE STUFFS -> num_incorrect, time_to_complete etc to form difficulty vector 
+    cur.execute(query) 
+    rows = cur.fetchall() # store
+
+    #for row in rows:
+        #print(row)  # test for if prints like the sample puzzle_data below
+
+    cur.close()
+    conn.close()
+
+    # will adjust puzzle rows to be model-parseable here.
+    
+    return rows
+
+fetch_puzzle_data()
 
 # Sample dataset 
 puzzle_data = np.array([
@@ -200,9 +237,11 @@ puzzle_data = np.array([
 
 # initialize model
 vae_model.load_state_dict(torch.load("vae_model.pth"))
+#model = "" # don't wanna run VAE every time
+#model.load_state_dict(torch.load("vae_model.pth"))
 vae_model.eval()
 # play
-difficulty_vector = torch.tensor([100, 0.6, 0.5]) 
+difficulty_vector = torch.tensor([100, 0.6, 0.5]) # hardcoded rn
 generated_puzzle = generate_puzzle(vae_model, difficulty_vector)
 
 if __name__ == "__main__":
@@ -215,7 +254,8 @@ if __name__ == "__main__":
         caesar_cipher_puzzle,
         subbytes_aes,
         shiftrows_aes,
-        mixcolumns_aes
+        mixcolumns_aes,
+        aes
     ]
 
     # Pick one at random

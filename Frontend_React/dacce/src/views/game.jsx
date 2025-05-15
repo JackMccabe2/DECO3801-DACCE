@@ -20,6 +20,7 @@ import Terminal from "../components/terminal";
 // Import contexts
 import { useWebSocket } from "../contexts/WebSocketContext";
 import { useUser } from "../contexts/UserContext";
+// import { getPuzzle } from "../../../../ServerClient/server-ws/utils/getPuzzle";
 
 const Game = ({ onNavigate }) => {
   const [puzzle, setPuzzle] = useState({ question: null, answer: null });
@@ -32,13 +33,26 @@ const Game = ({ onNavigate }) => {
 
 
   // Timer
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(60); // second
 
   useEffect(() => {
-    
-    // if client recives gameover message, means either user or 
-    // opponent got to 5 points
+    const key = Object.keys(gameState)[0];
+    if (!key || !gameState[key]) return;
+  
+    const users = gameState[key].users;
+    if (!users) return;
+
+    if (Object.keys(gameState[key].users).length == 1)  {
+      console.dir("Game State: " + gameState, {depth: null});
+      alert("opponent left");
+      onNavigate("dashboard");
+    }
+
+  }, [gameState]); 
+
+  useEffect(() => {
     if (gameStatus === "over") {
+      //alert("GAME STATYDASTES CAHNEGS");
       endGame();
     }
 
@@ -46,14 +60,12 @@ const Game = ({ onNavigate }) => {
 
   useEffect(() => {
     const gameId = Object.keys(gameState)[0];
-    // if game not set up, ignore
     if (!gameId || !gameState[gameId] || !opponent) return;
   
     const currentScore = gameState[gameId].users[opponent];
     const previousScore = prevOpponentScoreRef.current;
   
-    // if 
-    if (currentScore === 5 || gameStatus === "over") {
+    if (currentScore === 5) {
       return;
     } else if (
       previousScore != null &&
@@ -74,11 +86,28 @@ const Game = ({ onNavigate }) => {
     //alert(gameState);
     setOpponentFunction(gameState);
 
-    // function to get puzzle
-    if (gameStatus != "over"){
-      fetchPuzzle();
-    }
+    const loginPayload = {
+      type: "GET PUZZLE",
+      message: "payload to get puzzle",
+    };
 
+  sendMessage(loginPayload, (response) => {
+      if (response.status === "PUZZLE") {
+        setPuzzle({
+          question: response.data.question,
+          answer: response.data.answer
+        });
+        puzzle.answer = response.data.answer
+        console.log("set answer to: " + response.data.answer);
+        
+      } else {
+        alert("Get puzzle failed.");
+        return;
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
@@ -93,6 +122,7 @@ const Game = ({ onNavigate }) => {
   }, []);
 
   const exitGame = async (user) => {
+    console.dir("Game State: " + gameState, {depth: null});
     const payload = { type: "EXIT GAME", message: user };
     sendMessage(payload, (response) => {
       if (response.status !== "OK") {
@@ -102,7 +132,6 @@ const Game = ({ onNavigate }) => {
   };
 
   const fetchPuzzle = async () => {
-
     if (hasFetchedPuzzle.current) return;
     hasFetchedPuzzle.current = true;
     setLoading(true);
@@ -114,17 +143,13 @@ const Game = ({ onNavigate }) => {
 
     // get puzzle
     await sendMessage(payload, (response) => {
-      //console.log("fetch puyzzle status: ",response.status);
       if (response.status === "PUZZLE") {
         setPuzzle({
           question: response.data.question,
           answer: response.data.answer,
         });
         puzzle.answer = response.data.answer;
-        console.log("set answer to: " + response.data.answer);
         setLoading(false);
-      } else if (response.status === "GAME OVER") {
-        return;
       } else {
         alert("Get puzzle failed.");
       }
@@ -132,17 +157,15 @@ const Game = ({ onNavigate }) => {
   };
 
   const handleTerminalCommand = async (input) => {
-    console.log("User entered:", input);
 
     if (input == puzzle.answer) {
       await incrementScore();
-      if (gameStatus != "over"){
-        hasFetchedPuzzle.current = false;
-        await fetchPuzzle();
-      }
+      hasFetchedPuzzle.current = false;
+      await fetchPuzzle();
       // Do something like advance stage or send to server
+      
     } else {
-      alert("Incorrect! Try again.",puzzle.answer);
+      alert("Incorrect! Try again.");
     }
   };
 
@@ -170,7 +193,7 @@ const Game = ({ onNavigate }) => {
 
   async function incrementScore() {
 
-    //setGameStatus(false);
+    setGameStatus(false);
 
     //alert(`${user.username} score: ${gameState[Object.keys(gameState)[0]].users[user.username]} opponent score: ${opponent}`);
 
@@ -184,7 +207,6 @@ const Game = ({ onNavigate }) => {
     };
 
     await sendMessage(payload, async (response) => {
-      console.log(response.status)
       if (response.status === "OK GOT GAME"){
         await setGameState(response.message);
 
@@ -194,12 +216,10 @@ const Game = ({ onNavigate }) => {
         }, 0);
 
         // if user score is 5, 
-      } else if (response.status === "UPDATE USER") {
-        //console.log("setting game status to over")
-        //setGameStatus("over")
-        //endGame();
+      } else if (response.status === "GAME OVER") {
+        //await endGame();
       } else {
-        //alert("Get puzzle failed.");
+        alert("Get puzzle failed.");
       }
 
       
@@ -208,19 +228,19 @@ const Game = ({ onNavigate }) => {
 
   }
 
-  function endGame() {
+  async function endGame() {
 
     // gameState
-    if (gameState[Object.keys(gameState)[0]].users[user.username] === 1) {
-      //setOpponent("HIIIII");
-      alert("user has won");
-      onNavigate("dashboard");
-      //return;
-    } else {
+
+    if (gameState[Object.keys(gameState)[0]].users[opponent] === 5) {
+      
       //setOpponent("GRAHHHHH"); 
       alert("opponent has won...");
-      onNavigate("dashboard");
-      //return;
+      onNavigate("playgame");
+    } else {
+      //setOpponent("HIIIII");
+      alert("user has won");
+      onNavigate("playgame");
     }
 
   }
@@ -229,6 +249,10 @@ const Game = ({ onNavigate }) => {
   const leaveGame = () => {
     setShowLeaveModal(true);
   };
+
+  const errortest = () => {
+    return redirect
+  }
 
   return (
     <>
@@ -317,7 +341,9 @@ const Game = ({ onNavigate }) => {
                 <OverlayTrigger
                   key="bottom"
                   placement="bottom"
-                  overlay={<Tooltip id="tooltip-bottom">Game Tips</Tooltip>}
+                  overlay={
+                    <Tooltip id="tooltip-bottom">Game Tips</Tooltip>
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -335,7 +361,9 @@ const Game = ({ onNavigate }) => {
                 <OverlayTrigger
                   key="bottom"
                   placement="bottom"
-                  overlay={<Tooltip id="tooltip-bottom">Leave the game</Tooltip>}
+                  overlay={
+                    <Tooltip id="tooltip-bottom">Leave the game</Tooltip>
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -344,7 +372,9 @@ const Game = ({ onNavigate }) => {
                     fill="currentColor"
                     className="bi bi-door-closed-fill custom-icon"
                     viewBox="0 0 16 16"
-                    onClick={() => leaveGame()}
+                    onClick={() => {
+                      leaveGame();
+                    }}
                   >
                     <path d="M12 1a1 1 0 0 1 1 1v13h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2a1 1 0 0 1 1-1zm-2 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
                   </svg>
@@ -377,10 +407,10 @@ const Game = ({ onNavigate }) => {
                 </Button>
                 <Button
                   variant="primary"
-                  onClick={async () => {
+                  onClick={ async () => {
                     await exitGame(user);
-                    onNavigate("dashboard");
-                  }}
+                    onNavigate("dashboard")}
+                  }
                 >
                   Confirm
                 </Button>
@@ -409,8 +439,9 @@ const Game = ({ onNavigate }) => {
             <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
           </svg>
         }
-        title={`Encrypted Message...`}
+        title="Encrypted Message..."
         content={puzzle.question}
+        //content="One of the criminals, known as “The Archivist”, always hides messages in old formats so that only those who know the history of encoding can understand them..."
       />
 
       {/* Terminal */}
