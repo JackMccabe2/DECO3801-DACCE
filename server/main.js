@@ -1,4 +1,5 @@
-// index1.js
+// main.js
+
 
 // Dependencies
 import express from 'express';
@@ -15,9 +16,6 @@ const server = express().listen(8080, () => {
 // Initialize WebSocket Server
 const wss = new WebSocketServer({ server }); // Use WebSocketServer here
 
-
-// PostgreSQL Connection 
-
 const client = new Client({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -26,33 +24,6 @@ const client = new Client({
   port: process.env.DB_PORT,
 });
 
-/*
-const client = new Client({
-  host: "localhost",
-  database: "postgres",
-  user: "georgiadocherty",
-  password: "D4t4b4se",
-  port: 5432
-});
-*/
-/*
-const client = new Client({
-  host: "localhost",
-  user: "georgiadocherty",
-  password: "password",
-  database: "postgres",
-  port: 5432
-});
-*/
-/*
-const client = new Client({
-  host: "localhost",
-  user: "josh",
-  password: "password1",
-  database: "postgres",
-  port: 5432
-  });
-*/
 
 client.connect()
   .then(() => console.log("Connected to PostgreSQL"))
