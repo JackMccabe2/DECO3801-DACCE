@@ -102,7 +102,11 @@ const Signup = ({ onNavigate }) => {
   const handleSignup = async (page) => {
     setShowPolicyModal(false);
 
-    const loginPayload = { type: "POST", username: tempUsername, password: tempPassword };
+    const loginPayload = {
+      type: "POST",
+      username: tempUsername,
+      password: tempPassword,
+    };
 
     sendMessage(loginPayload, (response) => {
       if (response.status === "OK USER CREATED") {
@@ -133,7 +137,9 @@ const Signup = ({ onNavigate }) => {
   return (
     <Container
       fluid
-      className="d-flex justify-content-center align-items-center"
+      className={`d-flex justify-content-center align-items-center ${
+        toastType === "success" ? "loading-cursor" : ""
+      }`}
     >
       <Row className="custom-content-wrap p-5 rounded h-100">
         <Col xs={12}>
@@ -203,6 +209,8 @@ const Signup = ({ onNavigate }) => {
                 }
               }
             }}
+            disabled={toastType === "success"}
+            className={toastType === "success" ? "disabled-button" : ""}
           />
         </Col>
         <Col

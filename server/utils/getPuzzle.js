@@ -4,10 +4,12 @@ export async function getPuzzle(ws) {
   
   try {
   
-    const python = spawn('python3', ['../../game_ai.py']);
+    const python = spawn('python3', ['game_ai.py']);
     let dataString = '';
-      
-    
+    console.log('[Server] Raw output from Python:', dataString);
+    python.stderr.on('data', (err) => {
+      console.error('[PYTHON STDERR]', err.toString());
+    });
 
     python.stdout.on('data', (data) => {
       dataString += data.toString();

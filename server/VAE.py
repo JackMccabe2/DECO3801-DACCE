@@ -4,7 +4,8 @@ import torch.optim as optim
 import numpy as np
 from torch.utils.data import DataLoader, TensorDataset
 import psycopg2
-import Database
+import os
+from dotenv import load_dotenv, dotenv_values 
 
 class Encoder(nn.Module):
     def __init__(self, input_dim, latent_dim):
@@ -82,6 +83,9 @@ BATCH_SIZE = 16
 LEARNING_RATE = 0.001
 
 def fetch_puzzle_data():
+
+    load_dotenv()
+
     """
     conn = psycopg2.connect(
         host="localhost",
@@ -90,15 +94,21 @@ def fetch_puzzle_data():
         password="D4t4b4se",
         port=5432
     )"""
+
+    print(os.getenv("DB_HOST"))
+    print(os.getenv("DB_NAME"))
+    print(os.getenv("DB_USER"))
+    print(os.getenv("DB_PASSWORD"))
+    print(os.getenv("DB_PORT"))
     
     conn = psycopg2.connect(
-        host="localhost",
-        database="postgres",
-        user="jack",
-        password="postgres",
-        port=5432
+        host=os.getenv("DB_HOST"),
+        database=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        port=os.getenv("DB_PORT")
     )
-
+    
     cur = conn.cursor()
     # Need to select games info per session too.
     # update this, a few changes in the way database stuff is stored 
