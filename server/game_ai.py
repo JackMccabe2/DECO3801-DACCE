@@ -6,9 +6,7 @@ import numpy as np
 from VAE import vae_model
 from torch.utils.data import DataLoader, TensorDataset
 import psycopg2
-import Database
 import json
-import sys
 import uuid
 
 def aes():
