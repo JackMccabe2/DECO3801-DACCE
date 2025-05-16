@@ -43,10 +43,6 @@ wss.on('connection', (ws) => {
     });
 
     ws.on('close', () => {
-      //const index = activeUsers.indexOf(ws.userId);
-      //if (index !== -1) {
-      //  activeUsers.splice(index, 1);
-      //}
 
       if (ws.userId) {
         users.delete(ws.userId);
