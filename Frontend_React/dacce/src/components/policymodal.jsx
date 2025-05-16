@@ -27,7 +27,7 @@ function PolicyModal({ show, onClose, onConfirm }) {
       <Modal.Body className="modal-body">
         <div>
           Welcome to Cool Hack Game! Your privacy is important to us. This
-          Privacy Policy explains how we handle your information when you use
+          Private Policy explains how we handle your information when you use
           our game.{" "}
           <p>
             <i>
