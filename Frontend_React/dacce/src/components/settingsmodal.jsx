@@ -5,6 +5,7 @@ import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
+// Import CSS
 import "../css/policymodal.css";
 
 function SettingsModal({ show, onClose, onConfirm }) {
