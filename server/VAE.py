@@ -7,51 +7,79 @@ import psycopg2
 import os
 from dotenv import load_dotenv, dotenv_values 
 
+# Takes input data and maps it to a lower-dimensional latent space,
+# outputting the mean and log variance of the latent space distribution.
 class Encoder(nn.Module):
     def __init__(self, input_dim, latent_dim):
         super(Encoder, self).__init__()
         self.fc1 = nn.Linear(input_dim, 128)
         self.fc2_mean = nn.Linear(128, latent_dim)
         self.fc2_logvar = nn.Linear(128, latent_dim)
-        
+    
+    # forward pass
+    # x: input data
     def forward(self, x):
         h = torch.relu(self.fc1(x))
         mean = self.fc2_mean(h)
         logvar = self.fc2_logvar(h)
         return mean, logvar
 
+# Takes a point from the latent space and maps it back to the original data space.
 class Decoder(nn.Module):
     def __init__(self, latent_dim, output_dim):
         super(Decoder, self).__init__()
         self.fc1 = nn.Linear(latent_dim, 128)
         self.fc2 = nn.Linear(128, output_dim)
 
+    # forward pass.
+    # z: a point sampled from the latent space
     def forward(self, z):
         h = torch.relu(self.fc1(z))
         return torch.sigmoid(self.fc2(h))  #normalised
 
 # VAE
+# Combines an Encoder and a Decoder to learn a compressed representation (latent space)
+# of the input data and then reconstruct the data from this representation.
 class VAE(nn.Module):
     def __init__(self, input_dim, latent_dim):
         super(VAE, self).__init__()
         self.encoder = Encoder(input_dim, latent_dim)
         self.decoder = Decoder(latent_dim, input_dim)
 
+    # Implements the reparameterization trick.
+    # This allows backpropagation through the sampling process by introducing a deterministic
+    # transformation of a random variable.
+    # mean: mean of the latent distribution from the encoder
+    # logvar: log variance of the latent distribution from the encoder
     def reparameterize(self, mean, logvar):
         std = torch.exp(0.5 * logvar)
         eps = torch.randn_like(std)
         return mean + eps * std
 
+    # forward pass for the entire VAE model.
+    # x: input data
     def forward(self, x):
         mean, logvar = self.encoder(x)
         z = self.reparameterize(mean, logvar)
         return self.decoder(z), mean, logvar
-
+    
+# Calculates the loss function.
+# Loss here is composed of two parts:
+# 1. Reconstruction loss: How well the decoder reconstructs the input data (MSE).
+# 2. KL divergence: A regularizer that measures how much the learned latent distribution
+#    diverges from a prior distribution (typically a standard normal distribution).
+# recon_x: reconstructed data from the decoder
+# x: original input data
+# mean: mean of the latent distribution
+# logvar: log variance of the latent distribution
 def loss_function(recon_x, x, mean, logvar):
+    # Mean Squared Error for reconstruction loss
     recon_loss = nn.functional.mse_loss(recon_x, x, reduction='sum')
+    # divergence between the learned latent distribution and a standard normal distribution
     kl_loss = -0.5 * torch.sum(1 + logvar - mean.pow(2) - logvar.exp())
-    return recon_loss + kl_loss
+    return recon_loss + kl_loss # Total loss
 
+# trains the model
 def train_vae(model, data_loader, epochs=20, lr=0.001):
     optimizer = optim.Adam(model.parameters(), lr=lr)
     model.train()
@@ -85,15 +113,6 @@ LEARNING_RATE = 0.001
 def fetch_puzzle_data():
 
     load_dotenv()
-
-    """
-    conn = psycopg2.connect(
-        host="localhost",
-        database="postgres",
-        user="georgiadocherty",
-        password="D4t4b4se",
-        port=5432
-    )"""
 
     print(os.getenv("DB_HOST"))
     print(os.getenv("DB_NAME"))
