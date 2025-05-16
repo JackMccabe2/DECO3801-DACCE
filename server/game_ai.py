@@ -205,12 +205,11 @@ def fetch_puzzle_data():
     # Need to select games info per session too.
     query = """ 
         SELECT
-            played_at,
-            difficulty_rating,
             opponent_score,
-            result_id
-        FROM game_results
-    """
+            player_score,
+            match_id
+        FROM match_results 
+    """ 
 
     # ADD GAME INSTANCE STUFFS -> num_incorrect, time_to_complete etc to form difficulty vector 
     cur.execute(query) 
