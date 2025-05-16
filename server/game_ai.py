@@ -170,6 +170,103 @@ def xor_aes():
         "answer": expected.hex()
     }
 
+# Vigenere Cipher Puzzle
+def vigenere_cipher_puzzle():
+    key = random.choice(["KEY", "LOCK", "HACK"])
+    plaintext = "SECURITY"
+    ciphertext = ""
+
+    for i in range(len(plaintext)):
+        p = ord(plaintext[i]) - 65
+        k = ord(key[i % len(key)]) - 65
+        c = (p + k) % 26
+        ciphertext += chr(c + 65)
+
+    question = (
+        f"Vigenère Cipher Puzzle:\n"
+        f"Plaintext: {'_' * len(plaintext)}\n"
+        f"Ciphertext: {ciphertext}\n"
+        f"Key: {key} (repeats if shorter than message)\n"
+        f"Decrypt the original message. All caps A-Z."
+    )
+
+    return {
+        "id": str(uuid.uuid4()),
+        "type": "vigenere",
+        "question": question,
+        "answer": plaintext
+    }
+
+# Substitution Cipher Puzzle
+def substitution_cipher_puzzle():
+    alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    shuffled = alphabet[:]
+    random.shuffle(shuffled)
+    mapping = dict(zip(alphabet, shuffled))
+
+    answer = "HELLOWORLD"
+    ciphertext = ''.join(mapping[c] for c in answer)
+
+    question = (
+        f"Substitution Cipher Puzzle:\n"
+        f"Ciphertext: {ciphertext}\n"
+        f"Each letter is replaced using a fixed substitution. A-Z only.\n"
+        f"Decrypt the message."
+    )
+
+    return {
+        "id": str(uuid.uuid4()),
+        "type": "substitution",
+        "question": question,
+        "answer": answer
+    }
+
+# RSA Puzzle
+def rsa_puzzle():
+    p, q = 11, 13
+    n = p * q           # n = 143
+    e = 7
+    phi_n = (p-1)*(q-1) # 120
+
+    # Private key d (modular inverse of e mod phi_n)
+    d = pow(e, -1, phi_n) # = 103
+
+    message = 9  # original message (plaintext number)
+    ciphertext = pow(message, e, n)
+
+    question = (
+        f"RSA Puzzle:\n"
+        f"Public Key: (e={e}, n={n})\n"
+        f"Ciphertext: {ciphertext}\n"
+        f"Decrypt the message using RSA. Enter the integer plaintext."
+    )
+
+    return {
+        "id": str(uuid.uuid4()),
+        "type": "rsa",
+        "question": question,
+        "answer": str(message)
+    }
+
+# Real-world Token Decryption (JWT-like Base64)
+def token_puzzle():
+    import base64
+    payload = '{"user":"admin","access":"granted"}'
+    encoded = base64.b64encode(payload.encode()).decode()
+
+    question = (
+        f"Base64 Token Puzzle:\n"
+        f"Encoded string: {encoded}\n"
+        f"Decode this Base64 string to view the original payload."
+    )
+
+    return {
+        "id": str(uuid.uuid4()),
+        "type": "base64",
+        "question": question,
+        "answer": payload
+    }
+
 def play_puzzle(puzzle_vector):
 
     key_length = int(1024 + puzzle_vector[1] * 2048)
