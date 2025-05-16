@@ -1,3 +1,5 @@
+import WebSocket from 'ws';
+
 async function addScore(username, client) {
     try {
         const query = `

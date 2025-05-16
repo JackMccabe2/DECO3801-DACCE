@@ -1,3 +1,4 @@
+import WebSocket from 'ws';
 
 /*
 async function addGameToDB(data, user, client) {
