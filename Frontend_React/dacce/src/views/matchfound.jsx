@@ -25,21 +25,6 @@ const Matched = ({ onNavigate }) => {
   const { user } = useUser();
   const maxTime = 30;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // Countdown timer, resets the page to "playgame/matching" when the timer reaches 0
   useEffect(() => {
     const gameId = Object.keys(gameState)[0];

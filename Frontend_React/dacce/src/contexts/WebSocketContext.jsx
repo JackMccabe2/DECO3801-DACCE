@@ -47,6 +47,7 @@ export const WebSocketProvider = ({ children, onNavigate }) => {
       if (response?.status && response?.message !== undefined) {
         //alert(response.status);
         if (response.status === "OK GOT GAME") {
+          console.log(response.message);
           setGameStatus(true);
           setGameState(response.message);
         } else if (response.status === "OK LEFT GAME") {
