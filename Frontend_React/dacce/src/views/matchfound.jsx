@@ -25,21 +25,6 @@ const Matched = ({ onNavigate }) => {
   const { user } = useUser();
   const maxTime = 30;
 
-  useEffect(() => {
-    const key = Object.keys(gameState)[0];
-    if (!key || !gameState[key]) return;
-  
-    const users = gameState[key].users;
-    if (!users) return;
-
-    if (gameState === null || Object.keys(gameState[key].users).length == 1)  {
-      console.log("Game State: " + gameState);
-      alert("opponent left");
-      onNavigate("playgame");
-    }
-
-  }, [gameState]); 
-
   // Countdown timer, resets the page to "playgame/matching" when the timer reaches 0
   useEffect(() => {
     const gameId = Object.keys(gameState)[0];
@@ -95,7 +80,7 @@ const Matched = ({ onNavigate }) => {
   }
 
   async function handleDeny() {
-    console.log("Game State: " + gameState);
+
     const loginPayload = { type: "EXIT GAME", message: user };
 
     sendMessage(loginPayload, (response) => {

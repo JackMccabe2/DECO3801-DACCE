@@ -1,10 +1,10 @@
-// Import React Hooks
+// Import React Bootstrap components
 import { useState, useEffect } from "react";
 
-// Import Icons
+
 import { PiSmileyXEyesFill } from "react-icons/pi";
 
-// Import Bootstrap Components
+
 import Container from "react-bootstrap/Container";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";

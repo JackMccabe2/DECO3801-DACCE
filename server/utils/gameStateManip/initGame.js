@@ -1,4 +1,5 @@
 import { okMessage } from '../sendMessage.js';
+import WebSocket from 'ws';
 
 export async function initGame(ws, gameId, data, users) {
 
@@ -60,6 +61,7 @@ export async function initGame(ws, gameId, data, users) {
         // if added, also send update to first user
         if (added) {
             const targetWs = users.get(opponent);
+            //console.log("opponent: ",targetWs);
             if (targetWs && targetWs.readyState === WebSocket.OPEN) {
                 console.log('[Server] Sending response:', response.status, response.message);
                 targetWs.send(JSON.stringify(response));

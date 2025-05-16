@@ -134,10 +134,9 @@ def fetch_puzzle_data():
     query = """ 
         SELECT
             opponent_score,
-            played_at,
-            difficulty_rating,
-            result_id
-        FROM game_results 
+            player_score,
+            match_id
+        FROM match_results 
     """
     query = """
         SELECT

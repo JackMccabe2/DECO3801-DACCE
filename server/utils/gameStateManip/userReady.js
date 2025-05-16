@@ -1,4 +1,5 @@
 import { okMessage } from '../sendMessage.js';
+import WebSocket from 'ws';
 
 export async function userReady(ws, gameIdArray, data, users) {
     try {
